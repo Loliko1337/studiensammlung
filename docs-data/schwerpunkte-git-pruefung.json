@@ -45,6 +45,12 @@
    "abstand": "m"
   },
   {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "void setup() {\n    // Wir legen eine Variable 'n' an und geben ihr den Wert 7.\n    // Das System legt 'n' an einer freien Speicheradresse ab (hier: 0x08F2).\n    int n = 7; \n\n    // Wir erstellen einen Zeiger 'p'.\n    // Das '&'-Zeichen holt die Adresse von 'n' (also 0x08F2). \n    // Diese Adresse wird als Inhalt im Zeiger 'p' gespeichert.\n    // (Der Zeiger 'p' selbst liegt auf einer eigenen Adresse, z.B. 0x08F4).\n    int* p = &n; \n    \n    // Wenn wir jetzt den Wert ändern wollen, auf den 'p' zeigt, \n    // nutzen wir den Stern (*). Folgender Befehl ändert den Inhalt \n    // an der Adresse 0x08F2 von 7 auf 10:\n    // *p = 10; \n}"
+  },
+  {
    "typ": "box",
    "html": "Zeiger sind an und für sich nichts wirklich anderes als Variablen. So wie eine variable vom typ integer den Wert 7 speichert, so speichert eine Pointer variable vom typ integer die Adresse von einer anderen Integer Variable",
    "variante": "merke",
