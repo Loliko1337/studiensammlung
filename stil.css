@@ -161,7 +161,7 @@ code{font-family:var(--mono);font-size:.92em;background:#f2f6f8;border:1px solid
 .codeblock{position:relative;background:#f7f9fa;border:1px solid var(--grid);border-radius:7px}
 .codeblock .code-label{position:absolute;top:7px;right:11px;font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft)}
 .codeblock pre{margin:0;padding:12px 14px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.55;tab-size:2}
-.codeblock code{font-family:inherit}
+.codeblock code{font-family:inherit;font-size:inherit;background:none;border:0;border-radius:0;padding:0;display:block}
 .c-kw{color:var(--teal);font-weight:700}
 .c-str{color:var(--trace-dk)}
 .c-com{color:#8a949e;font-style:italic}
