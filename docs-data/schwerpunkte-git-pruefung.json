@@ -47,7 +47,8 @@
   {
    "typ": "box",
    "html": "Zeiger sind an und für sich nichts wirklich anderes als Variablen. So wie eine variable vom typ integer den Wert 7 speichert, so speichert eine Pointer variable vom typ integer die Adresse von einer anderen Integer Variable",
-   "variante": "merke"
+   "variante": "merke",
+   "abstand": "l"
   },
   {
    "typ": "h2",
