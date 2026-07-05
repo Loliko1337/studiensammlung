@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trainer-Vorlage</title>
-<!-- ============================================================
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trainer-Vorlage</title>
+    <!-- ============================================================
      TRAINER-GRUNDGERÜST für die Studiensammlung
      ============================================================
      So baust du daraus einen neuen Trainer:
@@ -21,176 +21,545 @@
      funktioniert von selbst. HTML in Fragetexten ist erlaubt,
      z. B. <b>fett</b>, U<sub>BE</sub>, x<sup>2</sup>, <code>Code</code>.
      ============================================================ -->
-<style>
-  :root{
-    --paper:#eef1f4; --panel:#ffffff; --ink:#1a2024; --ink-soft:#55606a;
-    --line:#d4dbe2; --grid:#e3e8ed;
-    --trace:#17a35b; --trace-dk:#0f7c44; --teal:#0b7a8c;
-    --amber:#d98a1f; --amber-bg:#fcf3e2;
-    --red:#d6453d; --red-bg:#fbeae9; --green-bg:#e6f6ee;
-    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
-    --sans:ui-sans-serif,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5;
-       -webkit-font-smoothing:antialiased;padding:0 16px 64px}
-  .wrap{max-width:780px;margin:0 auto}
-  button{font:inherit}
-  :focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+    <style>
+      :root {
+        --paper: #eef1f4;
+        --panel: #ffffff;
+        --ink: #1a2024;
+        --ink-soft: #55606a;
+        --line: #d4dbe2;
+        --grid: #e3e8ed;
+        --trace: #17a35b;
+        --trace-dk: #0f7c44;
+        --teal: #0b7a8c;
+        --amber: #d98a1f;
+        --amber-bg: #fcf3e2;
+        --red: #d6453d;
+        --red-bg: #fbeae9;
+        --green-bg: #e6f6ee;
+        --mono:
+          "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+          "Liberation Mono", monospace;
+        --sans:
+          ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial,
+          sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        padding: 0 16px 64px;
+      }
+      .wrap {
+        max-width: 780px;
+        margin: 0 auto;
+      }
+      button {
+        font: inherit;
+      }
+      :focus-visible {
+        outline: 2px solid var(--teal);
+        outline-offset: 2px;
+      }
 
-  /* ---------- Kopf ---------- */
-  header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
-         padding:28px 0 18px;border-bottom:2px solid var(--ink)}
-  .brand .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-                  color:var(--ink-soft);margin:0 0 4px}
-  .brand h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.01em;line-height:1.1}
-  .brand .sub{font-size:13px;color:var(--ink-soft);margin-top:4px}
-  .navlink{font-family:var(--mono);font-size:12px;color:var(--teal);text-decoration:none}
-  .navlink:hover{text-decoration:underline}
+      /* ---------- Kopf ---------- */
+      header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding: 28px 0 18px;
+        border-bottom: 2px solid var(--ink);
+      }
+      .brand .eyebrow {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        margin: 0 0 4px;
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+      }
+      .brand .sub {
+        font-size: 13px;
+        color: var(--ink-soft);
+        margin-top: 4px;
+      }
+      .navlink {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--teal);
+        text-decoration: none;
+      }
+      .navlink:hover {
+        text-decoration: underline;
+      }
 
-  .readout{font-family:var(--mono);background:var(--ink);color:var(--trace);border-radius:7px;
-           padding:9px 13px;min-width:132px;box-shadow:inset 0 0 0 1px #2c343b}
-  .readout .rlabel{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#7c8b86;display:block}
-  .readout .rval{font-size:20px;font-weight:700;letter-spacing:.02em}
-  .readout .rval small{font-size:12px;color:#5d6b66;font-weight:400}
+      .readout {
+        font-family: var(--mono);
+        background: var(--ink);
+        color: var(--trace);
+        border-radius: 7px;
+        padding: 9px 13px;
+        min-width: 132px;
+        box-shadow: inset 0 0 0 1px #2c343b;
+      }
+      .readout .rlabel {
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #7c8b86;
+        display: block;
+      }
+      .readout .rval {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+      .readout .rval small {
+        font-size: 12px;
+        color: #5d6b66;
+        font-weight: 400;
+      }
 
-  /* ---------- Kategorien & Modus ---------- */
-  nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px;align-items:center}
-  .cat{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--line);
-       color:var(--ink-soft);padding:8px 12px;border-radius:6px;cursor:pointer;transition:.12s}
-  .cat:hover{border-color:var(--ink-soft);color:var(--ink)}
-  .cat[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
-  .cat.rng[aria-pressed="true"]{background:var(--trace-dk);border-color:var(--trace-dk)}
-  .cat.pruefung{margin-left:auto;border-color:var(--amber);color:var(--amber)}
-  .cat.pruefung:hover{background:var(--amber-bg)}
+      /* ---------- Kategorien & Modus ---------- */
+      nav {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 18px 0 22px;
+        align-items: center;
+      }
+      .cat {
+        font-family: var(--mono);
+        font-size: 12px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        color: var(--ink-soft);
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.12s;
+      }
+      .cat:hover {
+        border-color: var(--ink-soft);
+        color: var(--ink);
+      }
+      .cat[aria-pressed="true"] {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: #fff;
+      }
+      .cat.rng[aria-pressed="true"] {
+        background: var(--trace-dk);
+        border-color: var(--trace-dk);
+      }
+      .cat.pruefung {
+        margin-left: auto;
+        border-color: var(--amber);
+        color: var(--amber);
+      }
+      .cat.pruefung:hover {
+        background: var(--amber-bg);
+      }
 
-  /* ---------- Aufgaben-Karte ---------- */
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
-  .card .head{display:flex;align-items:center;justify-content:space-between;gap:10px;
-              padding:13px 18px;border-bottom:1px solid var(--line)}
-  .card .head .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-                   color:var(--trace-dk);font-weight:700}
-  .card .head .fortschritt{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
-  .card .body{padding:18px;
-    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-    background-size:22px 22px;background-position:-1px -1px}
-  .prompt{font-size:15px;margin:0 0 14px}
-  .prompt code{font-family:var(--mono);font-size:.92em;background:#f2f6f8;border:1px solid var(--grid);
-               border-radius:4px;padding:1px 4px}
+      /* ---------- Aufgaben-Karte ---------- */
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .card .head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 13px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .card .head .tag {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--trace-dk);
+        font-weight: 700;
+      }
+      .card .head .fortschritt {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-soft);
+      }
+      .card .body {
+        padding: 18px;
+        background-image:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 22px 22px;
+        background-position: -1px -1px;
+      }
+      .prompt {
+        font-size: 15px;
+        margin: 0 0 14px;
+      }
+      .prompt code {
+        font-family: var(--mono);
+        font-size: 0.92em;
+        background: #f2f6f8;
+        border: 1px solid var(--grid);
+        border-radius: 4px;
+        padding: 1px 4px;
+      }
 
-  .given{display:flex;flex-wrap:wrap;gap:6px 8px;margin:0 0 16px}
-  .chip{font-family:var(--mono);font-size:12.5px;background:#f3f6f8;border:1px solid var(--line);
-        border-radius:5px;padding:4px 9px;white-space:nowrap}
-  .chip b{color:var(--trace-dk)}
+      .given {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 8px;
+        margin: 0 0 16px;
+      }
+      .chip {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        background: #f3f6f8;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 4px 9px;
+        white-space: nowrap;
+      }
+      .chip b {
+        color: var(--trace-dk);
+      }
 
-  /* Antwort-Optionen (wahl / multi) */
-  .opts{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
-  .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#fcfdfe;
-       border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;transition:.12s;
-       font-size:14px;width:100%}
-  .opt:hover{border-color:var(--ink-soft)}
-  .opt .kasten{flex:0 0 auto;width:17px;height:17px;margin-top:1px;border:1.5px solid var(--line);
-               border-radius:4px;background:#fff;position:relative}
-  .opt.rund .kasten{border-radius:50%}
-  .opt[aria-pressed="true"]{border-color:var(--teal);background:#f0f8fa}
-  .opt[aria-pressed="true"] .kasten{border-color:var(--teal);background:var(--teal)}
-  .opt.ok{border-color:var(--trace);background:var(--green-bg)}
-  .opt.ok .kasten{border-color:var(--trace);background:var(--trace)}
-  .opt.bad{border-color:var(--red);background:var(--red-bg)}
-  .opt.bad .kasten{border-color:var(--red);background:var(--red)}
-  .opt:disabled{cursor:default;opacity:.92}
+      /* Antwort-Optionen (wahl / multi) */
+      .opts {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .opt {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        text-align: left;
+        background: #fcfdfe;
+        border: 1.5px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: 0.12s;
+        font-size: 14px;
+        width: 100%;
+      }
+      .opt:hover {
+        border-color: var(--ink-soft);
+      }
+      .opt .kasten {
+        flex: 0 0 auto;
+        width: 17px;
+        height: 17px;
+        margin-top: 1px;
+        border: 1.5px solid var(--line);
+        border-radius: 4px;
+        background: #fff;
+        position: relative;
+      }
+      .opt.rund .kasten {
+        border-radius: 50%;
+      }
+      .opt[aria-pressed="true"] {
+        border-color: var(--teal);
+        background: #f0f8fa;
+      }
+      .opt[aria-pressed="true"] .kasten {
+        border-color: var(--teal);
+        background: var(--teal);
+      }
+      .opt.ok {
+        border-color: var(--trace);
+        background: var(--green-bg);
+      }
+      .opt.ok .kasten {
+        border-color: var(--trace);
+        background: var(--trace);
+      }
+      .opt.bad {
+        border-color: var(--red);
+        background: var(--red-bg);
+      }
+      .opt.bad .kasten {
+        border-color: var(--red);
+        background: var(--red);
+      }
+      .opt:disabled {
+        cursor: default;
+        opacity: 0.92;
+      }
 
-  /* Eingabefelder (zahl / text) */
-  .fields{display:flex;flex-direction:column;gap:11px;margin-bottom:8px}
-  .field{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .field label{font-family:var(--mono);font-size:14px;min-width:58px;font-weight:600}
-  .field .eq{color:var(--ink-soft);font-family:var(--mono)}
-  .field .einheit{font-family:var(--mono);font-size:13px;color:var(--ink-soft)}
-  .cell{font-family:var(--mono);font-size:15px;width:150px;padding:8px 10px;border:1.5px solid var(--line);
-        border-radius:6px;background:#fcfdfe;color:var(--ink);transition:.12s}
-  .cell.breit{width:min(420px,100%)}
-  .cell:focus{outline:none;border-color:var(--trace);box-shadow:0 0 0 3px rgba(23,163,91,.13)}
-  .cell.ok{border-color:var(--trace);background:var(--green-bg)}
-  .cell.bad{border-color:var(--red);background:var(--red-bg)}
-  .soll{font-family:var(--mono);font-size:12.5px;color:var(--trace-dk)}
+      /* Eingabefelder (zahl / text) */
+      .fields {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+        margin-bottom: 8px;
+      }
+      .field {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .field label {
+        font-family: var(--mono);
+        font-size: 14px;
+        min-width: 58px;
+        font-weight: 600;
+      }
+      .field .eq {
+        color: var(--ink-soft);
+        font-family: var(--mono);
+      }
+      .field .einheit {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--ink-soft);
+      }
+      .cell {
+        font-family: var(--mono);
+        font-size: 15px;
+        width: 150px;
+        padding: 8px 10px;
+        border: 1.5px solid var(--line);
+        border-radius: 6px;
+        background: #fcfdfe;
+        color: var(--ink);
+        transition: 0.12s;
+      }
+      .cell.breit {
+        width: min(420px, 100%);
+      }
+      .cell:focus {
+        outline: none;
+        border-color: var(--trace);
+        box-shadow: 0 0 0 3px rgba(23, 163, 91, 0.13);
+      }
+      .cell.ok {
+        border-color: var(--trace);
+        background: var(--green-bg);
+      }
+      .cell.bad {
+        border-color: var(--red);
+        background: var(--red-bg);
+      }
+      .soll {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--trace-dk);
+      }
 
-  /* Auswertung */
-  .feedback{margin-top:14px;border-radius:8px;padding:11px 13px;font-size:13.5px;display:none}
-  .feedback.zeigen{display:block}
-  .feedback.gut{background:var(--green-bg);border:1px solid #bfe6d0}
-  .feedback.schlecht{background:var(--red-bg);border:1px solid #eccfcd}
-  .feedback .fb-titel{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-                      font-weight:700;margin-bottom:4px}
-  .feedback.gut .fb-titel{color:var(--trace-dk)}
-  .feedback.schlecht .fb-titel{color:var(--red)}
-  .rechenweg{margin:8px 0 0;padding:0;list-style:none;font-family:var(--mono);font-size:12.5px}
-  .rechenweg li{display:flex;justify-content:space-between;gap:12px;padding:3px 0;
-                border-bottom:1px dashed var(--grid)}
-  .rechenweg li span:last-child{color:var(--trace-dk);white-space:nowrap;font-weight:700}
+      /* Auswertung */
+      .feedback {
+        margin-top: 14px;
+        border-radius: 8px;
+        padding: 11px 13px;
+        font-size: 13.5px;
+        display: none;
+      }
+      .feedback.zeigen {
+        display: block;
+      }
+      .feedback.gut {
+        background: var(--green-bg);
+        border: 1px solid #bfe6d0;
+      }
+      .feedback.schlecht {
+        background: var(--red-bg);
+        border: 1px solid #eccfcd;
+      }
+      .feedback .fb-titel {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .feedback.gut .fb-titel {
+        color: var(--trace-dk);
+      }
+      .feedback.schlecht .fb-titel {
+        color: var(--red);
+      }
+      .rechenweg {
+        margin: 8px 0 0;
+        padding: 0;
+        list-style: none;
+        font-family: var(--mono);
+        font-size: 12.5px;
+      }
+      .rechenweg li {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 3px 0;
+        border-bottom: 1px dashed var(--grid);
+      }
+      .rechenweg li span:last-child {
+        color: var(--trace-dk);
+        white-space: nowrap;
+        font-weight: 700;
+      }
 
-  /* Aktionen */
-  .aktionen{display:flex;gap:8px;margin-top:16px}
-  .btn{font-family:var(--mono);font-size:13px;border:1px solid var(--line);background:#fbfcfd;color:var(--ink);
-       padding:9px 16px;border-radius:7px;cursor:pointer;transition:.12s}
-  .btn:hover{border-color:#b9c2cc}
-  .btn.primaer{background:var(--trace-dk);border-color:var(--trace-dk);color:#fff}
-  .btn.primaer:hover{background:var(--trace)}
-  .btn:disabled{opacity:.45;cursor:not-allowed}
+      /* Aktionen */
+      .aktionen {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .btn {
+        font-family: var(--mono);
+        font-size: 13px;
+        border: 1px solid var(--line);
+        background: #fbfcfd;
+        color: var(--ink);
+        padding: 9px 16px;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: 0.12s;
+      }
+      .btn:hover {
+        border-color: #b9c2cc;
+      }
+      .btn.primaer {
+        background: var(--trace-dk);
+        border-color: var(--trace-dk);
+        color: #fff;
+      }
+      .btn.primaer:hover {
+        background: var(--trace);
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
 
-  /* Prüfungs-Ergebnis */
-  .ergebnis h2{margin:0 0 4px;font-size:20px}
-  .ergebnis .quote{font-family:var(--mono);font-size:34px;font-weight:800;margin:8px 0 2px}
-  .ergebnis .quote.gut{color:var(--trace-dk)} .ergebnis .quote.mittel{color:var(--amber)} .ergebnis .quote.schlecht{color:var(--red)}
-  .fehlerliste{margin-top:16px;display:flex;flex-direction:column;gap:10px}
-  .fehlerliste .fitem{border:1px solid #eccfcd;background:var(--red-bg);border-radius:8px;padding:10px 12px;font-size:13.5px}
-  .fehlerliste .fitem .ff{font-weight:700;margin-bottom:3px}
-  .fehlerliste .fitem .fr{font-family:var(--mono);font-size:12.5px;color:var(--trace-dk)}
+      /* Prüfungs-Ergebnis */
+      .ergebnis h2 {
+        margin: 0 0 4px;
+        font-size: 20px;
+      }
+      .ergebnis .quote {
+        font-family: var(--mono);
+        font-size: 34px;
+        font-weight: 800;
+        margin: 8px 0 2px;
+      }
+      .ergebnis .quote.gut {
+        color: var(--trace-dk);
+      }
+      .ergebnis .quote.mittel {
+        color: var(--amber);
+      }
+      .ergebnis .quote.schlecht {
+        color: var(--red);
+      }
+      .fehlerliste {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .fehlerliste .fitem {
+        border: 1px solid #eccfcd;
+        background: var(--red-bg);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 13.5px;
+      }
+      .fehlerliste .fitem .ff {
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .fehlerliste .fitem .fr {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--trace-dk);
+      }
 
-  footer{margin-top:20px;font-family:var(--mono);font-size:11px;color:var(--ink-soft);text-align:center}
-</style>
-</head>
-<body>
-<div class="wrap">
+      footer {
+        margin-top: 20px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-soft);
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <p class="eyebrow" id="hdEyebrow"></p>
+          <h1 id="hdTitel"></h1>
+          <div class="sub" id="hdSub"></div>
+          <div style="margin-top: 6px">
+            <a class="navlink" href="../index.html">← zurück zum Portal</a>
+          </div>
+        </div>
+        <div class="readout">
+          <span class="rlabel" id="scoreLabel">Richtig</span>
+          <span class="rval"
+            ><span id="scoreVal">0</span><small id="scoreVon"> / 0</small></span
+          >
+        </div>
+      </header>
 
-  <header>
-    <div class="brand">
-      <p class="eyebrow" id="hdEyebrow"></p>
-      <h1 id="hdTitel"></h1>
-      <div class="sub" id="hdSub"></div>
-      <div style="margin-top:6px"><a class="navlink" href="../index.html">← zurück zum Portal</a></div>
+      <nav id="nav" aria-label="Kategorien"></nav>
+
+      <div class="card">
+        <div class="head">
+          <span class="tag" id="qTag">–</span>
+          <span class="fortschritt" id="qFortschritt"></span>
+        </div>
+        <div class="body" id="qBody"></div>
+      </div>
+
+      <footer>
+        Enter = Prüfen bzw. Weiter · Fragen ergänzen: einfach die FRAGEN-Liste
+        in dieser Datei erweitern
+      </footer>
     </div>
-    <div class="readout">
-      <span class="rlabel" id="scoreLabel">Richtig</span>
-      <span class="rval"><span id="scoreVal">0</span><small id="scoreVon"> / 0</small></span>
-    </div>
-  </header>
 
-  <nav id="nav" aria-label="Kategorien"></nav>
-
-  <div class="card">
-    <div class="head">
-      <span class="tag" id="qTag">–</span>
-      <span class="fortschritt" id="qFortschritt"></span>
-    </div>
-    <div class="body" id="qBody"></div>
-  </div>
-
-  <footer>Enter = Prüfen bzw. Weiter · Fragen ergänzen: einfach die FRAGEN-Liste in dieser Datei erweitern</footer>
-</div>
-
-<script>
-/* ============================================================
+    <script>
+      /* ============================================================
    ① EINSTELLUNGEN — hier Titel & Co. anpassen
    ============================================================ */
-const TRAINER = {
-  eyebrow:    "Trainer · Vorlage",
-  titel:      "Neuer Trainer",
-  untertitel: "Kurzbeschreibung — Thema, Kurs, Semester",
-  pruefungsFragen: 10,   // Anzahl Fragen im Prüfungsmodus
-};
+      const TRAINER = {
+        eyebrow: "GIT Prüfungstrainer",
+        titel: "GIT Prüfungstrainer",
+        untertitel: "Vorbereitung auf die Klausur (Pointer, Register, Interrupts, Datentypen)",
+        pruefungsFragen: 10, // Anzahl Fragen im Prüfungsmodus
+      };
 
-/* ============================================================
+      /* ============================================================
    ② FRAGEN — hier deine Fragen eintragen
    ============================================================
    Jede Frage ist ein Objekt { ... }. Vier Typen stehen bereit:
@@ -212,368 +581,756 @@ const TRAINER = {
    Zufallswerte erzeugen (unendlich viele Übungsvarianten), genau
    wie im Antestat-Trainer. Beispiel ganz unten in der Liste.
    ============================================================ */
-const FRAGEN = [
+      const FRAGEN = [
+        {
+          typ: "wahl",
+          frage: "Was speichert eine Zeigervariable (Pointer)?",
+          antworten: [
+            "Einen festen Zahlenwert",
+            "Die Speicheradresse einer anderen Variable",
+            "Einen Buchstaben",
+            "Den Variablennamen",
+          ],
+          richtig: 1,
+          erklaerung:
+            "Ein Zeiger zeigt auf den Speicherort einer Variablen, speichert also deren Adresse.",
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Welcher Operator wird verwendet, um die Speicheradresse einer Variablen zu ermitteln (Adress-Operator)?",
+          antworten: ["*", "&", "%", "->"],
+          richtig: 1,
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Welcher Operator wird zur Dereferenzierung genutzt (Zugriff auf den Wert an der Speicheradresse)?",
+          antworten: ["&", "*", "->", "#"],
+          richtig: 1,
+        },
+        {
+          typ: "zahl",
+          frage:
+            "Gegeben ist der Code:<br><code>int n = 5;<br>int *p = &n;<br>*p = 10;</code><br>Welchen Wert hat <code>n</code> nach Ausführung?",
+          richtig: 10,
+          erklaerung:
+            "Durch *p = 10 wird der Wert an der Adresse von n auf 10 geändert.",
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Was passiert bei der Zeigerarithmetik <code>p++</code>, wenn <code>p</code> ein Pointer auf einen 16-Bit Integer ist?",
+          antworten: [
+            "Die Adresse erhöht sich um 1 Byte",
+            "Die Adresse erhöht sich um 2 Byte",
+            "Der gespeicherte Wert wird um 1 erhöht",
+            "Der Zeiger wird gelöscht",
+          ],
+          richtig: 1,
+          erklaerung:
+            "Ein 16-Bit Integer belegt 2 Byte. Der Pointer springt zum nächsten Element, also um 2 Byte.",
+        },
+        {
+          typ: "text",
+          frage:
+            "Welches Schlüsselwort zwingt den Compiler, eine Variable immer neu aus dem RAM zu lesen (wichtig bei Interrupts)?",
+          richtig: "volatile",
+        },
+        {
+          typ: "wahl",
+          frage: "Was bewirkt der Ausdruck <code>PORTB |= (1<<PB5);</code>?",
+          antworten: [
+            "Löscht Bit 5 in PORTB",
+            "Setzt Bit 5 in PORTB auf 1",
+            "Macht PB5 zu einem Eingang",
+            "Schaltet alle Pins an Port B auf 1",
+          ],
+          richtig: 1,
+          erklaerung: "|= ist die ODER-Zuweisung zum Setzen einzelner Bits.",
+        },
+        {
+          typ: "wahl",
+          frage: "Was bewirkt der Ausdruck <code>DDRB &= ~(1<<PB0);</code>?",
+          antworten: [
+            "Macht PB0 zu einem Ausgang",
+            "Setzt den internen Pull-Up für PB0",
+            "Macht PB0 zu einem Eingang (Bit auf 0)",
+            "Löscht alle Bits in DDRB",
+          ],
+          richtig: 2,
+          erklaerung:
+            "&= ~ löscht spezifische Bits (setzt sie auf 0). Eine 0 im DDRx macht den Pin zum Eingang.",
+        },
+        {
+          typ: "text",
+          frage:
+            "Wie heißt das Register zur Festlegung der Datenrichtung (Eingang/Ausgang) an Port D?",
+          richtig: "DDRD",
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Wie aktiviert man den internen Pull-Up-Widerstand an PB2 (vorausgesetzt PB2 ist als Eingang konfiguriert)?",
+          antworten: [
+            "PORTB |= (1<<PB2);",
+            "PINB |= (1<<PB2);",
+            "DDRB |= (1<<PB2);",
+            "PORTB &= ~(1<<PB2);",
+          ],
+          richtig: 0,
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Über welches Register wird der Zustand (HIGH/LOW) eines als Eingang konfigurierten Pins eingelesen?",
+          antworten: ["PORTx", "DDRx", "PINx", "SREG"],
+          richtig: 2,
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Welche Speicherarchitektur verwendet getrennte Speicher und Busse für Daten und Programmcode?",
+          antworten: [
+            "Von-Neumann-Architektur",
+            "Harvard-Architektur",
+            "Turing-Architektur",
+            "CISC-Architektur",
+          ],
+          richtig: 1,
+        },
+        {
+          typ: "wahl",
+          frage: "Was ist ein Vorteil der Von-Neumann-Architektur?",
+          antworten: [
+            "Gleichzeitiger Zugriff auf Daten und Code",
+            "Einfacherer Aufbau durch gemeinsamen Bus",
+            "Höhere Geschwindigkeit",
+            "Absolut sicherer Speicher",
+          ],
+          richtig: 1,
+        },
+        {
+          typ: "wahl",
+          frage:
+            "In welchem Speicher legt der ATmega328p üblicherweise das auszuführende Programm ab?",
+          antworten: ["SRAM", "EEPROM", "Flash", "Register"],
+          richtig: 2,
+        },
+        {
+          typ: "wahl",
+          frage:
+            "In welchem Speicher liegen veränderliche lokale Variablen zur Laufzeit?",
+          antworten: ["SRAM", "EEPROM", "Flash", "ROM"],
+          richtig: 0,
+        },
+        {
+          typ: "wahl",
+          frage: "Was ist der größte Nachteil von Polling?",
+          antworten: [
+            "Es funktioniert nur bei Timer-Events",
+            "Es kostet extrem viel CPU-Zeit (Ressourcen) und blockiert andere Aufgaben",
+            "Man braucht externe Hardware",
+            "Es ist sehr schwer zu programmieren",
+          ],
+          richtig: 1,
+        },
+        {
+          typ: "text",
+          frage:
+            "Wie lautet die Abkürzung für die Funktion, die bei einem Interrupt aufgerufen wird (Interrupt Service Routine)?",
+          richtig: "ISR",
+        },
+        {
+          typ: "wahl",
+          frage: "Welche ist die 'Goldene Regel' für eine ISR?",
+          antworten: [
+            "Sie sollte so lang wie möglich sein",
+            "Sie darf keine Variablen verwenden",
+            "Sie muss so kurz und schnell wie möglich sein",
+            "Sie muss immer delay() enthalten",
+          ],
+          richtig: 2,
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Welcher C-Befehl aus der avr-libc aktiviert die Interrupts global (setzt das I-Bit im SREG)?",
+          antworten: ["cli()", "sei()", "enable_irq()", "start()"],
+          richtig: 1,
+        },
+        {
+          typ: "wahl",
+          frage: "Was macht die CPU direkt *bevor* sie in die ISR springt?",
+          antworten: [
+            "Sie löscht den SRAM",
+            "Sie speichert die aktuelle Position (Programmzähler) ab",
+            "Sie wartet auf Tastendruck",
+            "Sie deaktiviert alle Ausgänge",
+          ],
+          richtig: 1,
+        },
+        {
+          typ: "text",
+          frage: "Wofür steht MSB?",
+          richtig: "Most Significant Bit",
+        },
+        {
+          typ: "text",
+          frage: "Wofür steht LSB?",
+          richtig: "Least Significant Bit",
+        },
+        {
+          typ: "zahl",
+          frage:
+            "Welchen Wert (0 oder 1) hat das MSB bei einer negativen Binärzahl (im Zweierkomplement)?",
+          richtig: 1,
+        },
+        {
+          typ: "wahl",
+          frage: "Wie wird eine negative Zahl im Binärsystem dargestellt?",
+          antworten: [
+            "Mit einem Minuszeichen davor",
+            "Als Einerkomplement",
+            "Als Zweierkomplement",
+            "Gar nicht",
+          ],
+          richtig: 2,
+        },
+        {
+          typ: "text",
+          frage:
+            "Wie lautet der Hexadezimalwert für die binäre Zahl 0010 0000? (Format: 0x...)",
+          richtig: "0x20",
+        },
+        {
+          typ: "text",
+          frage:
+            "Wie lautet der Hexadezimalwert für die binäre Zahl 1111 1111? (Format: 0x...)",
+          richtig: "0xFF",
+        },
+        {
+          typ: "text",
+          frage: "Wie lautet der binäre Wert von 0x0A (4 Bit, z.B. 0101)?",
+          richtig: "1010",
+        },
+        {
+          typ: "multi",
+          frage: "Welche der folgenden Komponenten sind Teil einer CPU?",
+          antworten: [
+            "Rechenwerk (ALU)",
+            "Steuerwerk",
+            "Register",
+            "Flash-Speicher",
+            "A/D-Wandler",
+          ],
+          richtig: [0, 1, 2],
+          erklaerung:
+            "Flash und ADC sind Teil des Mikrocontrollers (Peripherie), aber nicht Teil der reinen CPU.",
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Welcher Datentyp aus <code>stdint.h</code> beschreibt einen vorzeichenlosen 8-Bit Integer?",
+          antworten: ["int8_t", "uint8_t", "char8", "byte_t"],
+          richtig: 1,
+        },
+        {
+          typ: "zahl",
+          frage:
+            "Was ist der maximale Wert einer <code>uint8_t</code> Variablen?",
+          richtig: 255,
+        },
+        {
+          typ: "wahl",
+          frage: "Was bedeutet das Qualifizierungsmerkmal <code>const</code>?",
+          antworten: [
+            "Die Variable wird konstant im SRAM gespeichert",
+            "Der Wert der Variable kann nach der Initialisierung nicht mehr verändert werden",
+            "Die Variable ist global verfügbar",
+            "Die Variable darf nur in ISRs verwendet werden",
+          ],
+          richtig: 1,
+        },
+        {
+          typ: "text",
+          frage: "Wie groß ist der Flash-Speicher des ATmega328p in KByte?",
+          richtig: "32",
+        },
+        {
+          typ: "wahl",
+          frage: "Welche Priorität haben Interrupts zueinander?",
+          antworten: [
+            "Der zuletzt aufgetretene gewinnt",
+            "Die mit der niedrigeren Vektor-Adresse haben Vorrang (RESET ist am höchsten)",
+            "Sie haben alle dieselbe Priorität",
+            "Der Benutzer kann die Priorität beliebig vergeben",
+          ],
+          richtig: 1,
+        },
+        {
+          typ: "wahl",
+          frage:
+            "Warum sollte man in einer ISR auf Funktionen wie <code>delay()</code> verzichten?",
+          antworten: [
+            "Weil die ISR so schnell wie möglich beendet werden muss",
+            "Weil delay() in ISRs immer das Board zerstört",
+            "Weil Timer in ISRs nicht gestoppt werden",
+            "Weil delay() nur in C++ funktioniert",
+          ],
+          richtig: 0,
+        },
+        {
+          typ: "wahl",
+          frage: "Was beschreibt der Begriff 'Mikrocontroller' am besten?",
+          antworten: [
+            "Ein reiner Prozessor ohne Speicher",
+            "Ein integrierter Schaltkreis (IC), der CPU, Speicher und Peripherie (I/O, Timer, ADC) vereint",
+            "Ein Speichermedium für Programmcode",
+            "Ein Programm zur Ansteuerung von Motoren",
+          ],
+          richtig: 1,
+        },
+        {
+          typ: "text",
+          frage:
+            "Wie nennt man den internen Speicher für dauerhafte, aber änderbare Daten (z.B. Konfigurationen), der auch nach einem Stromausfall erhalten bleibt?",
+          richtig: "EEPROM",
+        },
+        {
+          typ: "wahl",
+          frage: "Was bewirkt der Ausdruck <code>if (PINB & (1<<PB0))</code>?",
+          antworten: [
+            "Er setzt PB0 auf 1",
+            "Er fragt ab, ob der Taster/Pin PB0 HIGH (1) ist",
+            "Er macht PB0 zum Eingang",
+            "Er löscht PB0",
+          ],
+          richtig: 1,
+          erklaerung:
+            "Ein Bitweises UND prüft, ob das jeweilige Bit (hier PB0) im PINB Register gesetzt ist.",
+        },
+      ];
 
-  // ---- Beispiel 1: Single Choice --------------------------------
-  {
-    typ: "wahl",
-    kategorie: "Konzept",
-    frage: "Was speichert eine Zeiger-Variable <code>int *p</code>?",
-    antworten: [
-      "Den Wert der Variablen, auf die sie zeigt",
-      "Die Speicheradresse einer <code>int</code>-Variablen",
-      "Immer den Wert <code>NULL</code>",
-      "Die Größe des Datentyps in Bytes",
-    ],
-    richtig: 1,
-    erklaerung: "Ein Zeiger ist selbst eine Variable — ihr Inhalt ist die Adresse einer anderen Variablen. Mit <code>*p</code> greift man auf den Wert an dieser Adresse zu.",
-  },
-
-  // ---- Beispiel 2: Mehrfachauswahl -------------------------------
-  {
-    typ: "multi",
-    kategorie: "Konzept",
-    frage: "Welche Aussagen über <b>lokale Variablen</b> in C treffen zu? (Mehrfachauswahl)",
-    antworten: [
-      "Sie sind nur innerhalb ihrer Funktion gültig",
-      "Sie liegen normalerweise auf dem Stack",
-      "Ihr Wert bleibt nach Verlassen der Funktion erhalten",
-      "Sie sind im gesamten Programm sichtbar",
-    ],
-    richtig: [0, 1],
-    erklaerung: "Lokale Variablen leben auf dem Stack und verschwinden beim Verlassen der Funktion. Wert-Erhalt über Aufrufe hinweg bekommt man nur mit <code>static</code>.",
-  },
-
-  // ---- Beispiel 3: Zahlenwerte berechnen --------------------------
-  {
-    typ: "zahl",
-    kategorie: "Rechnen",
-    frage: "Berechne den Strom durch den Widerstand.",
-    gegeben: [["U", "12 V"], ["R", "1,5 kΩ"]],
-    felder: [
-      { label: "I", einheit: "mA", wert: 8, toleranz: 0.1, dezimalen: 1 },
-    ],
-    rechenweg: [
-      ["I = U / R = 12 V / 1,5 kΩ", "8,0 mA"],
-    ],
-    erklaerung: "Ohmsches Gesetz — Volt durch Kiloohm ergibt direkt Milliampere.",
-  },
-
-  // ---- Beispiel 4: Freitext ---------------------------------------
-  {
-    typ: "text",
-    kategorie: "Konzept",
-    frage: "Wie heißt der Operator, der in C die <b>Adresse</b> einer Variablen liefert? (Zeichen oder Name)",
-    akzeptiert: ["&", "adressoperator", "adress-operator", "und-zeichen"],
-    erklaerung: "<code>&n</code> liefert die Adresse von <code>n</code> — das Gegenstück ist der Dereferenzierungs-Operator <code>*</code>.",
-  },
-
-  // ---- Beispiel 5: Generator mit Zufallswerten (Vorlage) ----------
-  // Einkommentieren, anpassen — erzeugt bei jedem Aufruf neue Werte:
-  //
-  // function genOhm(){
-  //   const U = 5 + Math.floor(Math.random() * 20);       // 5…24 V
-  //   const R = (1 + Math.floor(Math.random() * 9)) / 2;  // 0,5…4,5 kΩ
-  //   return {
-  //     typ: "zahl", kategorie: "Rechnen",
-  //     frage: "Berechne den Strom durch den Widerstand.",
-  //     gegeben: [["U", U + " V"], ["R", String(R).replace(".", ",") + " kΩ"]],
-  //     felder: [{ label: "I", einheit: "mA", wert: U / R, toleranz: 0.05, dezimalen: 2 }],
-  //     rechenweg: [[`I = U / R = ${U} V / ${String(R).replace(".", ",")} kΩ`, (U / R).toFixed(2).replace(".", ",") + " mA"]],
-  //   };
-  // },   ← einfach "genOhm," (ohne function-Schlüsselwort davor) …
-  // Moment: als Listeneintrag so schreiben:  () => genOhm()  oder die
-  // Funktion direkt inline:  () => ({ typ: "zahl", ... })
-
-];
-
-/* ============================================================
+      /* ============================================================
    ③ ENGINE — ab hier musst du nichts mehr anfassen
    ============================================================ */
-(function(){
-  const $ = s => document.querySelector(s);
-  const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
-  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const zahl = s => parseFloat(String(s).trim().replace(",", "."));
+      (function () {
+        const $ = (s) => document.querySelector(s);
+        const el = (t, c, h) => {
+          const e = document.createElement(t);
+          if (c) e.className = c;
+          if (h != null) e.innerHTML = h;
+          return e;
+        };
+        const shuffle = (a) => {
+          a = a.slice();
+          for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+          }
+          return a;
+        };
+        const zahl = (s) => parseFloat(String(s).trim().replace(",", "."));
 
-  /* Kopf befüllen */
-  document.title = TRAINER.titel;
-  $("#hdEyebrow").textContent = TRAINER.eyebrow;
-  $("#hdTitel").textContent = TRAINER.titel;
-  $("#hdSub").textContent = TRAINER.untertitel;
+        /* Kopf befüllen */
+        document.title = TRAINER.titel;
+        $("#hdEyebrow").textContent = TRAINER.eyebrow;
+        $("#hdTitel").textContent = TRAINER.titel;
+        $("#hdSub").textContent = TRAINER.untertitel;
 
-  /* Fragenpool: Funktionen bleiben Funktionen (Generatoren), Objekte wie sie sind */
-  const POOL = FRAGEN.filter(Boolean);
-  const frageHolen = eintrag => typeof eintrag === "function" ? eintrag() : eintrag;
-  const KATEGORIEN = [...new Set(POOL.map(f => frageHolen(f).kategorie || "Allgemein"))];
+        /* Fragenpool: Funktionen bleiben Funktionen (Generatoren), Objekte wie sie sind */
+        const POOL = FRAGEN.filter(Boolean);
+        const frageHolen = (eintrag) =>
+          typeof eintrag === "function" ? eintrag() : eintrag;
+        const KATEGORIEN = [
+          ...new Set(POOL.map((f) => frageHolen(f).kategorie || "Allgemein")),
+        ];
 
-  const state = {
-    modus: "ueben",           // "ueben" | "pruefung"
-    kat: "random",
-    eintrag: null, frage: null,
-    beantwortet: false,
-    score: { ok: 0, n: 0 }, streak: 0,
-    pruefung: null,           // { liste, index, ok, falsch: [] }
-  };
+        const state = {
+          modus: "ueben", // "ueben" | "pruefung"
+          kat: "random",
+          eintrag: null,
+          frage: null,
+          beantwortet: false,
+          score: { ok: 0, n: 0 },
+          streak: 0,
+          pruefung: null, // { liste, index, ok, falsch: [] }
+        };
 
-  /* ---------- Navigation ---------- */
-  function bauNav(){
-    const nav = $("#nav");
-    nav.innerHTML = "";
-    const rng = el("button", "cat rng", "🎲 Zufall"); rng.dataset.cat = "random"; nav.appendChild(rng);
-    KATEGORIEN.forEach(k => { const b = el("button", "cat", k); b.dataset.cat = k; nav.appendChild(b); });
-    const pr = el("button", "cat pruefung", "🎓 Prüfungsmodus"); pr.id = "btnPruefung"; nav.appendChild(pr);
-    nav.addEventListener("click", e => {
-      const b = e.target.closest(".cat"); if (!b) return;
-      if (b.id === "btnPruefung"){ pruefungStarten(); return; }
-      state.modus = "ueben"; state.pruefung = null;
-      state.kat = b.dataset.cat; syncNav(); neueFrage();
-    });
-    syncNav();
-  }
-  function syncNav(){
-    document.querySelectorAll("#nav .cat").forEach(b =>
-      b.setAttribute("aria-pressed", state.modus === "ueben" && b.dataset.cat === state.kat ? "true" : "false"));
-    $("#btnPruefung").setAttribute("aria-pressed", state.modus === "pruefung" ? "true" : "false");
-  }
+        /* ---------- Navigation ---------- */
+        function bauNav() {
+          const nav = $("#nav");
+          nav.innerHTML = "";
+          const rng = el("button", "cat rng", "🎲 Zufall");
+          rng.dataset.cat = "random";
+          nav.appendChild(rng);
+          KATEGORIEN.forEach((k) => {
+            const b = el("button", "cat", k);
+            b.dataset.cat = k;
+            nav.appendChild(b);
+          });
+          const pr = el("button", "cat pruefung", "🎓 Prüfungsmodus");
+          pr.id = "btnPruefung";
+          nav.appendChild(pr);
+          nav.addEventListener("click", (e) => {
+            const b = e.target.closest(".cat");
+            if (!b) return;
+            if (b.id === "btnPruefung") {
+              pruefungStarten();
+              return;
+            }
+            state.modus = "ueben";
+            state.pruefung = null;
+            state.kat = b.dataset.cat;
+            syncNav();
+            neueFrage();
+          });
+          syncNav();
+        }
+        function syncNav() {
+          document
+            .querySelectorAll("#nav .cat")
+            .forEach((b) =>
+              b.setAttribute(
+                "aria-pressed",
+                state.modus === "ueben" && b.dataset.cat === state.kat
+                  ? "true"
+                  : "false",
+              ),
+            );
+          $("#btnPruefung").setAttribute(
+            "aria-pressed",
+            state.modus === "pruefung" ? "true" : "false",
+          );
+        }
 
-  /* ---------- Frage ziehen & rendern ---------- */
-  function neueFrage(){
-    let eintrag;
-    if (state.modus === "pruefung"){
-      const p = state.pruefung;
-      if (p.index >= p.liste.length){ pruefungErgebnis(); return; }
-      eintrag = p.liste[p.index];
-    } else {
-      const passend = state.kat === "random" ? POOL
-        : POOL.filter(f => (frageHolen(f).kategorie || "Allgemein") === state.kat);
-      eintrag = passend[Math.floor(Math.random() * passend.length)];
-    }
-    state.eintrag = eintrag;
-    state.frage = frageHolen(eintrag);
-    state.beantwortet = false;
-    render(state.frage);
-  }
+        /* ---------- Frage ziehen & rendern ---------- */
+        function neueFrage() {
+          let eintrag;
+          if (state.modus === "pruefung") {
+            const p = state.pruefung;
+            if (p.index >= p.liste.length) {
+              pruefungErgebnis();
+              return;
+            }
+            eintrag = p.liste[p.index];
+          } else {
+            const passend =
+              state.kat === "random"
+                ? POOL
+                : POOL.filter(
+                    (f) =>
+                      (frageHolen(f).kategorie || "Allgemein") === state.kat,
+                  );
+            eintrag = passend[Math.floor(Math.random() * passend.length)];
+          }
+          state.eintrag = eintrag;
+          state.frage = frageHolen(eintrag);
+          state.beantwortet = false;
+          render(state.frage);
+        }
 
-  function render(f){
-    $("#qTag").textContent = (f.kategorie || "Allgemein") + " · " + typName(f.typ);
-    $("#qFortschritt").textContent = state.modus === "pruefung"
-      ? `Frage ${state.pruefung.index + 1} / ${state.pruefung.liste.length}` : "";
-    const b = $("#qBody");
-    b.innerHTML = "";
-    b.appendChild(el("p", "prompt", f.frage));
+        function render(f) {
+          $("#qTag").textContent =
+            (f.kategorie || "Allgemein") + " · " + typName(f.typ);
+          $("#qFortschritt").textContent =
+            state.modus === "pruefung"
+              ? `Frage ${state.pruefung.index + 1} / ${state.pruefung.liste.length}`
+              : "";
+          const b = $("#qBody");
+          b.innerHTML = "";
+          b.appendChild(el("p", "prompt", f.frage));
 
-    if (f.gegeben && f.gegeben.length){
-      const g = el("div", "given");
-      f.gegeben.forEach(([k, v]) => g.appendChild(el("span", "chip", `<b>${k}</b> = ${v}`)));
-      b.appendChild(g);
-    }
+          if (f.gegeben && f.gegeben.length) {
+            const g = el("div", "given");
+            f.gegeben.forEach(([k, v]) =>
+              g.appendChild(el("span", "chip", `<b>${k}</b> = ${v}`)),
+            );
+            b.appendChild(g);
+          }
 
-    if (f.typ === "wahl" || f.typ === "multi"){
-      // Antworten mischen, Original-Indizes merken
-      const misch = shuffle(f.antworten.map((t, i) => ({ t, i })));
-      f._misch = misch;
-      const box = el("div", "opts");
-      misch.forEach((o, pos) => {
-        const btn = el("button", "opt" + (f.typ === "wahl" ? " rund" : ""), `<span class="kasten"></span><span>${o.t}</span>`);
-        btn.dataset.pos = pos;
-        btn.setAttribute("aria-pressed", "false");
-        btn.addEventListener("click", () => {
-          if (state.beantwortet) return;
-          if (f.typ === "wahl") box.querySelectorAll(".opt").forEach(x => x.setAttribute("aria-pressed", "false"));
-          btn.setAttribute("aria-pressed", btn.getAttribute("aria-pressed") === "true" ? "false" : "true");
-        });
-        box.appendChild(btn);
-      });
-      b.appendChild(box);
-    }
+          if (f.typ === "wahl" || f.typ === "multi") {
+            // Antworten mischen, Original-Indizes merken
+            const misch = shuffle(f.antworten.map((t, i) => ({ t, i })));
+            f._misch = misch;
+            const box = el("div", "opts");
+            misch.forEach((o, pos) => {
+              const btn = el(
+                "button",
+                "opt" + (f.typ === "wahl" ? " rund" : ""),
+                `<span class="kasten"></span><span>${o.t}</span>`,
+              );
+              btn.dataset.pos = pos;
+              btn.setAttribute("aria-pressed", "false");
+              btn.addEventListener("click", () => {
+                if (state.beantwortet) return;
+                if (f.typ === "wahl")
+                  box
+                    .querySelectorAll(".opt")
+                    .forEach((x) => x.setAttribute("aria-pressed", "false"));
+                btn.setAttribute(
+                  "aria-pressed",
+                  btn.getAttribute("aria-pressed") === "true"
+                    ? "false"
+                    : "true",
+                );
+              });
+              box.appendChild(btn);
+            });
+            b.appendChild(box);
+          }
 
-    if (f.typ === "zahl"){
-      const fx = el("div", "fields");
-      f.felder.forEach((feld, i) => {
-        const row = el("div", "field");
-        row.innerHTML = `<label>${feld.label}</label><span class="eq">=</span>
+          if (f.typ === "zahl") {
+            const fx = el("div", "fields");
+            f.felder.forEach((feld, i) => {
+              const row = el("div", "field");
+              row.innerHTML = `<label>${feld.label}</label><span class="eq">=</span>
           <input class="cell" data-i="${i}" inputmode="decimal" autocomplete="off">
           <span class="einheit">${feld.einheit || ""}</span><span class="soll" data-soll="${i}"></span>`;
-        fx.appendChild(row);
-      });
-      b.appendChild(fx);
-      const erste = fx.querySelector("input"); if (erste) erste.focus();
-    }
+              fx.appendChild(row);
+            });
+            b.appendChild(fx);
+            const erste = fx.querySelector("input");
+            if (erste) erste.focus();
+          }
 
-    if (f.typ === "text"){
-      const fx = el("div", "fields");
-      fx.innerHTML = `<div class="field"><input class="cell breit" data-text inputmode="text" autocomplete="off" placeholder="Antwort eintippen …"></div>`;
-      b.appendChild(fx);
-      fx.querySelector("input").focus();
-    }
+          if (f.typ === "text") {
+            const fx = el("div", "fields");
+            fx.innerHTML = `<div class="field"><input class="cell breit" data-text inputmode="text" autocomplete="off" placeholder="Antwort eintippen …"></div>`;
+            b.appendChild(fx);
+            fx.querySelector("input").focus();
+          }
 
-    b.appendChild(el("div", "feedback", ""));
+          b.appendChild(el("div", "feedback", ""));
 
-    const akt = el("div", "aktionen");
-    const pruefBtn = el("button", "btn primaer", state.modus === "pruefung" ? "Antwort übernehmen" : "Prüfen");
-    pruefBtn.id = "btnPruefen";
-    pruefBtn.addEventListener("click", pruefen);
-    const weiter = el("button", "btn", "Weiter →");
-    weiter.id = "btnWeiter";
-    weiter.disabled = true;
-    weiter.addEventListener("click", neueFrage);
-    akt.appendChild(pruefBtn); akt.appendChild(weiter);
-    b.appendChild(akt);
-  }
-  function typName(t){ return { wahl:"Single Choice", multi:"Mehrfachauswahl", zahl:"Berechnung", text:"Freitext" }[t] || t; }
-
-  /* ---------- Auswerten ---------- */
-  function auswerten(f){
-    // liefert { korrekt, richtigText } und färbt die Eingaben ein (nur im Übungsmodus)
-    const zeigen = state.modus === "ueben";
-    if (f.typ === "wahl" || f.typ === "multi"){
-      const soll = f.typ === "wahl" ? [f.richtig] : f.richtig.slice();
-      const gewaehlt = [];
-      document.querySelectorAll(".opt").forEach(btn => {
-        const orig = f._misch[+btn.dataset.pos].i;
-        const an = btn.getAttribute("aria-pressed") === "true";
-        if (an) gewaehlt.push(orig);
-        btn.disabled = true;
-        if (zeigen){
-          if (soll.includes(orig)) btn.classList.add("ok");
-          else if (an) btn.classList.add("bad");
+          const akt = el("div", "aktionen");
+          const pruefBtn = el(
+            "button",
+            "btn primaer",
+            state.modus === "pruefung" ? "Antwort übernehmen" : "Prüfen",
+          );
+          pruefBtn.id = "btnPruefen";
+          pruefBtn.addEventListener("click", pruefen);
+          const weiter = el("button", "btn", "Weiter →");
+          weiter.id = "btnWeiter";
+          weiter.disabled = true;
+          weiter.addEventListener("click", neueFrage);
+          akt.appendChild(pruefBtn);
+          akt.appendChild(weiter);
+          b.appendChild(akt);
         }
-      });
-      const korrekt = soll.length === gewaehlt.length && soll.every(i => gewaehlt.includes(i));
-      return { korrekt, richtigText: soll.map(i => f.antworten[i]).join(" · ") };
-    }
-    if (f.typ === "zahl"){
-      let alleOk = true;
-      const teile = [];
-      document.querySelectorAll(".cell[data-i]").forEach(inp => {
-        const feld = f.felder[+inp.dataset.i];
-        const wert = zahl(inp.value);
-        const ok = isFinite(wert) && Math.abs(wert - feld.wert) <= (feld.toleranz ?? 0.01);
-        if (!ok) alleOk = false;
-        inp.disabled = true;
-        if (zeigen){
-          inp.classList.add(ok ? "ok" : "bad");
-          if (!ok){
-            const soll = document.querySelector(`[data-soll="${inp.dataset.i}"]`);
-            soll.textContent = "→ " + feld.wert.toFixed(feld.dezimalen ?? 2).replace(".", ",") + " " + (feld.einheit || "");
+        function typName(t) {
+          return (
+            {
+              wahl: "Single Choice",
+              multi: "Mehrfachauswahl",
+              zahl: "Berechnung",
+              text: "Freitext",
+            }[t] || t
+          );
+        }
+
+        /* ---------- Auswerten ---------- */
+        function auswerten(f) {
+          // liefert { korrekt, richtigText } und färbt die Eingaben ein (nur im Übungsmodus)
+          const zeigen = state.modus === "ueben";
+          if (f.typ === "wahl" || f.typ === "multi") {
+            const soll = f.typ === "wahl" ? [f.richtig] : f.richtig.slice();
+            const gewaehlt = [];
+            document.querySelectorAll(".opt").forEach((btn) => {
+              const orig = f._misch[+btn.dataset.pos].i;
+              const an = btn.getAttribute("aria-pressed") === "true";
+              if (an) gewaehlt.push(orig);
+              btn.disabled = true;
+              if (zeigen) {
+                if (soll.includes(orig)) btn.classList.add("ok");
+                else if (an) btn.classList.add("bad");
+              }
+            });
+            const korrekt =
+              soll.length === gewaehlt.length &&
+              soll.every((i) => gewaehlt.includes(i));
+            return {
+              korrekt,
+              richtigText: soll.map((i) => f.antworten[i]).join(" · "),
+            };
+          }
+          if (f.typ === "zahl") {
+            let alleOk = true;
+            const teile = [];
+            document.querySelectorAll(".cell[data-i]").forEach((inp) => {
+              const feld = f.felder[+inp.dataset.i];
+              const wert = zahl(inp.value);
+              const ok =
+                isFinite(wert) &&
+                Math.abs(wert - feld.wert) <= (feld.toleranz ?? 0.01);
+              if (!ok) alleOk = false;
+              inp.disabled = true;
+              if (zeigen) {
+                inp.classList.add(ok ? "ok" : "bad");
+                if (!ok) {
+                  const soll = document.querySelector(
+                    `[data-soll="${inp.dataset.i}"]`,
+                  );
+                  soll.textContent =
+                    "→ " +
+                    feld.wert.toFixed(feld.dezimalen ?? 2).replace(".", ",") +
+                    " " +
+                    (feld.einheit || "");
+                }
+              }
+              teile.push(
+                `${feld.label} = ${feld.wert.toFixed(feld.dezimalen ?? 2).replace(".", ",")} ${feld.einheit || ""}`,
+              );
+            });
+            return { korrekt: alleOk, richtigText: teile.join(" · ") };
+          }
+          if (f.typ === "text") {
+            const inp = document.querySelector("[data-text]");
+            const eingabe = (inp.value || "").trim().toLowerCase();
+            const korrekt = f.akzeptiert.some(
+              (a) => a.toLowerCase() === eingabe,
+            );
+            inp.disabled = true;
+            if (zeigen) inp.classList.add(korrekt ? "ok" : "bad");
+            return { korrekt, richtigText: f.akzeptiert[0] };
+          }
+          return { korrekt: false, richtigText: "" };
+        }
+
+        function pruefen() {
+          if (state.beantwortet) return;
+          state.beantwortet = true;
+          const f = state.frage;
+          const erg = auswerten(f);
+
+          if (state.modus === "pruefung") {
+            const p = state.pruefung;
+            if (erg.korrekt) p.ok++;
+            else p.falsch.push({ frage: f, richtig: erg.richtigText });
+            p.index++;
+            $("#scoreVal").textContent = p.index;
+            neueFrage(); // sofort weiter, Feedback kommt am Ende
+            return;
+          }
+
+          // Übungsmodus: Feedback + Erklärung
+          state.score.n++;
+          if (erg.korrekt) {
+            state.score.ok++;
+            state.streak++;
+          } else {
+            state.streak = 0;
+          }
+          scoreZeigen();
+          const fb = document.querySelector(".feedback");
+          fb.classList.add("zeigen", erg.korrekt ? "gut" : "schlecht");
+          let html = `<div class="fb-titel">${erg.korrekt ? "Richtig" + (state.streak >= 3 ? " · Serie " + state.streak : "") : "Leider nicht"}</div>`;
+          if (!erg.korrekt)
+            html += `Richtig wäre: <b>${erg.richtigText}</b><br>`;
+          if (f.rechenweg && f.rechenweg.length)
+            html += `<ul class="rechenweg">${f.rechenweg.map(([l, r]) => `<li><span>${l}</span><span>${r}</span></li>`).join("")}</ul>`;
+          if (f.erklaerung)
+            html += `<div style="margin-top:6px">${f.erklaerung}</div>`;
+          fb.innerHTML = html;
+          $("#btnPruefen").disabled = true;
+          $("#btnWeiter").disabled = false;
+          $("#btnWeiter").focus();
+        }
+
+        function scoreZeigen() {
+          if (state.modus === "pruefung") {
+            $("#scoreLabel").textContent = "Prüfung";
+            $("#scoreVal").textContent = state.pruefung.index;
+            $("#scoreVon").textContent = " / " + state.pruefung.liste.length;
+          } else {
+            $("#scoreLabel").textContent =
+              state.streak >= 3 ? "Serie 🔥" : "Richtig";
+            $("#scoreVal").textContent = state.score.ok;
+            $("#scoreVon").textContent = " / " + state.score.n;
           }
         }
-        teile.push(`${feld.label} = ${feld.wert.toFixed(feld.dezimalen ?? 2).replace(".", ",")} ${feld.einheit || ""}`);
-      });
-      return { korrekt: alleOk, richtigText: teile.join(" · ") };
-    }
-    if (f.typ === "text"){
-      const inp = document.querySelector("[data-text]");
-      const eingabe = (inp.value || "").trim().toLowerCase();
-      const korrekt = f.akzeptiert.some(a => a.toLowerCase() === eingabe);
-      inp.disabled = true;
-      if (zeigen) inp.classList.add(korrekt ? "ok" : "bad");
-      return { korrekt, richtigText: f.akzeptiert[0] };
-    }
-    return { korrekt: false, richtigText: "" };
-  }
 
-  function pruefen(){
-    if (state.beantwortet) return;
-    state.beantwortet = true;
-    const f = state.frage;
-    const erg = auswerten(f);
-
-    if (state.modus === "pruefung"){
-      const p = state.pruefung;
-      if (erg.korrekt) p.ok++;
-      else p.falsch.push({ frage: f, richtig: erg.richtigText });
-      p.index++;
-      $("#scoreVal").textContent = p.index;
-      neueFrage();                       // sofort weiter, Feedback kommt am Ende
-      return;
-    }
-
-    // Übungsmodus: Feedback + Erklärung
-    state.score.n++;
-    if (erg.korrekt){ state.score.ok++; state.streak++; } else { state.streak = 0; }
-    scoreZeigen();
-    const fb = document.querySelector(".feedback");
-    fb.classList.add("zeigen", erg.korrekt ? "gut" : "schlecht");
-    let html = `<div class="fb-titel">${erg.korrekt ? "Richtig" + (state.streak >= 3 ? " · Serie " + state.streak : "") : "Leider nicht"}</div>`;
-    if (!erg.korrekt) html += `Richtig wäre: <b>${erg.richtigText}</b><br>`;
-    if (f.rechenweg && f.rechenweg.length)
-      html += `<ul class="rechenweg">${f.rechenweg.map(([l, r]) => `<li><span>${l}</span><span>${r}</span></li>`).join("")}</ul>`;
-    if (f.erklaerung) html += `<div style="margin-top:6px">${f.erklaerung}</div>`;
-    fb.innerHTML = html;
-    $("#btnPruefen").disabled = true;
-    $("#btnWeiter").disabled = false;
-    $("#btnWeiter").focus();
-  }
-
-  function scoreZeigen(){
-    if (state.modus === "pruefung"){
-      $("#scoreLabel").textContent = "Prüfung";
-      $("#scoreVal").textContent = state.pruefung.index;
-      $("#scoreVon").textContent = " / " + state.pruefung.liste.length;
-    } else {
-      $("#scoreLabel").textContent = state.streak >= 3 ? "Serie 🔥" : "Richtig";
-      $("#scoreVal").textContent = state.score.ok;
-      $("#scoreVon").textContent = " / " + state.score.n;
-    }
-  }
-
-  /* ---------- Prüfungsmodus ---------- */
-  function pruefungStarten(){
-    const n = Math.min(TRAINER.pruefungsFragen || 10, POOL.length * 2);
-    // gemischt ziehen; bei wenigen Fragen dürfen Generatoren mehrfach vorkommen
-    let liste = shuffle(POOL);
-    while (liste.length < n) liste = liste.concat(shuffle(POOL));
-    state.modus = "pruefung";
-    state.pruefung = { liste: liste.slice(0, n), index: 0, ok: 0, falsch: [] };
-    syncNav(); scoreZeigen(); neueFrage();
-  }
-  function pruefungErgebnis(){
-    const p = state.pruefung;
-    const quote = Math.round(100 * p.ok / p.liste.length);
-    const klasse = quote >= 80 ? "gut" : quote >= 50 ? "mittel" : "schlecht";
-    $("#qTag").textContent = "Prüfung · Ergebnis";
-    $("#qFortschritt").textContent = "";
-    const b = $("#qBody");
-    b.innerHTML = `
+        /* ---------- Prüfungsmodus ---------- */
+        function pruefungStarten() {
+          const n = Math.min(TRAINER.pruefungsFragen || 10, POOL.length * 2);
+          // gemischt ziehen; bei wenigen Fragen dürfen Generatoren mehrfach vorkommen
+          let liste = shuffle(POOL);
+          while (liste.length < n) liste = liste.concat(shuffle(POOL));
+          state.modus = "pruefung";
+          state.pruefung = {
+            liste: liste.slice(0, n),
+            index: 0,
+            ok: 0,
+            falsch: [],
+          };
+          syncNav();
+          scoreZeigen();
+          neueFrage();
+        }
+        function pruefungErgebnis() {
+          const p = state.pruefung;
+          const quote = Math.round((100 * p.ok) / p.liste.length);
+          const klasse =
+            quote >= 80 ? "gut" : quote >= 50 ? "mittel" : "schlecht";
+          $("#qTag").textContent = "Prüfung · Ergebnis";
+          $("#qFortschritt").textContent = "";
+          const b = $("#qBody");
+          b.innerHTML = `
       <div class="ergebnis">
         <h2>${quote >= 80 ? "Stark! 🟢" : quote >= 50 ? "Solide Basis 🟡" : "Da geht noch was 🔴"}</h2>
         <div class="quote ${klasse}">${quote} %</div>
         <div style="font-family:var(--mono);font-size:13px;color:var(--ink-soft)">${p.ok} von ${p.liste.length} richtig</div>
-        ${p.falsch.length ? `<div class="fehlerliste">${p.falsch.map(x => `
+        ${
+          p.falsch.length
+            ? `<div class="fehlerliste">${p.falsch
+                .map(
+                  (x) => `
           <div class="fitem">
             <div class="ff">${x.frage.frage}</div>
             <div class="fr">Richtig: ${x.richtig}</div>
             ${x.frage.erklaerung ? `<div style="margin-top:4px">${x.frage.erklaerung}</div>` : ""}
-          </div>`).join("")}</div>` : `<p style="margin-top:14px">Alles richtig — nichts zu wiederholen. 🎉</p>`}
+          </div>`,
+                )
+                .join("")}</div>`
+            : `<p style="margin-top:14px">Alles richtig — nichts zu wiederholen. 🎉</p>`
+        }
         <div class="aktionen">
           <button class="btn primaer" id="btnNochmal">Neue Prüfung</button>
           <button class="btn" id="btnUeben">Zurück zum Üben</button>
         </div>
       </div>`;
-    $("#btnNochmal").addEventListener("click", pruefungStarten);
-    $("#btnUeben").addEventListener("click", () => {
-      state.modus = "ueben"; state.pruefung = null;
-      syncNav(); scoreZeigen(); neueFrage();
-    });
-  }
+          $("#btnNochmal").addEventListener("click", pruefungStarten);
+          $("#btnUeben").addEventListener("click", () => {
+            state.modus = "ueben";
+            state.pruefung = null;
+            syncNav();
+            scoreZeigen();
+            neueFrage();
+          });
+        }
 
-  /* ---------- Tastatur: Enter = Prüfen / Weiter ---------- */
-  document.addEventListener("keydown", e => {
-    if (e.key !== "Enter" || e.target.tagName === "BUTTON") return;
-    const w = $("#btnWeiter");
-    if (!state.beantwortet) { const p = $("#btnPruefen"); if (p && !p.disabled) p.click(); }
-    else if (w && !w.disabled) w.click();
-  });
+        /* ---------- Tastatur: Enter = Prüfen / Weiter ---------- */
+        document.addEventListener("keydown", (e) => {
+          if (e.key !== "Enter" || e.target.tagName === "BUTTON") return;
+          const w = $("#btnWeiter");
+          if (!state.beantwortet) {
+            const p = $("#btnPruefen");
+            if (p && !p.disabled) p.click();
+          } else if (w && !w.disabled) w.click();
+        });
 
-  /* Los geht's */
-  if (!POOL.length){
-    $("#qBody").innerHTML = `<p class="prompt">Noch keine Fragen eingetragen — öffne diese Datei und fülle den Abschnitt <b>② FRAGEN</b>.</p>`;
-  } else {
-    bauNav(); scoreZeigen(); neueFrage();
-  }
-})();
-</script>
-</body>
+        /* Los geht's */
+        if (!POOL.length) {
+          $("#qBody").innerHTML =
+            `<p class="prompt">Noch keine Fragen eingetragen — öffne diese Datei und fülle den Abschnitt <b>② FRAGEN</b>.</p>`;
+        } else {
+          bauNav();
+          scoreZeigen();
+          neueFrage();
+        }
+      })();
+    </script>
+  </body>
 </html>
