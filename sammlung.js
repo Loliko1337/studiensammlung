@@ -236,12 +236,18 @@
     const art = document.createElement("article");
     art.className = "blatt";
     art.innerHTML = `
+      <div class="druck-abstand oben" aria-hidden="true"><div></div></div>
       <header class="blatt-kopf">
         <div class="eyebrow">Übersicht · Stand ${esc(doc.stand||"")}</div>
         <h1>${esc(doc.titel||"Ohne Titel")}</h1>
         ${doc.untertitel ? `<p class="untertitel">${esc(doc.untertitel)}</p>` : ""}
       </header>`;
     (doc.bloecke||[]).forEach(b=> art.appendChild(renderBlock(b, doc.abstand)));
+    const fuss = document.createElement("div");
+    fuss.className = "druck-abstand unten";
+    fuss.setAttribute("aria-hidden","true");
+    fuss.innerHTML = "<div></div>";
+    art.appendChild(fuss);
     ziel.appendChild(art);
   }
   function renderBlock(b, standardAbstand){

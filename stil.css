@@ -172,12 +172,21 @@ code{font-family:var(--mono);font-size:.92em;background:#f2f6f8;border:1px solid
 .blk figcaption{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);margin-top:6px}
 
 /* ---------- Druck / PDF ---------- */
-@page{ size:A4; margin:16mm 15mm 18mm; }
+/* Seitenrand 0 → der Browser hat keinen Platz mehr für seine Kopf-/Fußzeilen
+   (Datum, Titel, URL) und lässt sie weg. Die Ränder bauen wir selbst:
+   links/rechts über body-Padding, oben/unten über Abstandshalter, die sich
+   dank table-header/footer-group auf JEDER Seite wiederholen. */
+.druck-abstand{display:none}
+@page{ size:A4; margin:0; }
 @media print{
-  body{background:#fff}
+  body{background:#fff;padding:0 15mm}
   .kein-druck{display:none !important}
   .wrap{max-width:none;padding:0}
-  .blatt{border:0;box-shadow:none;border-radius:0;max-width:none;padding:0;margin:0}
+  .blatt{border:0;box-shadow:none;border-radius:0;max-width:none;padding:0;margin:0;display:table;width:100%}
+  .druck-abstand.oben{display:table-header-group}
+  .druck-abstand.unten{display:table-footer-group}
+  .druck-abstand.oben > div{height:13mm}
+  .druck-abstand.unten > div{height:15mm}
   .blk h2{break-after:avoid}
   .blk h3{break-after:avoid}
   .box,.formel,.codeblock,.blk figure,.blk table tr{break-inside:avoid}
