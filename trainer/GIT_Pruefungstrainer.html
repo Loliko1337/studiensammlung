@@ -886,6 +886,7 @@
           beantwortet: false,
           score: { ok: 0, n: 0 }, streak: 0,
           pruefung: null,           // { liste, index, ok, falsch: [] }
+          historie: [],             // zuletzt gezogene Einträge (verhindert Wiederholungen)
         };
 
         /* ---------- Navigation ---------- */
@@ -899,7 +900,7 @@
             const b = e.target.closest(".cat"); if (!b) return;
             if (b.id === "btnPruefung"){ pruefungStarten(); return; }
             state.modus = "ueben"; state.pruefung = null;
-            state.kat = b.dataset.cat; syncNav(); neueFrage();
+            state.kat = b.dataset.cat; state.historie = []; syncNav(); neueFrage();
           });
           syncNav();
         }
@@ -907,6 +908,19 @@
           document.querySelectorAll("#nav .cat").forEach(b =>
             b.setAttribute("aria-pressed", state.modus === "ueben" && b.dataset.cat === state.kat ? "true" : "false"));
           $("#btnPruefung").setAttribute("aria-pressed", state.modus === "pruefung" ? "true" : "false");
+        }
+
+        /* ---------- Frage ziehen (ohne die letzten Wiederholungen) ---------- */
+        function ziehen(passend){
+          if (passend.length <= 1) return passend[0];
+          // meide die letzten 1-2 gezogenen Fragen (je nach Poolgröße), damit
+          // nichts zwei- oder dreimal hintereinander drankommt
+          const meideAnzahl = Math.min(2, passend.length - 1);
+          const meiden = state.historie.slice(-meideAnzahl);
+          let kandidaten = passend.filter(e => !meiden.includes(e));
+          if (!kandidaten.length) kandidaten = passend.filter(e => e !== state.historie[state.historie.length - 1]);
+          if (!kandidaten.length) kandidaten = passend;
+          return kandidaten[Math.floor(Math.random() * kandidaten.length)];
         }
 
         /* ---------- Frage ziehen & rendern ---------- */
@@ -919,7 +933,9 @@
           } else {
             const passend = state.kat === "random" ? POOL
               : POOL.filter(f => (frageHolen(f).kategorie || "Allgemein") === state.kat);
-            eintrag = passend[Math.floor(Math.random() * passend.length)];
+            eintrag = ziehen(passend);
+            state.historie.push(eintrag);
+            if (state.historie.length > 5) state.historie.shift();
           }
           state.eintrag = eintrag;
           state.frage = frageHolen(eintrag);
@@ -1094,13 +1110,28 @@
         }
 
         /* ---------- Prüfungsmodus ---------- */
+        function ohneNachbarWiederholung(liste){
+          // vertauscht Elemente, die direkt hintereinander gleich wären (z.B. bei Pool-Wiederholung)
+          for (let i = 1; i < liste.length; i++){
+            if (liste[i] === liste[i - 1]){
+              for (let j = i + 1; j < liste.length; j++){
+                if (liste[j] !== liste[i - 1] && liste[j] !== liste[i]){
+                  [liste[i], liste[j]] = [liste[j], liste[i]];
+                  break;
+                }
+              }
+            }
+          }
+          return liste;
+        }
         function pruefungStarten(){
           const n = Math.min(TRAINER.pruefungsFragen || 10, POOL.length * 2);
           // gemischt ziehen; bei wenigen Fragen dürfen Generatoren mehrfach vorkommen
           let liste = shuffle(POOL);
           while (liste.length < n) liste = liste.concat(shuffle(POOL));
+          liste = ohneNachbarWiederholung(liste.slice(0, n));
           state.modus = "pruefung";
-          state.pruefung = { liste: liste.slice(0, n), index: 0, ok: 0, falsch: [] };
+          state.pruefung = { liste, index: 0, ok: 0, falsch: [] };
           syncNav(); scoreZeigen(); neueFrage();
         }
         function pruefungErgebnis(){
