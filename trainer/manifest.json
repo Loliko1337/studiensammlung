@@ -19,6 +19,11 @@
    "datei": "trainer/V1-Formelsammlung-korrigiert.html",
    "titel": "Formelsammlung · V1",
    "beschreibung": "Alle Formeln zum Bipolartransistor-Versuch auf einen Blick."
+  },
+  {
+   "datei": "trainer/GIT_Pruefungstrainer.html",
+   "titel": "GIT Prüfungstrainer",
+   "beschreibung": "Vorbereitung auf die Klausur (Pointer, Register, Interrupts, Datentypen)"
   }
  ]
 }
