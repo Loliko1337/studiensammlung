@@ -101,7 +101,7 @@
     localStorage.setItem(LS_DOCS, JSON.stringify(alle));
   }
 
-  /* ---------- Veröffentlichte Inhalte lesen (ohne Token, relative Fetches) ---------- */
+  /* ---------- Veröffentlichte Inhalte lesen ---------- */
   async function jsonHolen(relPfad){
     try {
       const r = await fetch(relPfad + "?t=" + Date.now(), { cache:"no-store" });
@@ -109,15 +109,62 @@
       return await r.json();
     } catch(e){ return null; } // z. B. file:// ohne Server
   }
+  // Bevorzugt die GitHub-API: zeigt Änderungen SOFORT (kein Warten auf den Pages-Build).
+  async function apiJson(relPfad){
+    if (!repoKonfiguriert()) return null;
+    try {
+      const h = { "Accept":"application/vnd.github.raw+json" };
+      const t = getToken(); if (t) h["Authorization"] = "Bearer " + t;
+      const r = await fetch(apiUrl(relPfad) + `?ref=${CFG.branch}&t=${Date.now()}`, { headers:h, cache:"no-store" });
+      if (r.ok) return await r.json();
+    } catch(e){ /* Fallback beim Aufrufer */ }
+    return null;
+  }
+  async function frischHolen(relPfad){
+    return (await apiJson(relPfad)) || jsonHolen(relPfad);
+  }
+
+  /* ---------- Schnell-Laden: sofort anzeigen, im Hintergrund auffrischen ----------
+     Reihenfolge: 1) letzter Schnappschuss aus localStorage (0 ms)
+                  2) gehostete Datei (CDN, schnell)
+                  3) GitHub-API (garantiert frisch, gewinnt immer)
+     cb wird nur aufgerufen, wenn sich der Inhalt tatsächlich geändert hat.        */
+  const LS_CACHE = "sammlung_schnappschuss";
+  function cacheLesen(p){
+    try { return (JSON.parse(localStorage.getItem(LS_CACHE)||"{}"))[p] || null; } catch(e){ return null; }
+  }
+  function cacheSchreiben(p, data){
+    try {
+      const s = JSON.stringify(data);
+      if (s.length > 400000) return; // große Übersichten (Bilder) nicht snapshotten
+      const c = JSON.parse(localStorage.getItem(LS_CACHE)||"{}");
+      c[p] = data; localStorage.setItem(LS_CACHE, JSON.stringify(c));
+    } catch(e){ /* Quota voll o. ä. — Schnappschuss ist optional */ }
+  }
+  function lebendLaden(relPfad, cb){
+    let stand = "", apiDa = false;
+    const liefern = (d, vonApi) => {
+      if (!d) return;
+      if (apiDa && !vonApi) return;           // langsamere, ältere Quelle überschreibt keine API-Daten
+      if (vonApi) apiDa = true;
+      const s = JSON.stringify(d);
+      if (s === stand) return;                // nichts Neues → kein Neuzeichnen
+      stand = s; cacheSchreiben(relPfad, d); cb(d);
+    };
+    const c = cacheLesen(relPfad);
+    if (c) liefern(c, false);
+    jsonHolen(relPfad).then(d => liefern(d, false));
+    apiJson(relPfad).then(d => liefern(d, true));
+  }
   async function indexLaden(){   // Übersichten
-    return (await jsonHolen("docs-data/index.json")) || { docs: [] };
+    return (await frischHolen("docs-data/index.json")) || { docs: [] };
   }
   async function manifestLaden(){ // Trainer
-    return (await jsonHolen("trainer/manifest.json")) || { trainer: [] };
+    return (await frischHolen("trainer/manifest.json")) || { trainer: [] };
   }
   async function docLaden(id){
-    // 1. veröffentlicht, 2. lokaler Entwurf
-    const pub = await jsonHolen(`docs-data/${id}.json`);
+    // 1. frisch (API) bzw. veröffentlicht, 2. lokaler Entwurf
+    const pub = await frischHolen(`docs-data/${id}.json`);
     if (pub) return pub;
     return lokaleDocs()[id] || null;
   }
@@ -209,6 +256,7 @@
       case "formel": el.innerHTML = `<div class="formel">${b.html||""}</div>`; break;
       case "tabelle":el.innerHTML = `<div class="tabelle-huelle"><table>${b.html||""}</table></div>`; break;
       case "box":    el.innerHTML = `<div class="box box-${b.variante||"info"}"><div class="box-label">${boxLabel(b.variante)}</div><div>${b.html||""}</div></div>`; break;
+      case "code":   el.innerHTML = `<div class="codeblock"><span class="code-label">${CODE_SPRACHEN[b.sprache]||"Code"}</span><pre><code>${codeHighlight(b.text, b.sprache)}</code></pre></div>`; break;
       case "spalten":el.innerHTML = `<div class="spalten"><div class="spalte">${b.links||""}</div><div class="spalte">${b.rechts||""}</div></div>`; break;
       case "bild":   el.innerHTML = `<figure><img src="${b.src||""}" alt="${esc(b.unterschrift||"")}" style="width:${b.breite||100}%">${b.unterschrift?`<figcaption>${esc(b.unterschrift)}</figcaption>`:""}</figure>`; break;
       case "linie":  el.innerHTML = `<hr>`; break;
@@ -220,11 +268,41 @@
     return {info:"Info", merke:"Merke", achtung:"Achtung", beispiel:"Beispiel"}[v] || "Info";
   }
 
+  /* ---------- Leichter Syntax-Highlighter (kein externes Paket nötig) ---------- */
+  const RE_JS = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b(?:const|let|var|function|return|if|else|for|while|do|switch|case|break|continue|new|class|extends|import|export|from|default|try|catch|finally|throw|async|await|typeof|instanceof|null|undefined|true|false|this|of|in)\b)|(\b(?:0x[0-9a-fA-F]+|\d+(?:\.\d+)?)\b)/g;
+  const RE_C  = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|(^[ \t]*#[ \t]*\w+[^\n]*)|("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(\b(?:int|char|float|double|void|long|short|unsigned|signed|struct|typedef|enum|union|static|const|volatile|return|if|else|for|while|do|switch|case|break|continue|sizeof|default|goto|extern|NULL|uint8_t|uint16_t|uint32_t|int8_t|int16_t|int32_t|bool|true|false)\b)|(\b(?:0x[0-9a-fA-F]+|\d+(?:\.\d+)?)\b)/gm;
+  function codeHighlight(text, sprache){
+    const s = esc(text || "");
+    const span = (cls, m) => `<span class="${cls}">${m}</span>`;
+    if (sprache === "html"){
+      return s.replace(/(&lt;!--[\s\S]*?--&gt;)|(&lt;\/?[a-zA-Z][^&]*?&gt;)|("(?:[^"\\\n]|\\.)*")/g,
+        (m, com, tag, str) => com ? span("c-com", m) : tag ? span("c-kw", m) : span("c-str", m));
+    }
+    if (sprache === "js" || sprache === "c"){
+      return s.replace(sprache === "js" ? RE_JS : RE_C, (m, com, a, b2, c2, d2) => {
+        if (com) return span("c-com", m);
+        if (sprache === "c"){
+          if (a)  return span("c-kw",  m);  // Präprozessor (#include, #define …)
+          if (b2) return span("c-str", m);
+          if (c2) return span("c-kw",  m);
+          if (d2) return span("c-num", m);
+        } else {
+          if (a)  return span("c-str", m);
+          if (b2) return span("c-kw",  m);
+          if (c2) return span("c-num", m);
+        }
+        return m;
+      });
+    }
+    return s; // "anderes": nur monospaced, keine Farben
+  }
+  const CODE_SPRACHEN = { c:"C", js:"JavaScript", html:"HTML", andere:"Code" };
+
   /* ---------- Export ---------- */
   window.Sammlung = {
     CFG, repoKonfiguriert, getToken, setToken, eingeloggt, schreibmodus, tokenPruefen,
-    indexLaden, manifestLaden, docLaden, docSpeichern, docEntfernen,
+    indexLaden, manifestLaden, docLaden, docSpeichern, docEntfernen, lebendLaden,
     lokaleDocs, lokalSpeichern, lokalLoeschen,
-    trainerHochladen, slug, renderDoc, renderBlock, esc, ABSTAENDE, abstandPx,
+    trainerHochladen, slug, renderDoc, renderBlock, esc, ABSTAENDE, abstandPx, codeHighlight, CODE_SPRACHEN,
   };
 })();

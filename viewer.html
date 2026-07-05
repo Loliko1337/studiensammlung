@@ -4,11 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Übersicht</title>
-<link rel="stylesheet" href="stil.css">
-<script src="config.js"></script>
-<script src="sammlung.js" defer></script>
+<link rel="stylesheet" href="stil.css?v=5">
+<script src="config.js?v=5"></script>
+<script src="sammlung.js?v=5" defer></script>
 </head>
 <body>
+<script>
+/* Sichtbare Fehleranzeige statt stummem Abbruch (z. B. bei Cache-/Versionsproblemen) */
+window.addEventListener("error", function(e){
+  var b = document.getElementById("jsFehlerBanner");
+  if (!b){
+    b = document.createElement("div");
+    b.id = "jsFehlerBanner";
+    b.className = "kein-druck";
+    b.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:999;background:#fbeae9;border:1px solid #eccfcd;color:#d6453d;border-radius:8px;padding:10px 14px;font:12.5px ui-monospace,Menlo,monospace;box-shadow:0 8px 24px rgba(20,30,40,.2)";
+    document.body.appendChild(b);
+  }
+  b.innerHTML = "⚠ Skriptfehler: " + (e.message || "unbekannt") +
+    "<br>Meist hilft: Seite mit <b>Strg+F5</b> neu laden (alte Version im Cache) und prüfen, ob alle Dateien (v.&nbsp;a. sammlung.js) aktuell hochgeladen sind.";
+});
+</script>
 <div class="wrap">
 
   <header class="top kein-druck">
@@ -38,27 +53,41 @@
 </div>
 
 <script defer>
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   const S = window.Sammlung;
   const id = new URLSearchParams(location.search).get("doc");
-  const doc = id ? await S.docLaden(id) : null;
+  let gerendert = false;
 
-  if (!doc){
+  function zeigen(doc){
+    gerendert = true;
+    document.title = doc.titel + " · Übersicht";
+    document.getElementById("kopfTitel").textContent = doc.titel;
+    document.getElementById("kopfSub").textContent = doc.untertitel || "";
+    S.renderDoc(doc, document.getElementById("ziel"));
+    if (S.eingeloggt()){
+      const b = document.getElementById("btnBearbeiten");
+      b.hidden = false;
+      b.href = "editor.html?doc=" + encodeURIComponent(doc.id);
+    }
+  }
+  function nichtGefunden(){
     document.getElementById("kopfTitel").textContent = "Nicht gefunden";
     document.getElementById("nichtGefunden").hidden = false;
     document.getElementById("btnPdf").hidden = true;
-    return;
   }
-  document.title = doc.titel + " · Übersicht";
-  document.getElementById("kopfTitel").textContent = doc.titel;
-  document.getElementById("kopfSub").textContent = doc.untertitel || "";
-  S.renderDoc(doc, document.getElementById("ziel"));
 
-  if (S.eingeloggt()){
-    const b = document.getElementById("btnBearbeiten");
-    b.hidden = false;
-    b.href = "editor.html?doc=" + encodeURIComponent(doc.id);
-  }
+  if (!id){ nichtGefunden(); return; }
+
+  // Lokaler Entwurf (z. B. Editor-Vorschau) ist immer der frischeste Stand dieses Geräts → sofort zeigen
+  const entwurf = S.lokaleDocs()[id];
+  if (entwurf) zeigen(entwurf);
+
+  // Veröffentlichte Fassung: sofort aus Schnappschuss/Datei, frisch aus der API — nur bei Änderung neu zeichnen
+  if (!entwurf) S.lebendLaden(`docs-data/${id}.json`, zeigen);
+
+  // Nach 3 s weder Entwurf noch Daten → sauber melden statt ewig "Wird geladen …"
+  setTimeout(() => { if (!gerendert) nichtGefunden(); }, 3000);
+
   document.getElementById("btnPdf").addEventListener("click", () => window.print());
 });
 </script>

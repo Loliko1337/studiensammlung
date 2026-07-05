@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Studiensammlung · Portal</title>
-<link rel="stylesheet" href="stil.css">
-<script src="config.js"></script>
-<script src="sammlung.js" defer></script>
+<link rel="stylesheet" href="stil.css?v=5">
+<script src="config.js?v=5"></script>
+<script src="sammlung.js?v=5" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -133,62 +133,70 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll(".nur-admin").forEach(e => e.hidden = !admin);
   }
 
-  /* ---------- Übersichten laden ---------- */
-  const idx = await S.indexLaden();
-  const rD = $("rasterDocs");
-  idx.docs.forEach(d => {
-    const a = document.createElement("a");
-    a.className = "karte doc";
-    a.href = "viewer.html?doc=" + encodeURIComponent(d.id);
-    a.innerHTML = `
-      <span class="modul">Übersicht</span>
-      <h3>${S.esc(d.titel)}</h3>
-      <p>${S.esc(d.untertitel || "")}</p>
-      <div class="fuss"><span>Stand ${S.esc(d.stand || "")}</span><span class="led"></span></div>
-      <div class="karten-werkzeuge nur-admin" hidden>
-        <a class="btn klein" href="editor.html?doc=${encodeURIComponent(d.id)}">Bearbeiten</a>
-      </div>`;
-    a.querySelectorAll(".karten-werkzeuge a").forEach(x => x.addEventListener("click", e => e.stopPropagation()));
-    rD.appendChild(a);
-  });
-  $("zaehlerDocs").textContent = idx.docs.length + " veröffentlicht";
-  $("leerDocs").hidden = idx.docs.length > 0;
-
-  /* ---------- Lokale Entwürfe ---------- */
-  const entwuerfe = Object.values(S.lokaleDocs()).filter(d => !idx.docs.some(x => x.id === d.id));
-  if (entwuerfe.length){
-    $("abschnittEntwuerfe").hidden = false;
-    $("zaehlerEntwuerfe").textContent = entwuerfe.length + " nur in diesem Browser";
-    const rE = $("rasterEntwuerfe");
-    entwuerfe.forEach(d => {
+  /* ---------- Übersichten: sofort anzeigen, im Hintergrund auffrischen ---------- */
+  function renderDocs(idx){
+    const rD = $("rasterDocs");
+    rD.innerHTML = "";
+    idx.docs.forEach(d => {
       const a = document.createElement("a");
-      a.className = "karte doc entwurf";
-      a.href = "editor.html?doc=" + encodeURIComponent(d.id);
+      a.className = "karte doc";
+      a.href = "viewer.html?doc=" + encodeURIComponent(d.id);
       a.innerHTML = `
-        <span class="modul">Entwurf</span>
-        <h3>${S.esc(d.titel || "Ohne Titel")}</h3>
+        <span class="modul">Übersicht</span>
+        <h3>${S.esc(d.titel)}</h3>
         <p>${S.esc(d.untertitel || "")}</p>
-        <div class="fuss"><span>Stand ${S.esc(d.stand || "")}</span><span class="led"></span></div>`;
-      rE.appendChild(a);
+        <div class="fuss"><span>Stand ${S.esc(d.stand || "")}</span><span class="led"></span></div>
+        <div class="karten-werkzeuge nur-admin" hidden>
+          <a class="btn klein" href="editor.html?doc=${encodeURIComponent(d.id)}">Bearbeiten</a>
+        </div>`;
+      a.querySelectorAll(".karten-werkzeuge a").forEach(x => x.addEventListener("click", e => e.stopPropagation()));
+      rD.appendChild(a);
     });
-  }
+    $("zaehlerDocs").textContent = idx.docs.length + " veröffentlicht";
+    $("leerDocs").hidden = idx.docs.length > 0;
 
-  /* ---------- Trainer laden ---------- */
-  const man = await S.manifestLaden();
-  const rT = $("rasterTrainer");
-  man.trainer.forEach(t => {
-    const a = document.createElement("a");
-    a.className = "karte";
-    a.href = t.datei;
-    a.innerHTML = `
-      <span class="modul">Trainer</span>
-      <h3>${S.esc(t.titel)}</h3>
-      <p>${S.esc(t.beschreibung || "")}</p>
-      <div class="fuss"><span>interaktiv</span><span class="led"></span></div>`;
-    rT.appendChild(a);
-  });
-  $("zaehlerTrainer").textContent = man.trainer.length + " Module";
-  $("leerTrainer").hidden = man.trainer.length > 0;
+    // Lokale Entwürfe (nur die, die nicht veröffentlicht sind)
+    const entwuerfe = Object.values(S.lokaleDocs()).filter(d => !idx.docs.some(x => x.id === d.id));
+    $("abschnittEntwuerfe").hidden = !entwuerfe.length;
+    if (entwuerfe.length){
+      $("zaehlerEntwuerfe").textContent = entwuerfe.length + " nur in diesem Browser";
+      const rE = $("rasterEntwuerfe");
+      rE.innerHTML = "";
+      entwuerfe.forEach(d => {
+        const a = document.createElement("a");
+        a.className = "karte doc entwurf";
+        a.href = "editor.html?doc=" + encodeURIComponent(d.id);
+        a.innerHTML = `
+          <span class="modul">Entwurf</span>
+          <h3>${S.esc(d.titel || "Ohne Titel")}</h3>
+          <p>${S.esc(d.untertitel || "")}</p>
+          <div class="fuss"><span>Stand ${S.esc(d.stand || "")}</span><span class="led"></span></div>`;
+        rE.appendChild(a);
+      });
+    }
+    statusZeigen(); // .nur-admin-Sichtbarkeit nach jedem Neuzeichnen anwenden
+  }
+  S.lebendLaden("docs-data/index.json", renderDocs);
+
+  /* ---------- Trainer: sofort anzeigen, im Hintergrund auffrischen ---------- */
+  function renderTrainer(man){
+    const rT = $("rasterTrainer");
+    rT.innerHTML = "";
+    man.trainer.forEach(t => {
+      const a = document.createElement("a");
+      a.className = "karte";
+      a.href = t.datei;
+      a.innerHTML = `
+        <span class="modul">Trainer</span>
+        <h3>${S.esc(t.titel)}</h3>
+        <p>${S.esc(t.beschreibung || "")}</p>
+        <div class="fuss"><span>interaktiv</span><span class="led"></span></div>`;
+      rT.appendChild(a);
+    });
+    $("zaehlerTrainer").textContent = man.trainer.length + " Module";
+    $("leerTrainer").hidden = man.trainer.length > 0;
+  }
+  S.lebendLaden("trainer/manifest.json", renderTrainer);
 
   /* ---------- Login ---------- */
   const dlg = $("dlgLogin");

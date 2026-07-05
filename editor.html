@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Übersichts-Editor</title>
-<link rel="stylesheet" href="stil.css">
-<script src="config.js"></script>
-<script src="sammlung.js" defer></script>
+<link rel="stylesheet" href="stil.css?v=5">
+<script src="config.js?v=5"></script>
+<script src="sammlung.js?v=5" defer></script>
 <style>
   /* ---------- Editor-spezifisch ---------- */
   .werkbank{position:sticky;top:0;z-index:40;background:var(--paper);padding:10px 0 12px;border-bottom:1px solid var(--line);margin-bottom:22px}
@@ -68,9 +68,27 @@
   .eblock:hover .spalten .spalte{border-color:var(--grid)}
 
   .bild-tools{display:flex;gap:6px;align-items:center;margin-top:5px;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+  .code-kopf{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:5px}
+  .code-edit{width:100%;font-family:var(--mono);font-size:13px;line-height:1.55;border:1px solid var(--grid);border-radius:7px;background:#f7f9fa;padding:12px 14px;resize:vertical;white-space:pre;overflow-x:auto;tab-size:2;box-sizing:border-box}
+  .code-edit:focus{outline:2px solid var(--teal);outline-offset:1px}
 </style>
 </head>
 <body>
+<script>
+/* Sichtbare Fehleranzeige statt stummem Abbruch (z. B. bei Cache-/Versionsproblemen) */
+window.addEventListener("error", function(e){
+  var b = document.getElementById("jsFehlerBanner");
+  if (!b){
+    b = document.createElement("div");
+    b.id = "jsFehlerBanner";
+    b.className = "kein-druck";
+    b.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:999;background:#fbeae9;border:1px solid #eccfcd;color:#d6453d;border-radius:8px;padding:10px 14px;font:12.5px ui-monospace,Menlo,monospace;box-shadow:0 8px 24px rgba(20,30,40,.2)";
+    document.body.appendChild(b);
+  }
+  b.innerHTML = "⚠ Skriptfehler: " + (e.message || "unbekannt") +
+    "<br>Meist hilft: Seite mit <b>Strg+F5</b> neu laden (alte Version im Cache) und prüfen, ob alle Dateien (v.&nbsp;a. sammlung.js) aktuell hochgeladen sind.";
+});
+</script>
 <div class="wrap">
 
   <header class="top kein-druck">
@@ -196,7 +214,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const w = document.createElement("div");
     w.className = "eblock";
     w.dataset.index = i;
-    w.style.marginBottom = S.abstandPx(b, doc.abstand);
+    const abstandFn = S.abstandPx || (() => "14px"); // Fallback, falls alte sammlung.js gecacht ist
+    w.style.marginBottom = abstandFn(b, doc.abstand);
     const griff = document.createElement("div");
     griff.className = "griff kein-druck";
     griff.innerHTML = `
@@ -216,7 +235,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     selAb.addEventListener("click", e => e.stopPropagation());
     selAb.addEventListener("change", () => {
       if (selAb.value) b.abstand = selAb.value; else delete b.abstand;
-      w.style.marginBottom = S.abstandPx(b, doc.abstand);
+      w.style.marginBottom = abstandFn(b, doc.abstand);
       markiereGeaendert();
     });
     griff.addEventListener("click", e => {
@@ -272,6 +291,18 @@ document.addEventListener("DOMContentLoaded", async () => {
           <input type="file" accept="image/*" data-feld="datei">
           <label>Breite <input type="range" min="25" max="100" value="${b.breite||100}" data-feld="breite"> <span data-feld="breiteAnzeige">${b.breite||100}%</span></label>
         </div>`; break;
+      case "code": {
+        const opts = Object.entries(S.CODE_SPRACHEN || {c:"C",js:"JavaScript",html:"HTML",andere:"Code"})
+          .map(([v,l]) => `<option value="${v}" ${v===(b.sprache||"c")?"selected":""}>${l}</option>`).join("");
+        const zeilen = Math.min(24, Math.max(4, (b.text||"").split("\n").length + 1));
+        inhalt.innerHTML = `
+          <div class="code-kopf kein-druck">
+            <select data-feld="sprache" style="font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:6px;padding:3px 5px;background:#fbfcfd">${opts}</select>
+            <span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-soft)">Tab = 2 Leerzeichen · Farben erscheinen in Vorschau &amp; PDF</span>
+          </div>
+          <textarea class="code-edit" data-feld="text" rows="${zeilen}" spellcheck="false" placeholder="Code hier einfügen …">${S.esc(b.text||"")}</textarea>`;
+        break;
+      }
       case "linie": inhalt.innerHTML = `<hr>`; break;
     }
     w.appendChild(inhalt);
@@ -281,6 +312,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Box-Variante
     const sel = inhalt.querySelector("select[data-feld=variante]");
     if (sel) sel.addEventListener("change", () => { sichern(); doc.bloecke[i].variante = sel.value; markiereGeaendert(); bauen(); });
+    // Code-Block: Sprache + Textarea (Tab-Taste, Auto-Höhe)
+    const selSpr = inhalt.querySelector("select[data-feld=sprache]");
+    if (selSpr) selSpr.addEventListener("change", () => { doc.bloecke[i].sprache = selSpr.value; markiereGeaendert(); });
+    const ta = inhalt.querySelector("textarea[data-feld=text]");
+    if (ta){
+      ta.addEventListener("input", () => {
+        ta.style.height = "auto"; ta.style.height = (ta.scrollHeight + 2) + "px";
+        markiereGeaendert();
+      });
+      ta.addEventListener("keydown", e => {
+        if (e.key === "Tab"){
+          e.preventDefault();
+          const s = ta.selectionStart, en = ta.selectionEnd;
+          ta.value = ta.value.slice(0, s) + "  " + ta.value.slice(en);
+          ta.selectionStart = ta.selectionEnd = s + 2;
+          markiereGeaendert();
+        }
+      });
+    }
     // Tabellen-Werkzeuge
     inhalt.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => tabAktion(inhalt, btn.dataset.tab)));
     tabellenZellenEditierbar(inhalt);
@@ -332,6 +382,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     {typ:"liste",   t:"Aufzählung",         s:"Punkte-Liste"},
     {typ:"liste",   t:"Nummerierte Liste",  s:"1., 2., 3. …", extra:{geordnet:true}},
     {typ:"formel",  t:"Formel",             s:"zentriert, Monospace, U_BE etc."},
+    {typ:"code",    t:"Code",               s:"C, JavaScript oder HTML — mit Syntaxfarben", extra:{sprache:"c", text:""}},
     {typ:"tabelle", t:"Tabelle",            s:"Zeilen/Spalten anpassbar"},
     {typ:"box",     t:"Merk-Box",           s:"Info · Merke · Achtung · Beispiel", extra:{variante:"merke"}},
     {typ:"spalten", t:"Zwei Spalten",       s:"nebeneinander, z. B. Vergleich"},
@@ -385,6 +436,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           b.html = klon.innerHTML;
         }
         if (f === "unterschrift") b.unterschrift = el.textContent.trim();
+        if (f === "text") b.text = el.value;
       });
     });
   }
@@ -438,7 +490,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const wohin = await S.docSpeichern(doc);
       geaendert = false;
       $("speicherStatus").textContent = wohin === "github"
-        ? "Veröffentlicht ✓ (GitHub Pages braucht 1–2 min) · " + new Date().toLocaleTimeString()
+        ? "Veröffentlicht ✓ — sofort im Portal sichtbar · " + new Date().toLocaleTimeString()
         : "Lokal gespeichert ✓ (nur dieser Browser) · " + new Date().toLocaleTimeString();
       $("btnLoeschen").hidden = false;
       history.replaceState(null, "", "editor.html?doc=" + encodeURIComponent(doc.id));
