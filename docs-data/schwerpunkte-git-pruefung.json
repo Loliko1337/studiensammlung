@@ -67,7 +67,54 @@
   },
   {
    "typ": "liste",
-   "html": "<li><b>Lokale Variablen</b>: Werden innerhalb einer Funktion definiert.&nbsp;Sie sind nur dort gültig und werden normalerweise auf dem Stack gespeichert. Nach dem Verlassen der Funktion geht ihr Wert verloren</li><li><b>Globale Variablen</b>: Werden außerhalb aller Funktionen definiert. Sie sind im gesamten Programm verfügbar und werden im RAM gespeichert</li><li><b>Statische Variablen (static)</b>: Verhalten sich wie lokale Variablen (Sichtbarkeit nur in der Funktion), aber ihr Wert bleibt erhalten, auch wenn die Funktion verlassen wird</li>"
+   "html": "<li><b>Lokale Variablen</b>: Werden innerhalb einer Funktion definiert.&nbsp;Sie sind nur dort gültig und werden normalerweise auf dem Stack gespeichert. Nach dem Verlassen der Funktion geht ihr Wert verloren</li><li><b>Globale Variablen</b>: Werden außerhalb aller Funktionen definiert. Sie sind im gesamten Programm verfügbar und werden im RAM gespeichert</li><li><b>Statische Variablen (static)</b>: Verhalten sich wie lokale Variablen (Sichtbarkeit nur in der Funktion), aber ihr Wert bleibt erhalten, auch wenn die Funktion verlassen wird.&nbsp;Sie werden <b>nicht </b>im Stack, sondern im RAM gespeichert</li>",
+   "abstand": "0"
+  },
+  {
+   "typ": "h3",
+   "html": "Speicher-Qualifizierer:",
+   "abstand": "0"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><b>const</b>: Der Wert ist unveränderlich und wird platzsparend im Flash-Speicher (Programmspeicher) abgelegt.</li><li><b>volatile</b>: Sagt dem Compiler, dass sich der Wert jederzeit durch Hardware (z.B. ein Register oder Interrupt) ändern kann. Verhindert, dass der Compiler den Zugriff wegoptimiert. Wird im RAM abgelegt.</li><li><b>register</b>: Versucht, die Variable für maximalen Speed direkt in einem CPU-Register abzulegen</li>",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "Binärsystem &amp; LED-Ansteuerung",
+   "abstand": "0"
+  },
+  {
+   "typ": "absatz",
+   "html": "Mikrocontroller steuern Hardware über binäre Muster an den Ports. Ein Port ist meist 8 Bit breit."
+  },
+  {
+   "typ": "h3",
+   "html": "Muster-Beispiele:",
+   "abstand": "0"
+  },
+  {
+   "typ": "box",
+   "html": "In der Vorlesung hat er die Ansteuerung oft anhand von LEDs Visualisiert. Mache ich hier einfach mal auch.&nbsp;",
+   "variante": "info",
+   "abstand": "0"
+  },
+  {
+   "typ": "absatz",
+   "html": "<ul><li><b>Alle 8 LEDs an einem Port anschalten</b>: 0xFF (hex) oder 0b11111111 (binär)</li><li><b>Wechselblinklicht-Muster</b>: 0xAA (10101010) oder 0x55 (01010101)</li></ul>",
+   "abstand": "0"
+  },
+  {
+   "typ": "h3",
+   "html": "Pin-Konfiguration:",
+   "abstand": "0"
+  },
+  {
+   "typ": "absatz",
+   "html": "Der Zugriff erfolgt über drei Register pro Port (z.B. Port B):<div><ol><li>DDRB (Data Direction Register): Konfiguriert den Pin als Eingang (0) oder Ausgang (1)</li><li>PORTB (Port Output Register): Setzt den Ausgangspegel auf High/5V (1) oder Low/0V (0). Wenn der Pin ein Eingang ist, aktiviert eine 1 den internen Pull-Up-Widerstand</li><li>PINB (Port Input Register): Dient zum Einlesen des Pegels (0 oder 1) von der Außenwelt</li></ol></div>",
+   "abstand": "0"
   }
- ]
+ ],
+ "abstand": "0"
 }
