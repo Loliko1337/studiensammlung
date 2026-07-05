@@ -4,8 +4,8 @@
    (Entwürfe werden nur in deinem Browser gespeichert).
    ============================================================ */
 window.SAMMLUNG_CONFIG = {
-  owner:  "",            // z. B. "maxmustermann"
-  repo:   "",            // z. B. "studiensammlung"
+  owner:  "Loliko1337",            // z. B. "maxmustermann"
+  repo:   "studiensammlung",            // z. B. "studiensammlung"
   branch: "main",
 
   // Anzeige
