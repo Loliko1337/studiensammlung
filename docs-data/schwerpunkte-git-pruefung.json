@@ -7,42 +7,42 @@
   {
    "typ": "h2",
    "html": "Pointer (Zeiger)",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "absatz",
    "html": "Zeiger sind Variablen, die die Adresse einer anderen Variable speichern.&nbsp;Ihre Größe ist architekturabhängig",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "h3",
    "html": "Syntax:",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "liste",
    "html": "<li><b>&amp; (Adress-Operator)</b>: Liefert die Speicheradresse einer Variablen</li><li><b>* (Inhalts-/Dereferenzierungs-Operator)</b>: Greift auf den Wert an der gespeicherten Adresse zu</li>",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "h3",
    "html": "Zeigerarithmetik:",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "absatz",
    "html": "Wenn du einen Zeiger erhöhst (p++), erhöht sich die Adresse um die <b>Größe des Datentyps</b>, auf den er zeigt.&nbsp;",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "h3",
    "html": "Beispiel:",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "tabelle",
    "html": "<tbody><tr><th>Adresse</th><th>Inhalt</th><th>Variable</th><th>Erklärung</th></tr><tr><td>0x08F2</td><td>0x007</td><td>n</td><td>Die Variable n hat den Wert 7</td></tr><tr><td>0x08F4</td><td>0x08F2</td><td>p</td><td>Der Zeiger p speichert die Adresse von n</td></tr></tbody>",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "box",
@@ -53,27 +53,27 @@
   {
    "typ": "h2",
    "html": "Variablentypen und Speicherorte",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "absatz",
    "html": "In der C-Programmierung für Mikrocontroller bestimmt der Typ und der Ort der Deklaration, wie lange eine Variable existiert und wer auf sie zugreifen kann.",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "h3",
    "html": "Arten von Variablen:",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "liste",
    "html": "<li><b>Lokale Variablen</b>: Werden innerhalb einer Funktion definiert.&nbsp;Sie sind nur dort gültig und werden normalerweise auf dem Stack gespeichert. Nach dem Verlassen der Funktion geht ihr Wert verloren</li><li><b>Globale Variablen</b>: Werden außerhalb aller Funktionen definiert. Sie sind im gesamten Programm verfügbar und werden im RAM gespeichert</li><li><b>Statische Variablen (static)</b>: Verhalten sich wie lokale Variablen (Sichtbarkeit nur in der Funktion), aber ihr Wert bleibt erhalten, auch wenn die Funktion verlassen wird.&nbsp;Sie werden <b>nicht </b>im Stack, sondern im RAM gespeichert</li>",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "h3",
    "html": "Speicher-Qualifizierer:",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "liste",
@@ -83,37 +83,33 @@
   {
    "typ": "h2",
    "html": "Binärsystem &amp; LED-Ansteuerung",
-   "abstand": "0"
+   "abstand": "m"
   },
   {
    "typ": "absatz",
-   "html": "Mikrocontroller steuern Hardware über binäre Muster an den Ports. Ein Port ist meist 8 Bit breit."
+   "html": "Mikrocontroller steuern Hardware über binäre Muster an den Ports. Ein Port ist meist 8 Bit breit.",
+   "abstand": "m"
   },
   {
    "typ": "h3",
-   "html": "Muster-Beispiele:",
-   "abstand": "0"
+   "html": "Muster-Beispiele:"
   },
   {
    "typ": "box",
    "html": "In der Vorlesung hat er die Ansteuerung oft anhand von LEDs Visualisiert. Mache ich hier einfach mal auch.&nbsp;",
-   "variante": "info",
-   "abstand": "0"
+   "variante": "info"
   },
   {
    "typ": "absatz",
-   "html": "<ul><li><b>Alle 8 LEDs an einem Port anschalten</b>: 0xFF (hex) oder 0b11111111 (binär)</li><li><b>Wechselblinklicht-Muster</b>: 0xAA (10101010) oder 0x55 (01010101)</li></ul>",
-   "abstand": "0"
+   "html": "<ul><li><b>Alle 8 LEDs an einem Port anschalten</b>: 0xFF (hex) oder 0b11111111 (binär)</li><li><b>Wechselblinklicht-Muster</b>: 0xAA (10101010) oder 0x55 (01010101)</li></ul>"
   },
   {
    "typ": "h3",
-   "html": "Pin-Konfiguration:",
-   "abstand": "0"
+   "html": "Pin-Konfiguration:"
   },
   {
    "typ": "absatz",
-   "html": "Der Zugriff erfolgt über drei Register pro Port (z.B. Port B):<div><ol><li>DDRB (Data Direction Register): Konfiguriert den Pin als Eingang (0) oder Ausgang (1)</li><li>PORTB (Port Output Register): Setzt den Ausgangspegel auf High/5V (1) oder Low/0V (0). Wenn der Pin ein Eingang ist, aktiviert eine 1 den internen Pull-Up-Widerstand</li><li>PINB (Port Input Register): Dient zum Einlesen des Pegels (0 oder 1) von der Außenwelt</li></ol></div>",
-   "abstand": "0"
+   "html": "Der Zugriff erfolgt über drei Register pro Port (z.B. Port B):<div><ol><li>DDRB (Data Direction Register): Konfiguriert den Pin als Eingang (0) oder Ausgang (1)</li><li>PORTB (Port Output Register): Setzt den Ausgangspegel auf High/5V (1) oder Low/0V (0). Wenn der Pin ein Eingang ist, aktiviert eine 1 den internen Pull-Up-Widerstand</li><li>PINB (Port Input Register): Dient zum Einlesen des Pegels (0 oder 1) von der Außenwelt</li></ol></div>"
   },
   {
    "typ": "h3",
@@ -139,8 +135,7 @@
   },
   {
    "typ": "h2",
-   "html": "Interrupttechnik",
-   "abstand": "0"
+   "html": "Interrupttechnik"
   },
   {
    "typ": "absatz",
@@ -153,8 +148,7 @@
   },
   {
    "typ": "h3",
-   "html": "Auslöser von Interrupts:",
-   "abstand": "0"
+   "html": "Auslöser von Interrupts:"
   },
   {
    "typ": "absatz",
@@ -169,5 +163,5 @@
    "html": "<ol><li><b>Hardware-Aktivierung:</b> Im PCICR (Pin Change Interrupt Control Register) die Port-Gruppe (z.B. Port B) aktivieren.</li><li><b>Maskierung:</b> Im PCMSKx festlegen, welche spezifischen Pins den Interrupt auslösen dürfen.</li><li><b>ISR-Definition:</b> Das Unterprogramm schreiben, das ausgeführt werden soll: ISR(PCINT0_vect) { ... }.</li><li><b>Globale Freigabe:</b> Das I-Bit im Status-Register (SREG) mit dem Befehl sei() setzen</li></ol><div><br></div><div><b>Priorität:</b> Wenn zwei Interrupts gleichzeitig auftreten, gewinnt der mit der niedrigeren Vektor-Adresse (ein RESET hat immer die höchste Priorität)</div>"
   }
  ],
- "abstand": "0"
+ "abstand": "m"
 }
