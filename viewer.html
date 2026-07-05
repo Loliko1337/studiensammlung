@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übersicht</title>
+<link rel="stylesheet" href="stil.css">
+<script src="config.js"></script>
+<script src="sammlung.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top kein-druck">
+    <div class="brand">
+      <p class="eyebrow">Übersicht</p>
+      <h1 id="kopfTitel">Wird geladen …</h1>
+      <div class="sub" id="kopfSub"></div>
+    </div>
+    <div class="kopf-aktionen">
+      <a class="btn" href="index.html">← Portal</a>
+      <a class="btn nur-admin" id="btnBearbeiten" hidden>Bearbeiten</a>
+      <button class="btn primaer" id="btnPdf">Als PDF speichern</button>
+    </div>
+  </header>
+
+  <div id="ziel"></div>
+
+  <div class="leer kein-druck" id="nichtGefunden" hidden>
+    Diese Übersicht wurde nicht gefunden. Vielleicht wurde sie umbenannt oder noch nicht veröffentlicht —
+    zurück zum <a href="index.html">Portal</a>.
+  </div>
+
+  <p class="kein-druck" style="text-align:center;color:var(--ink-soft);font-size:12px;font-family:var(--mono);margin-top:18px">
+    Tipp: „Als PDF speichern" öffnet den Druckdialog — dort als Ziel „Als PDF speichern" wählen.
+  </p>
+
+</div>
+
+<script defer>
+document.addEventListener("DOMContentLoaded", async () => {
+  const S = window.Sammlung;
+  const id = new URLSearchParams(location.search).get("doc");
+  const doc = id ? await S.docLaden(id) : null;
+
+  if (!doc){
+    document.getElementById("kopfTitel").textContent = "Nicht gefunden";
+    document.getElementById("nichtGefunden").hidden = false;
+    document.getElementById("btnPdf").hidden = true;
+    return;
+  }
+  document.title = doc.titel + " · Übersicht";
+  document.getElementById("kopfTitel").textContent = doc.titel;
+  document.getElementById("kopfSub").textContent = doc.untertitel || "";
+  S.renderDoc(doc, document.getElementById("ziel"));
+
+  if (S.eingeloggt()){
+    const b = document.getElementById("btnBearbeiten");
+    b.hidden = false;
+    b.href = "editor.html?doc=" + encodeURIComponent(doc.id);
+  }
+  document.getElementById("btnPdf").addEventListener("click", () => window.print());
+});
+</script>
+</body>
+</html>

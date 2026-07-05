@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LTI-Glieder · Lern- & Zeichenmodus</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --panel:#ffffff; --ink:#1a1d24; --ink2:#5b6472;
+    --line:#e2e5ea; --grid:#eceef2; --accent:#0b7a8c; --accent2:#0e94aa;
+    --trace:#0b7a8c; --trace2:#c2410c;
+    --ok:#2f9e44; --okbg:#ebfbee; --bad:#e03131; --badbg:#fff0f0; --warn:#c2410c;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+    --r:10px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1180px; margin:0 auto; padding:18px 16px 64px;}
+
+  header.top{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 14px; margin-bottom:14px;}
+  header.top .hgroup{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .navlink{font-family:var(--mono); font-size:12px; color:var(--accent); text-decoration:none; white-space:nowrap;
+           border:1px solid var(--line); padding:6px 11px; border-radius:7px; background:#fbfcfd;}
+  .navlink:hover{background:#effbfd; border-color:#cdd2da}
+  header.top h1{font-size:18px; margin:0; letter-spacing:-.01em; font-weight:650;}
+  header.top h1 .tag{font-family:var(--mono); color:var(--accent); font-weight:600;}
+  header.top .sub{color:var(--ink2); font-size:12.5px; font-family:var(--mono);}
+  header.top .sub a{color:var(--accent); text-decoration:none}
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:14px;}
+  .card h2{font-size:12px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink2); margin:0 0 10px; font-weight:700;}
+
+  .layout{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; margin-bottom:14px;}
+  @media(max-width:880px){ .layout{grid-template-columns:1fr} }
+
+  .chip{font-family:var(--mono); font-size:12.5px; border:1px solid var(--line); background:#fbfcfd; color:var(--ink2);
+        padding:5px 10px; border-radius:7px; cursor:pointer; user-select:none; transition:all .12s;}
+  .chip:hover{border-color:#cdd2da}
+  .chip.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .chiprow{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:8px;}
+  .grouplbl{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink2); font-weight:600; margin:8px 0 5px;}
+
+  .opt{font-family:var(--mono); font-size:13px; border:1px solid var(--line); background:#fbfcfd; padding:6px 12px;
+       border-radius:8px; cursor:pointer; transition:.12s; user-select:none;}
+  .opt:hover{border-color:#cdd2da}
+  .opt.sel{border-color:var(--accent); background:#effbfd; color:var(--accent); font-weight:600;}
+  .opts{display:flex; gap:7px; flex-wrap:wrap;}
+
+  .ja-nein{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:6px}
+  @media(max-width:520px){ .ja-nein{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:420px){ .ja-nein{grid-template-columns:1fr} }
+  .jn{border:1px solid var(--line); border-radius:8px; padding:8px 9px;}
+  .jn .jq{font-size:12.5px; font-weight:650; margin-bottom:6px;}
+  .jn .jbtns{display:flex; gap:6px;}
+  .jn .opt{flex:1; text-align:center; padding:6px 0;}
+  .builder{display:flex; flex-direction:column; gap:6px; margin-top:4px}
+  .brow{display:flex; align-items:center; gap:10px}
+  .blbl{flex:0 0 92px; font-size:12px; color:var(--ink2); font-weight:600}
+  .brow .opts{flex:1}
+
+  .btn{font-family:var(--sans); font-weight:600; font-size:13px; border:1px solid var(--accent); background:var(--accent);
+       color:#fff; padding:7px 13px; border-radius:8px; cursor:pointer; transition:.12s;}
+  .btn:hover{background:var(--accent2); border-color:var(--accent2)}
+  .btn.ghost{background:transparent; color:var(--accent)} .btn.ghost:hover{background:#effbfd}
+  .btn.sm{padding:6px 11px; font-size:12.5px}
+
+  /* sliders */
+  .sliders{margin-top:6px}
+  .slider{display:grid; grid-template-columns:90px 1fr 64px; align-items:center; gap:10px; margin-bottom:9px}
+  .slider .sl{font-family:var(--mono); font-size:12.5px; color:var(--ink)}
+  .slider .sv{font-family:var(--mono); font-size:12.5px; color:var(--accent); text-align:right}
+  input[type=range]{-webkit-appearance:none; appearance:none; height:4px; background:var(--line); border-radius:3px; outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); cursor:pointer; border:2px solid #fff; box-shadow:0 0 0 1px var(--accent)}
+  input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff}
+
+  /* info */
+  .tf{font-family:var(--mono); font-size:16px; background:#f7f9fa; border:1px solid var(--line); border-radius:8px;
+      padding:11px 12px; margin-bottom:10px; overflow-x:auto}
+  .tf sub{font-size:.72em} .tf sup{font-size:.72em}
+  .vals{font-family:var(--mono); font-size:12px; color:var(--ink2); margin-bottom:12px}
+  .clstable{display:grid; grid-template-columns:auto auto; gap:5px 14px; font-size:13px; margin-bottom:10px}
+  .clstable .k{color:var(--ink2)}
+  .clstable .v{font-family:var(--mono); font-weight:600}
+  .badge{display:inline-block; font-family:var(--mono); font-size:11px; padding:1px 7px; border-radius:5px;}
+  .badge.ja{background:var(--okbg); color:var(--ok)} .badge.nein{background:#eef0f3; color:var(--ink2)}
+  .sysnote{font-size:12.5px; color:var(--ink2); background:#f7f9fa; border:1px solid var(--line);
+           border-radius:8px; padding:10px 12px; line-height:1.55}
+  .sysnote b{color:var(--ink); font-family:var(--mono)}
+  .bezbig{font-family:var(--mono); font-size:22px; font-weight:700; color:var(--accent); margin-bottom:8px}
+
+  .plots{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;}
+  @media(max-width:900px){ .plots{grid-template-columns:1fr 1fr} }
+  @media(max-width:560px){ .plots{grid-template-columns:1fr} }
+  .plot{border:1px solid var(--line); border-radius:8px; background:#fff; padding:8px 8px 4px; min-width:0;}
+  .plot .pt{font-size:11.5px; font-weight:600; color:var(--ink); font-family:var(--mono); margin:0 0 4px 2px;}
+  .plot canvas{width:100%; height:auto; display:block;}
+  .plot.note{display:flex; align-items:center; justify-content:center; color:var(--ink2); font-size:12px;
+             min-height:120px; text-align:center; padding:14px; font-family:var(--mono)}
+  .hint{font-size:12px; color:var(--ink2); margin-top:8px}
+  .resolveOut{margin-top:8px; font-size:12.5px}
+  .resolveOut .chip{margin-right:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="hgroup">
+      <h1>LTI&#8209;Glieder <span class="tag">· Lern- &amp; Zeichenmodus</span></h1>
+      <div class="sub">Angaben → Graphen · Gegenstück zum Quiz-Trainer</div>
+    </div>
+    <a class="navlink" href="./lti-klassifikation.html">← Zum Quiz</a>
+  </header>
+
+  <div class="layout">
+    <!-- LEFT: selection + params -->
+    <div class="card">
+      <h2>Glied wählen</h2>
+      <div class="grouplbl">Grundglieder</div>
+      <div class="chiprow" id="rowGrund"></div>
+      <div class="grouplbl">Erweiterte Glieder</div>
+      <div class="chiprow" id="rowErw"></div>
+
+      <div class="grouplbl" style="margin-top:14px">… oder aus den Angaben bestimmen</div>
+      <div class="opts" id="rStat" style="margin-bottom:2px">
+        <div class="opt" data-v="P">P</div><div class="opt" data-v="I">I</div><div class="opt" data-v="D">D</div>
+      </div>
+      <div class="ja-nein">
+        <div class="jn"><div class="jq">Verzögerung</div><div class="jbtns" data-jn="verz">
+          <div class="opt" data-v="ja">ja</div><div class="opt" data-v="nein">nein</div></div></div>
+        <div class="jn"><div class="jq">Vorhalt</div><div class="jbtns" data-jn="vorhalt">
+          <div class="opt" data-v="ja">ja</div><div class="opt" data-v="nein">nein</div></div></div>
+        <div class="jn"><div class="jq">Allpass</div><div class="jbtns" data-jn="allpass">
+          <div class="opt" data-v="ja">ja</div><div class="opt" data-v="nein">nein</div></div></div>
+        <div class="jn"><div class="jq">Totzeit</div><div class="jbtns" data-jn="tot">
+          <div class="opt" data-v="ja">ja</div><div class="opt" data-v="nein">nein</div></div></div>
+      </div>
+      <div style="margin-top:9px"><button class="btn sm" id="resolveBtn">→ passende Glieder zeigen</button></div>
+      <div class="resolveOut" id="resolveOut"></div>
+
+      <div class="grouplbl" style="margin-top:14px">… oder ein beliebiges Glied bauen</div>
+      <div class="builder" id="builder">
+        <div class="brow"><span class="blbl">Stationär</span>
+          <div class="opts bopt" data-b="stat">
+            <div class="opt sel" data-v="P">P</div><div class="opt" data-v="I">I</div><div class="opt" data-v="D">D</div></div></div>
+        <div class="brow"><span class="blbl">Verzögerung</span>
+          <div class="opts bopt" data-b="verz">
+            <div class="opt sel" data-v="0">0</div><div class="opt" data-v="1">1</div>
+            <div class="opt" data-v="2r">2 reell</div><div class="opt" data-v="2k">2 kompl.</div></div></div>
+        <div class="brow"><span class="blbl">Vorhalt</span>
+          <div class="opts bopt" data-b="vor">
+            <div class="opt sel" data-v="0">0</div><div class="opt" data-v="1">1</div><div class="opt" data-v="2">2</div></div></div>
+        <div class="brow"><span class="blbl">Allpass</span>
+          <div class="opts bopt" data-b="ap">
+            <div class="opt sel" data-v="0">0</div><div class="opt" data-v="1">1</div></div></div>
+        <div class="brow"><span class="blbl">Totzeit</span>
+          <div class="opts bopt" data-b="tot">
+            <div class="opt sel" data-v="0">nein</div><div class="opt" data-v="1">ja</div></div></div>
+      </div>
+      <div style="margin-top:9px; display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn sm" id="buildBtn">→ Glied erzeugen</button>
+        <button class="btn sm" id="randomBtn">🎲 Zufallsglied</button>
+      </div>
+
+      <h2 style="margin-top:16px">Parameter</h2>
+      <div class="sliders" id="sliders"></div>
+      <div class="hint">Regler verschieben — alle Graphen aktualisieren sich sofort.</div>
+    </div>
+
+    <!-- RIGHT: info -->
+    <div class="card">
+      <h2>Klassifikation</h2>
+      <div class="bezbig" id="bez">—</div>
+      <div class="tf" id="tf"></div>
+      <div class="vals" id="vals"></div>
+      <div class="clstable" id="cls"></div>
+      <div class="sysnote" id="note"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Charakteristische Systemfunktionen</h2>
+    <div class="plots" id="plots"></div>
+  </div>
+
+</div>
+
+<script src="lti-systems.js"></script>
+<script>
+"use strict";
+
+/* ---------- Komplexe Hilfen ---------- */
+const cmul=(a,b)=>[a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]];
+const cdiv=(a,b)=>{const d=b[0]*b[0]+b[1]*b[1]; return [(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d];};
+const cabs=a=>Math.hypot(a[0],a[1]); const carg=a=>Math.atan2(a[1],a[0]);
+
+/* ---------- Parameter-Metadaten ---------- */
+const PM=LTI.PM;
+const DEF=LTI.DEF;
+
+/* PT2-Sprungantwort (unterdämpft, D<1) */
+function pt2step(t,p){const wn=1/p.T, wd=wn*Math.sqrt(1-p.D*p.D), ph=Math.acos(p.D);
+  return p.K*(1-(1/Math.sqrt(1-p.D*p.D))*Math.exp(-p.D*wn*t)*Math.sin(wd*t+ph));}
+
+/* ---------- Katalog (Funktionen der Parameter p) ---------- */
+const CAT=LTI.CAT;
+
+function tfHTML(s){return s
+  .replace(/K_I/g,"K<sub>I</sub>").replace(/K_D/g,"K<sub>D</sub>")
+  .replace(/T_I/g,"T<sub>I</sub>").replace(/T_D/g,"T<sub>D</sub>")
+  .replace(/Tₜ/g,"T<sub>t</sub>").replace(/s²/g,"s<sup>2</sup>").replace(/T²/g,"T<sup>2</sup>")
+  .replace(/e\^\(([^)]*)\)/g,"e<sup>$1</sup>");}
+
+/* Parameter-Label (K_I, T_1 …) in Subscript-HTML wandeln */
+function subLabel(s){return s
+  .replace("K_I","K<sub>I</sub>").replace("K_D","K<sub>D</sub>")
+  .replace("T_I","T<sub>I</sub>").replace("T_D","T<sub>D</sub>").replace("T_t","T<sub>t</sub>")
+  .replace("T_1","T<sub>1</sub>").replace("T_2","T<sub>2</sub>");}
+
+/* ---------- Plot-Engine (identisch zum Quiz) ---------- */
+const COL={axis:"#9aa3af",grid:"#eceef2",text:"#5b6472",trace:"#0b7a8c",trace2:"#c2410c",zero:"#1a1d24"};
+const W_MIN=0.05,W_MAX=60,NW=420;
+const wArr=(()=>{const a=[],l0=Math.log10(W_MIN),l1=Math.log10(W_MAX);
+  for(let i=0;i<NW;i++)a.push(Math.pow(10,l0+(l1-l0)*i/(NW-1)));return a;})();
+function setupCanvas(cv,wCss,hCss){const dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(wCss*dpr);cv.height=Math.round(hCss*dpr);
+  const ctx=cv.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,wCss,hCss);return{ctx,W:wCss,H:hCss};}
+function fmtTick(v){if(v===0)return"0";const a=Math.abs(v);
+  if(a>=1000||a<0.01)return v.toExponential(0);if(Number.isInteger(v))return""+v;return(Math.round(v*100)/100).toString();}
+function logTicks(){return[0.1,1,10];}
+function frame(ctx,m,W,H,xlab,ylab){ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle=COL.axis;ctx.lineWidth=1;ctx.strokeRect(m.l,m.t,W-m.l-m.r,H-m.t-m.b);
+  ctx.fillStyle=COL.text;ctx.font="10px ui-monospace,monospace";ctx.textAlign="center";
+  ctx.fillText(xlab,m.l+(W-m.l-m.r)/2,H-3);
+  ctx.save();ctx.translate(9,m.t+(H-m.t-m.b)/2);ctx.rotate(-Math.PI/2);ctx.fillText(ylab,0,0);ctx.restore();}
+function unwrap(arr){const o=[arr[0]];for(let i=1;i<arr.length;i++){let d=arr[i]-arr[i-1];
+  while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;o.push(o[i-1]+d);}return o;}
+
+function drawBode(cv){const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:42,r:10,t:10,b:24},px=W-m.l-m.r,py=H-m.t-m.b;
+  const db=wArr.map(w=>20*Math.log10(Math.max(1e-9,cabs(SYS.G(w)))));
+  let ymin=Math.min(...db),ymax=Math.max(...db);ymin=Math.floor(ymin/20)*20;ymax=Math.ceil(ymax/20)*20;
+  if(ymax-ymin<40)ymax=ymin+40;ymin=Math.max(ymin,-80);ymax=Math.min(ymax,80);
+  const lx0=Math.log10(W_MIN),lx1=Math.log10(W_MAX);
+  const X=w=>m.l+(Math.log10(w)-lx0)/(lx1-lx0)*px, Y=d=>m.t+(ymax-d)/(ymax-ymin)*py;
+  frame(ctx,m,W,H,"ω (log)","|G| / dB");
+  ctx.font="9px ui-monospace,monospace";ctx.textAlign="center";
+  logTicks().forEach(w=>{const x=X(w);ctx.strokeStyle=COL.grid;ctx.beginPath();ctx.moveTo(x,m.t);ctx.lineTo(x,m.t+py);ctx.stroke();
+    ctx.fillStyle=COL.text;ctx.fillText(fmtTick(w),x,H-13);});
+  ctx.textAlign="right";
+  for(let d=ymin;d<=ymax;d+=20){const y=Y(d);ctx.strokeStyle=COL.grid;ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(m.l+px,y);ctx.stroke();
+    ctx.fillStyle=COL.text;ctx.fillText(d,m.l-4,y+3);}
+  ctx.strokeStyle=COL.trace;ctx.lineWidth=2;ctx.beginPath();
+  wArr.forEach((w,i)=>{const x=X(w),y=Y(Math.max(ymin,Math.min(ymax,db[i])));i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();}
+
+function drawPhase(cv){const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:42,r:10,t:10,b:24},px=W-m.l-m.r,py=H-m.t-m.b;
+  let ph=unwrap(wArr.map(w=>carg(SYS.G(w)))).map(r=>r*180/Math.PI);
+  let ymin=Math.min(...ph),ymax=Math.max(...ph);ymin=Math.floor(ymin/45)*45;ymax=Math.ceil(ymax/45)*45;if(ymax-ymin<90)ymax=ymin+90;
+  const lx0=Math.log10(W_MIN),lx1=Math.log10(W_MAX);
+  const X=w=>m.l+(Math.log10(w)-lx0)/(lx1-lx0)*px, Y=d=>m.t+(ymax-d)/(ymax-ymin)*py;
+  frame(ctx,m,W,H,"ω (log)","φ / °");
+  ctx.font="9px ui-monospace,monospace";ctx.textAlign="center";
+  logTicks().forEach(w=>{const x=X(w);ctx.strokeStyle=COL.grid;ctx.beginPath();ctx.moveTo(x,m.t);ctx.lineTo(x,m.t+py);ctx.stroke();
+    ctx.fillStyle=COL.text;ctx.fillText(fmtTick(w),x,H-13);});
+  ctx.textAlign="right";
+  for(let d=ymin;d<=ymax;d+=45){const y=Y(d);ctx.strokeStyle=d===0?COL.axis:COL.grid;ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(m.l+px,y);ctx.stroke();
+    ctx.fillStyle=COL.text;ctx.fillText(d+"°",m.l-4,y+3);}
+  ctx.strokeStyle=COL.trace2;ctx.lineWidth=2;ctx.beginPath();
+  wArr.forEach((w,i)=>{const x=X(w),y=Y(Math.max(ymin,Math.min(ymax,ph[i])));i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();}
+
+function drawNyquist(cv){const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:30,r:12,t:10,b:24},px=W-m.l-m.r,py=H-m.t-m.b;
+  const pts=wArr.map(w=>SYS.G(w)).filter(p=>isFinite(p[0])&&isFinite(p[1]));
+  const LIM=24;let re=pts.map(p=>Math.max(-LIM,Math.min(LIM,p[0]))),im=pts.map(p=>Math.max(-LIM,Math.min(LIM,p[1])));
+  let xmin=Math.min(0,...re),xmax=Math.max(0,...re),ymin=Math.min(0,...im),ymax=Math.max(0,...im);
+  let span=Math.max(xmax-xmin,ymax-ymin,1)*1.12;const cx=(xmin+xmax)/2,cy=(ymin+ymax)/2,sc=Math.min(px,py)/span;
+  const X=v=>m.l+px/2+(v-cx)*sc, Y=v=>m.t+py/2-(v-cy)*sc;
+  frame(ctx,m,W,H,"Re","Im");
+  ctx.strokeStyle=COL.axis;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(m.l,Y(0));ctx.lineTo(m.l+px,Y(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(X(0),m.t);ctx.lineTo(X(0),m.t+py);ctx.stroke();
+  ctx.strokeStyle=COL.trace;ctx.lineWidth=2;ctx.beginPath();let drawn=false;
+  for(let i=0;i<re.length;i++){const x=X(re[i]),y=Y(im[i]);
+    if(x<m.l-2||x>m.l+px+2||y<m.t-2||y>m.t+py+2){drawn=false;continue;}
+    drawn?ctx.lineTo(x,y):ctx.moveTo(x,y);drawn=true;}
+  ctx.stroke();
+  const k=Math.floor(re.length*0.5);
+  if(k>1){const x1=X(re[k-1]),y1=Y(im[k-1]),x2=X(re[k]),y2=Y(im[k]),a=Math.atan2(y2-y1,x2-x1);
+    ctx.fillStyle=COL.trace;ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-7*Math.cos(a-.4),y2-7*Math.sin(a-.4));ctx.lineTo(x2-7*Math.cos(a+.4),y2-7*Math.sin(a+.4));ctx.closePath();ctx.fill();}
+  ctx.fillStyle=COL.zero;ctx.beginPath();ctx.arc(X(re[0]),Y(im[0]),2.5,0,7);ctx.fill();}
+
+function drawStep(cv){const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:38,r:10,t:12,b:24},px=W-m.l-m.r,py=H-m.t-m.b;const tmax=8,N=300;
+  const ts=[],ys=[];for(let i=0;i<=N;i++){const t=tmax*i/N;ts.push(t);ys.push(SYS.step(t));}
+  let ymin=Math.min(0,...ys),ymax=Math.max(...ys);
+  if(SYS.impulse&&typeof SYS.impBaseNum==="number")ymax=Math.max(ymax,SYS.impBaseNum);
+  if(ymax-ymin<0.5)ymax=ymin+1;const pad=(ymax-ymin)*0.12;ymin-=pad*0.3;ymax+=pad;
+  const X=t=>m.l+t/tmax*px, Y=v=>m.t+(ymax-v)/(ymax-ymin)*py;
+  frame(ctx,m,W,H,"t","h(t)");
+  ctx.font="9px ui-monospace,monospace";ctx.textAlign="right";const ny=4;
+  for(let i=0;i<=ny;i++){const v=ymin+(ymax-ymin)*i/ny,y=Y(v);ctx.strokeStyle=Math.abs(v)<1e-9?COL.axis:COL.grid;
+    ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(m.l+px,y);ctx.stroke();ctx.fillStyle=COL.text;ctx.fillText(fmtTick(v),m.l-4,y+3);}
+  ctx.textAlign="center";for(let t=0;t<=tmax;t+=2){ctx.fillStyle=COL.text;ctx.fillText(t,X(t),H-13);}
+  ctx.strokeStyle=COL.trace;ctx.lineWidth=2;ctx.beginPath();
+  ts.forEach((t,i)=>{const x=X(t),y=Y(Math.max(ymin,Math.min(ymax,ys[i])));i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+    if(SYS.impulse){
+    const tImp = SYS.impShift || 0;
+    const x0 = X(tImp) + 0.5;
+    const yTop = m.t + 8;
+    const yBase = Y(typeof SYS.impBaseNum === "number" ? SYS.impBaseNum : 0);
+    
+    ctx.strokeStyle = COL.trace2; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0, yBase); ctx.lineTo(x0, yTop); ctx.stroke();
+    ctx.fillStyle = COL.trace2; ctx.beginPath(); ctx.moveTo(x0, yTop - 1); ctx.lineTo(x0 - 4, yTop + 7); ctx.lineTo(x0 + 4, yTop + 7); ctx.closePath(); ctx.fill();
+    ctx.font = "9px ui-monospace,monospace"; ctx.textAlign = "left"; ctx.fillText("δ", x0 + 5, yTop + 6);
+  }
+}
+
+function drawPN(cv){const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:30,r:12,t:10,b:24},px=W-m.l-m.r,py=H-m.t-m.b;
+  const all=[...SYS.poles,...SYS.zeros];let xmin=-2.2,xmax=0.6,ymin=-1.6,ymax=1.6;
+  all.forEach(p=>{xmin=Math.min(xmin,p[0]-0.4);xmax=Math.max(xmax,p[0]+0.4);ymin=Math.min(ymin,p[1]-0.4);ymax=Math.max(ymax,p[1]+0.4);});
+  const span=Math.max(xmax-xmin,ymax-ymin),cx=(xmin+xmax)/2,cy=(ymin+ymax)/2,sc=Math.min(px,py)/(span*1.1);
+  const X=v=>m.l+px/2+(v-cx)*sc, Y=v=>m.t+py/2-(v-cy)*sc;
+  frame(ctx,m,W,H,"Re(s)","Im(s)");
+  ctx.strokeStyle=COL.axis;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(m.l,Y(0));ctx.lineTo(m.l+px,Y(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(X(0),m.t);ctx.lineTo(X(0),m.t+py);ctx.stroke();
+  ctx.strokeStyle=COL.trace;ctx.lineWidth=2.2;
+  SYS.poles.forEach(p=>{const x=X(p[0]),y=Y(p[1]),r=5;ctx.beginPath();ctx.moveTo(x-r,y-r);ctx.lineTo(x+r,y+r);ctx.moveTo(x+r,y-r);ctx.lineTo(x-r,y+r);ctx.stroke();});
+  ctx.strokeStyle=COL.trace2;ctx.lineWidth=2.2;
+  SYS.zeros.forEach(p=>{ctx.beginPath();ctx.arc(X(p[0]),Y(p[1]),5,0,7);ctx.stroke();});
+  ctx.font="9px ui-monospace,monospace";ctx.textAlign="left";
+  ctx.fillStyle=COL.trace;ctx.fillText("× Pol",m.l+4,m.t+11);ctx.fillStyle=COL.trace2;ctx.fillText("○ Nullstelle",m.l+48,m.t+11);}
+
+const PLOTS={
+  bode:{title:"Amplitudengang  |G(jω)|",fn:drawBode},
+  phase:{title:"Phasengang  arg G(jω)",fn:drawPhase},
+  nyq:{title:"Ortskurve  G(jω)",fn:drawNyquist},
+  step:{title:"Sprungantwort  h(t)",fn:drawStep},
+  pn:{title:"Pol-/Nullstellenplan",fn:drawPN},
+};
+const PLOT_ORDER=["bode","phase","nyq","step","pn"];
+
+/* ---------- State & Build ---------- */
+let DEFSYS=null;   // aktuelles Katalog-Glied
+let P={};          // aktuelle Parameter
+let SYS=null;      // gebundenes System für die Plots
+
+function buildSYS(){
+  const d=DEFSYS;
+  const shift=(d.tot && P.Tt)?P.Tt:0;
+  SYS={
+    G:w=>d.G(w,P), step:t=>d.step(t,P),
+    poles:d.poles(P), zeros:d.zeros(P),
+    impulse:d.impulse,
+    impBaseNum: d.impulse ? d.step(shift+1e-6, P) : null,
+    impShift: shift
+  };
+}
+
+
+function $(s){return document.querySelector(s);}
+function $$(s){return[...document.querySelectorAll(s)];}
+
+function renderPlots(){
+  const host=$("#plots");host.innerHTML="";
+  PLOT_ORDER.forEach(key=>{
+    const wrap=document.createElement("div");wrap.className="plot";
+    const t=document.createElement("div");t.className="pt";t.textContent=PLOTS[key].title;wrap.appendChild(t);
+    if(key==="pn" && SYS.poles.length===0 && SYS.zeros.length===0){
+      const n=document.createElement("div");n.className="plot note";n.style.minHeight="120px";
+      n.textContent=SYS.dtNote?"Totzeit: keine endlichen Pole/Nullstellen (wesentliche Singularität).":"Keine endlichen Pole oder Nullstellen.";
+      wrap.appendChild(n);host.appendChild(wrap);return;
+    }
+    const cv=document.createElement("canvas");wrap.appendChild(cv);host.appendChild(wrap);
+    requestAnimationFrame(()=>PLOTS[key].fn(cv));
+  });
+}
+
+function renderSliders(){
+  const host=$("#sliders");host.innerHTML="";
+  DEFSYS.params.forEach(k=>{
+    const meta=PM[k];
+    const row=document.createElement("div");row.className="slider";
+    const lab=document.createElement("div");lab.className="sl";lab.innerHTML=subLabel(meta.label);
+    const inp=document.createElement("input");inp.type="range";inp.min=meta.min;inp.max=meta.max;inp.step=meta.step;inp.value=P[k];
+    const val=document.createElement("div");val.className="sv";
+    const show=()=>{val.textContent=(+P[k]).toFixed(meta.step<1?(meta.step<0.1?2:1):0)+meta.unit;};
+    show();
+    inp.addEventListener("input",()=>{P[k]=parseFloat(inp.value);show();buildSYS();renderInfo();renderPlots();});
+    row.appendChild(lab);row.appendChild(inp);row.appendChild(val);host.appendChild(row);
+  });
+}
+
+function renderInfo(){
+  $("#bez").textContent=DEFSYS.name;
+  $("#tf").innerHTML=tfHTML(DEFSYS.tf);
+  const vals=DEFSYS.params.map(k=>{const meta=PM[k];
+    return subLabel(meta.label)+" = "+(+P[k]).toFixed(meta.step<1?(meta.step<0.1?2:1):0)+meta.unit;}).join(",   ");
+  $("#vals").innerHTML="Aktuell:  "+vals;
+  const yn=b=>b?'<span class="badge ja">ja</span>':'<span class="badge nein">nein</span>';
+  $("#cls").innerHTML=
+    `<div class="k">Stationäres Verhalten</div><div class="v">${DEFSYS.stat}</div>`+
+    `<div class="k">Verzögerung</div><div class="v">${yn(DEFSYS.verz)}</div>`+
+    `<div class="k">Vorhalt</div><div class="v">${yn(DEFSYS.vorhalt)}</div>`+
+    `<div class="k">Allpass</div><div class="v">${yn(DEFSYS.allpass)}</div>`+
+    `<div class="k">Totzeit</div><div class="v">${yn(DEFSYS.tot)}</div>`;
+  $("#note").innerHTML=DEFSYS.note;
+}
+
+function selectSystem(id){
+  loadSystem(CAT.find(s=>s.id===id));
+}
+function loadSystem(sys){
+  DEFSYS=sys;
+  P={}; DEFSYS.params.forEach(k=>P[k]=DEF[k]);
+  buildSYS();
+  $$(".chip[data-sys]").forEach(c=>c.classList.toggle("on",c.dataset.sys===sys.id));
+  renderSliders();renderInfo();renderPlots();
+}
+
+/* ---------- Glied bauen ---------- */
+const bsel={stat:"P",verz:"0",vor:"0",ap:"0",tot:"0"};
+$$("#builder .bopt").forEach(grp=>{const key=grp.dataset.b;
+  grp.querySelectorAll(".opt").forEach(o=>o.addEventListener("click",()=>{
+    bsel[key]=o.dataset.v; grp.querySelectorAll(".opt").forEach(x=>x.classList.toggle("sel",x===o));}));});
+function recipeFromBuilder(){
+  const origin = bsel.stat==="I"?-1 : bsel.stat==="D"?1 : 0;
+  const rec={origin, gain: origin>0?"KD":origin<0?"KI":"K"};
+  if(bsel.verz==="1") rec.lags=["T"];
+  else if(bsel.verz==="2r") rec.lags=["T","T1"];
+  else if(bsel.verz==="2k") rec.pt2={T:"T",D:"D"};
+  const nv=+bsel.vor; if(nv===1) rec.leads=["TD"]; else if(nv===2) rec.leads=["TD","T2"];
+  if(bsel.ap==="1"){ rec.aps=["T"]; if(!rec.lags&&!rec.pt2) rec.lags=["T"]; } // Allpass braucht einen Pol
+  if(bsel.tot==="1") rec.dead="Tt";
+  if(origin<0 && rec.leads){ rec.gain=(p)=>p.K/p.TI; rec.gainParams=["K","TI"]; rec.leads[0]="TI"; }
+  rec.id="BUILD";
+  return rec;
+}
+$("#buildBtn").addEventListener("click",()=>{ loadSystem(LTI.compose(recipeFromBuilder())); });
+$("#randomBtn").addEventListener("click",()=>{
+  const rec=LTI.randomRecipe(); const sys=LTI.compose(rec);
+  // Builder-Buttons an Zufall anpassen
+  bsel.stat=sys.stat; bsel.verz= rec.pt2?"2k":(rec.lags?(rec.lags.length>=2?"2r":"1"):"0");
+  bsel.vor= rec.leads?(rec.leads.length>=2?"2":"1"):"0"; bsel.ap=rec.aps?"1":"0"; bsel.tot=rec.dead?"1":"0";
+  $$("#builder .bopt").forEach(grp=>{const key=grp.dataset.b;
+    grp.querySelectorAll(".opt").forEach(x=>x.classList.toggle("sel",x.dataset.v===bsel[key]));});
+  loadSystem(sys);
+});
+
+/* Selektor-Chips bauen */
+function buildSelector(){
+  const g=$("#rowGrund"), e=$("#rowErw");
+  CAT.forEach(s=>{
+    const c=document.createElement("div");c.className="chip";c.dataset.sys=s.id;c.textContent=s.name;
+    c.addEventListener("click",()=>selectSystem(s.id));
+    (s.level==="grund"?g:e).appendChild(c);
+  });
+}
+
+/* "nach Angaben" */
+const rsel={stat:null,verz:null,vorhalt:null,allpass:null,tot:null};
+$$("#rStat .opt").forEach(o=>o.addEventListener("click",()=>{
+  rsel.stat=o.dataset.v;$$("#rStat .opt").forEach(x=>x.classList.toggle("sel",x===o));}));
+$$(".jbtns").forEach(grp=>{const key=grp.dataset.jn;
+  grp.querySelectorAll(".opt").forEach(o=>o.addEventListener("click",()=>{
+    rsel[key]=o.dataset.v;grp.querySelectorAll(".opt").forEach(x=>x.classList.toggle("sel",x===o));}));});
+
+$("#resolveBtn").addEventListener("click",()=>{
+  const out=$("#resolveOut");
+  const have=["stat","verz","vorhalt","allpass","tot"].filter(k=>rsel[k]!=null);
+  if(have.length<5){out.innerHTML='<span style="color:var(--warn)">Bitte alle fünf Angaben wählen.</span>';return;}
+  
+  const matches=CAT.filter(s=> s.stat===rsel.stat &&
+    (s.verz?"ja":"nein")===rsel.verz && (s.vorhalt?"ja":"nein")===rsel.vorhalt && (s.allpass?"ja":"nein")===rsel.allpass && (s.tot?"ja":"nein")===rsel.tot);
+  if(matches.length===0){out.innerHTML='<span style="color:var(--bad)">Keine Kombination im Katalog passt zu diesen Angaben.</span>';return;}
+  let html='<div style="margin-bottom:5px;color:var(--ink2)">'+
+    (matches.length===1?'Eindeutig:':'Mehrere Glieder passen (die ja/nein-Angaben legen die Ordnung nicht fest):')+'</div>';
+  matches.forEach(s=>{html+=`<span class="chip" data-pick="${s.id}">${s.name}</span>`;});
+  out.innerHTML=html;
+  out.querySelectorAll(".chip[data-pick]").forEach(c=>c.addEventListener("click",()=>selectSystem(c.dataset.pick)));
+  if(matches.length===1) selectSystem(matches[0].id);
+});
+
+let rT;window.addEventListener("resize",()=>{clearTimeout(rT);rT=setTimeout(renderPlots,150);});
+
+/* init */
+buildSelector();
+selectSystem("PT1");
+</script>
+</body>
+</html>

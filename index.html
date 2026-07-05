@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studiensammlung · Portal</title>
+<link rel="stylesheet" href="stil.css">
+<script src="config.js"></script>
+<script src="sammlung.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <p class="eyebrow">Laborregal · Semestermaterial</p>
+      <h1 id="portalTitel">Studiensammlung</h1>
+      <div class="sub" id="portalUntertitel"></div>
+    </div>
+    <div class="kopf-aktionen">
+      <div class="readout aus" id="statusReadout">
+        <span class="rlabel">Modus</span>
+        <span class="rval" id="statusWert">GAST</span>
+      </div>
+      <button class="btn" id="btnLogin">Anmelden</button>
+      <a class="btn primaer" id="btnNeu" href="editor.html" hidden>+ Neue Übersicht</a>
+    </div>
+  </header>
+
+  <!-- Übersichten -->
+  <section class="abschnitt">
+    <div class="abschnitt-kopf">
+      <h2>Übersichten &amp; Zusammenfassungen</h2>
+      <span class="zaehler" id="zaehlerDocs"></span>
+    </div>
+    <div class="raster" id="rasterDocs"></div>
+    <div class="leer" id="leerDocs" hidden>
+      Noch keine Übersichten veröffentlicht.
+      <span class="nur-admin" hidden> Melde dich an und klicke auf <strong>+ Neue Übersicht</strong>, um die erste zu bauen.</span>
+    </div>
+  </section>
+
+  <!-- Lokale Entwürfe (nur sichtbar wenn vorhanden) -->
+  <section class="abschnitt" id="abschnittEntwuerfe" hidden>
+    <div class="abschnitt-kopf">
+      <h2>Entwürfe auf diesem Gerät</h2>
+      <span class="zaehler" id="zaehlerEntwuerfe"></span>
+    </div>
+    <div class="raster" id="rasterEntwuerfe"></div>
+  </section>
+
+  <!-- Trainer -->
+  <section class="abschnitt">
+    <div class="abschnitt-kopf">
+      <h2>Interaktive Trainer</h2>
+      <div style="display:flex;gap:10px;align-items:baseline">
+        <span class="zaehler" id="zaehlerTrainer"></span>
+        <button class="btn klein nur-admin" id="btnTrainerUpload" hidden>+ Trainer hochladen</button>
+      </div>
+    </div>
+    <div class="raster" id="rasterTrainer"></div>
+    <div class="leer" id="leerTrainer" hidden>
+      Keine Trainer gefunden. Lege HTML-Dateien im Ordner <code>trainer/</code> ab und
+      trage sie in <code>trainer/manifest.json</code> ein — oder lade sie nach dem Anmelden direkt hier hoch.
+    </div>
+  </section>
+
+  <div class="hinweis kein-druck" id="hostHinweis" hidden>
+    Diese Seite wurde direkt als Datei geöffnet — Inhalte aus <code>docs-data/</code> und
+    <code>trainer/manifest.json</code> können so nicht geladen werden. Öffne die Sammlung über den
+    Hosting-Link (z.&nbsp;B. GitHub Pages) oder starte lokal einen Mini-Server.
+  </div>
+
+</div>
+
+<!-- Login-Dialog -->
+<dialog id="dlgLogin">
+  <h2>Anmelden</h2>
+  <p id="loginText"></p>
+  <label for="tokenInput">GitHub-Token</label>
+  <input type="password" id="tokenInput" placeholder="github_pat_…" autocomplete="off">
+  <div class="hinweis">
+    Token erstellen: GitHub → Settings → Developer settings → <strong>Fine-grained tokens</strong> →
+    „Generate new token" → nur dieses Repository auswählen → Berechtigung
+    <strong>Contents: Read and write</strong>. Der Token bleibt ausschließlich in diesem Browser gespeichert.
+  </div>
+  <div class="hinweis fehler" id="loginFehler" hidden></div>
+  <div class="dialog-fuss">
+    <button class="btn" id="btnLoginAbbruch">Abbrechen</button>
+    <button class="btn gefahr" id="btnLogout" hidden>Abmelden</button>
+    <button class="btn primaer" id="btnLoginOk">Anmelden</button>
+  </div>
+</dialog>
+
+<!-- Trainer-Upload-Dialog -->
+<dialog id="dlgUpload">
+  <h2>Trainer hochladen</h2>
+  <p>Die HTML-Datei wird in den Ordner <code>trainer/</code> des Repositorys übernommen und
+     erscheint danach automatisch im Portal. Gehören mehrere Dateien zusammen (z.&nbsp;B. eine
+     <code>.js</code>-Datei), lade sie nacheinander hoch — nur die HTML-Datei braucht Titel und Beschreibung.</p>
+  <label for="uplDatei">Datei</label>
+  <input type="file" id="uplDatei" accept=".html,.htm,.js,.css,.json,.svg,.png">
+  <label for="uplTitel">Titel (für die Kachel)</label>
+  <input type="text" id="uplTitel" placeholder="z. B. Antestat-Trainer V2">
+  <label for="uplBeschreibung">Kurzbeschreibung</label>
+  <input type="text" id="uplBeschreibung" placeholder="Worum geht's?">
+  <div class="hinweis fehler" id="uplFehler" hidden></div>
+  <div class="hinweis ok-meldung" id="uplOk" hidden></div>
+  <div class="dialog-fuss">
+    <button class="btn" id="btnUplAbbruch">Schließen</button>
+    <button class="btn primaer" id="btnUplOk">Hochladen</button>
+  </div>
+</dialog>
+
+<script defer>
+document.addEventListener("DOMContentLoaded", async () => {
+  const S = window.Sammlung, C = S.CFG;
+  const $ = id => document.getElementById(id);
+
+  $("portalTitel").textContent = C.titel || "Studiensammlung";
+  $("portalUntertitel").textContent = C.untertitel || "";
+  document.title = (C.titel || "Studiensammlung") + " · Portal";
+
+  if (location.protocol === "file:") $("hostHinweis").hidden = false;
+
+  /* ---------- Status / Adminmodus ---------- */
+  function statusZeigen(){
+    const admin = S.eingeloggt();
+    $("statusWert").textContent = admin ? (S.repoKonfiguriert() ? "ADMIN" : "LOKAL") : "GAST";
+    $("statusReadout").classList.toggle("aus", !admin);
+    $("btnLogin").textContent = admin ? "Angemeldet ✓" : "Anmelden";
+    $("btnNeu").hidden = !admin;
+    document.querySelectorAll(".nur-admin").forEach(e => e.hidden = !admin);
+  }
+
+  /* ---------- Übersichten laden ---------- */
+  const idx = await S.indexLaden();
+  const rD = $("rasterDocs");
+  idx.docs.forEach(d => {
+    const a = document.createElement("a");
+    a.className = "karte doc";
+    a.href = "viewer.html?doc=" + encodeURIComponent(d.id);
+    a.innerHTML = `
+      <span class="modul">Übersicht</span>
+      <h3>${S.esc(d.titel)}</h3>
+      <p>${S.esc(d.untertitel || "")}</p>
+      <div class="fuss"><span>Stand ${S.esc(d.stand || "")}</span><span class="led"></span></div>
+      <div class="karten-werkzeuge nur-admin" hidden>
+        <a class="btn klein" href="editor.html?doc=${encodeURIComponent(d.id)}">Bearbeiten</a>
+      </div>`;
+    a.querySelectorAll(".karten-werkzeuge a").forEach(x => x.addEventListener("click", e => e.stopPropagation()));
+    rD.appendChild(a);
+  });
+  $("zaehlerDocs").textContent = idx.docs.length + " veröffentlicht";
+  $("leerDocs").hidden = idx.docs.length > 0;
+
+  /* ---------- Lokale Entwürfe ---------- */
+  const entwuerfe = Object.values(S.lokaleDocs()).filter(d => !idx.docs.some(x => x.id === d.id));
+  if (entwuerfe.length){
+    $("abschnittEntwuerfe").hidden = false;
+    $("zaehlerEntwuerfe").textContent = entwuerfe.length + " nur in diesem Browser";
+    const rE = $("rasterEntwuerfe");
+    entwuerfe.forEach(d => {
+      const a = document.createElement("a");
+      a.className = "karte doc entwurf";
+      a.href = "editor.html?doc=" + encodeURIComponent(d.id);
+      a.innerHTML = `
+        <span class="modul">Entwurf</span>
+        <h3>${S.esc(d.titel || "Ohne Titel")}</h3>
+        <p>${S.esc(d.untertitel || "")}</p>
+        <div class="fuss"><span>Stand ${S.esc(d.stand || "")}</span><span class="led"></span></div>`;
+      rE.appendChild(a);
+    });
+  }
+
+  /* ---------- Trainer laden ---------- */
+  const man = await S.manifestLaden();
+  const rT = $("rasterTrainer");
+  man.trainer.forEach(t => {
+    const a = document.createElement("a");
+    a.className = "karte";
+    a.href = t.datei;
+    a.innerHTML = `
+      <span class="modul">Trainer</span>
+      <h3>${S.esc(t.titel)}</h3>
+      <p>${S.esc(t.beschreibung || "")}</p>
+      <div class="fuss"><span>interaktiv</span><span class="led"></span></div>`;
+    rT.appendChild(a);
+  });
+  $("zaehlerTrainer").textContent = man.trainer.length + " Module";
+  $("leerTrainer").hidden = man.trainer.length > 0;
+
+  /* ---------- Login ---------- */
+  const dlg = $("dlgLogin");
+  $("btnLogin").addEventListener("click", () => {
+    $("loginText").textContent = S.repoKonfiguriert()
+      ? `Repository: ${C.owner}/${C.repo}. Mit deinem Token kannst du Übersichten veröffentlichen und Trainer hochladen.`
+      : "Es ist noch kein Repository in config.js eingetragen — du kannst dich trotzdem anmelden und im Lokal-Modus Entwürfe bauen.";
+    $("btnLogout").hidden = !S.eingeloggt();
+    $("loginFehler").hidden = true;
+    $("tokenInput").value = "";
+    dlg.showModal();
+  });
+  $("btnLoginAbbruch").addEventListener("click", () => dlg.close());
+  $("btnLogout").addEventListener("click", () => { S.setToken(""); statusZeigen(); dlg.close(); });
+  $("btnLoginOk").addEventListener("click", async () => {
+    const t = $("tokenInput").value.trim();
+    if (!t){ zeigFehler("Bitte Token einfügen."); return; }
+    if (S.repoKonfiguriert()){
+      $("btnLoginOk").disabled = true;
+      const chk = await S.tokenPruefen(t).catch(e => ({ok:false, grund:String(e)}));
+      $("btnLoginOk").disabled = false;
+      if (!chk.ok){ zeigFehler(chk.grund); return; }
+    }
+    S.setToken(t); statusZeigen(); dlg.close();
+  });
+  function zeigFehler(msg){ const f = $("loginFehler"); f.textContent = msg; f.hidden = false; }
+
+  /* ---------- Trainer-Upload ---------- */
+  const dlgU = $("dlgUpload");
+  $("btnTrainerUpload").addEventListener("click", () => {
+    $("uplFehler").hidden = true; $("uplOk").hidden = true;
+    dlgU.showModal();
+  });
+  $("btnUplAbbruch").addEventListener("click", () => dlgU.close());
+  $("btnUplOk").addEventListener("click", async () => {
+    const f = $("uplDatei").files[0];
+    if (!f){ $("uplFehler").textContent = "Bitte eine Datei auswählen."; $("uplFehler").hidden = false; return; }
+    $("btnUplOk").disabled = true; $("uplFehler").hidden = true;
+    try{
+      const istHtml = /\.html?$/i.test(f.name);
+      await S.trainerHochladen(f, istHtml ? ($("uplTitel").value.trim() || f.name) : null,
+                               istHtml ? $("uplBeschreibung").value.trim() : null);
+      // Nicht-HTML-Dateien nur ablegen, nicht ins Manifest — trainerHochladen trägt immer ein,
+      // daher für Begleitdateien Hinweis geben:
+      $("uplOk").textContent = `„${f.name}" wurde hochgeladen. GitHub Pages braucht 1–2 Minuten, bis es live ist.`;
+      $("uplOk").hidden = false;
+    }catch(e){
+      $("uplFehler").textContent = e.message; $("uplFehler").hidden = false;
+    }finally{
+      $("btnUplOk").disabled = false;
+    }
+  });
+
+  statusZeigen();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antestat-Trainer · V1 Bipolartransistor als Verstärker</title>
+<style>
+  :root{
+    --paper:#eef1f4;
+    --panel:#ffffff;
+    --ink:#1a2024;
+    --ink-soft:#55606a;
+    --line:#d4dbe2;
+    --grid:#e3e8ed;
+    --trace:#17a35b;       /* Scope-Grün */
+    --trace-dk:#0f7c44;
+    --amber:#d98a1f;
+    --amber-bg:#fcf3e2;
+    --red:#d6453d;
+    --red-bg:#fbeae9;
+    --green-bg:#e6f6ee;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+    --sans:ui-sans-serif,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding:0 16px 64px;
+  }
+  .wrap{max-width:780px;margin:0 auto}
+
+  /* ---------- Kopf ---------- */
+  header{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;
+    padding:28px 0 18px;border-bottom:2px solid var(--ink);
+  }
+  .brand .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-soft);margin:0 0 4px;
+  }
+  .brand h1{
+    margin:0;font-size:26px;font-weight:800;letter-spacing:-.01em;line-height:1.1;
+  }
+  .brand .sub{font-size:13px;color:var(--ink-soft);margin-top:4px}
+
+  /* DMM-Display für den Score */
+  .readout{
+    font-family:var(--mono);background:var(--ink);color:var(--trace);
+    border-radius:7px;padding:9px 13px;min-width:132px;
+    box-shadow:inset 0 0 0 1px #2c343b;
+  }
+  .readout .rlabel{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#7c8b86;display:block}
+  .readout .rval{font-size:20px;font-weight:700;letter-spacing:.02em}
+  .readout .rval small{font-size:12px;color:#5d6b66;font-weight:400}
+
+  /* ---------- Kategorie-Wahl ---------- */
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px}
+  .cat{
+    font-family:var(--mono);font-size:12px;letter-spacing:.02em;
+    background:var(--panel);border:1px solid var(--line);color:var(--ink-soft);
+    padding:8px 12px;border-radius:6px;cursor:pointer;transition:.12s;
+  }
+  .cat:hover{border-color:var(--ink-soft);color:var(--ink)}
+  .cat[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .cat.rng[aria-pressed="true"]{background:var(--trace-dk);border-color:var(--trace-dk)}
+
+  /* ---------- Aufgaben-Karte ---------- */
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:0;overflow:hidden;
+  }
+  .card .head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:13px 18px;border-bottom:1px solid var(--line);
+    background:linear-gradient(var(--panel),var(--panel)) padding-box;
+  }
+  .card .head .tag{
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--trace-dk);font-weight:700;
+  }
+  .card .head .pts{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+  .card .body{
+    padding:18px;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;background-position:-1px -1px;
+  }
+  .prompt{font-size:15px;margin:0 0 14px}
+  .prompt b{font-weight:700}
+
+  /* gegebene Werte */
+  .given{
+    display:flex;flex-wrap:wrap;gap:6px 8px;margin:0 0 18px;
+  }
+  .chip{
+    font-family:var(--mono);font-size:12.5px;background:#f3f6f8;border:1px solid var(--line);
+    border-radius:5px;padding:4px 9px;white-space:nowrap;
+  }
+  .chip b{color:var(--trace-dk)}
+
+  /* Eingabefelder */
+  .fields{display:flex;flex-direction:column;gap:11px;margin-bottom:8px}
+  .field{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .field label{
+    font-family:var(--mono);font-size:14px;min-width:58px;font-weight:600;
+  }
+  .field .eq{color:var(--ink-soft);font-family:var(--mono)}
+  .cell{
+    font-family:var(--mono);font-size:15px;width:128px;text-align:right;
+    padding:8px 10px;border:1.5px solid var(--line);border-radius:6px;background:#fcfdfe;
+    color:var(--ink);transition:.12s;
+  }
+  .cell:focus{outline:none;border-color:var(--trace);box-shadow:0 0 0 3px rgba(23,163,91,.13)}
+  .cell.ok{border-color:var(--trace);background:var(--green-bg)}
+  .cell.bad{border-color:var(--red);background:var(--red-bg)}
+  .unit{font-family:var(--mono);font-size:13px;color:var(--ink-soft);min-width:30px}
+  .verdict{font-family:var(--mono);font-size:16px;width:20px;text-align:center}
+  .verdict.ok{color:var(--trace-dk)}
+  .verdict.bad{color:var(--red)}
+
+  /* Multiple Choice */
+  .choices{display:flex;flex-direction:column;gap:9px}
+  .choice{
+    display:flex;gap:11px;align-items:flex-start;padding:11px 13px;
+    border:1.5px solid var(--line);border-radius:7px;background:#fcfdfe;cursor:pointer;transition:.12s;
+    font-size:14.5px;
+  }
+  .choice:hover{border-color:var(--ink-soft)}
+  .choice[aria-pressed="true"]{border-color:var(--trace);background:var(--green-bg)}
+  .choice .box{
+    font-family:var(--mono);font-weight:700;color:var(--ink-soft);flex:0 0 auto;
+    width:20px;height:20px;border:1.5px solid var(--line);border-radius:4px;
+    display:grid;place-items:center;font-size:12px;margin-top:1px;
+  }
+  .choice[aria-pressed="true"] .box{border-color:var(--trace-dk);color:var(--trace-dk)}
+  .choice.reveal-ok{border-color:var(--trace);background:var(--green-bg)}
+  .choice.reveal-bad{border-color:var(--red);background:var(--red-bg)}
+
+  /* Kennlinienfeld */
+  .canvas-wrap{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+  canvas{border:1px solid var(--line);border-radius:8px;background:#fff;touch-action:none;cursor:crosshair;max-width:100%}
+  .placetoggle{display:flex;gap:8px}
+  .ptog{
+    font-family:var(--mono);font-size:12px;padding:7px 11px;border-radius:6px;cursor:pointer;
+    border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);
+  }
+  .ptog[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:700}
+  .ptog .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .ptog.ap .dot{background:var(--trace)}
+  .ptog.sp .dot{background:var(--amber)}
+
+  /* Aktionen */
+  .actions{
+    display:flex;gap:9px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line);
+    background:#fafbfc;
+  }
+  button.act{
+    font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;
+    border:1.5px solid var(--ink);border-radius:7px;padding:9px 16px;transition:.12s;
+  }
+  .act.primary{background:var(--ink);color:#fff}
+  .act.primary:hover{background:#000}
+  .act.ghost{background:transparent;color:var(--ink)}
+  .act.ghost:hover{background:#eef1f4}
+  .act.amber{border-color:var(--amber);color:var(--amber)}
+  .act.amber:hover{background:var(--amber-bg)}
+  .act:disabled{opacity:.4;cursor:not-allowed}
+
+  /* Lösung */
+  .solution{display:none;border-top:1px solid var(--line);padding:18px;background:#fbfcfd}
+  .solution.show{display:block}
+  .solution h3{
+    margin:0 0 12px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--amber);
+  }
+  .steps{display:flex;flex-direction:column;gap:9px}
+  .step{
+    display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:baseline;
+    font-family:var(--mono);font-size:13.5px;padding-bottom:9px;border-bottom:1px dashed var(--line);
+  }
+  .step:last-child{border-bottom:none;padding-bottom:0}
+  .step .lhs{color:var(--ink)}
+  .step .lhs .v{color:var(--ink-soft)}
+  .step .res{font-weight:700;color:var(--trace-dk);white-space:nowrap;text-align:right}
+  .note{
+    margin-top:14px;font-size:13.5px;color:var(--ink-soft);font-family:var(--sans);
+    border-left:3px solid var(--amber);padding:4px 0 4px 12px;
+  }
+  .foot{margin-top:22px;font-size:12px;color:var(--ink-soft);font-family:var(--mono);text-align:center}
+  sub{font-size:.72em}
+  @media(max-width:560px){
+    .brand h1{font-size:22px}
+    .cell{width:110px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <p class="eyebrow">HTWK Leipzig · Elektronik Praktikum</p>
+      <h1>Antestat-Trainer V1</h1>
+      <p class="sub">Bipolartransistor als Verstärker — Aufgaben mit frischen Zahlen, beliebig oft.</p>
+    </div>
+    <div class="readout">
+      <span class="rlabel">Richtig / Versuche</span>
+      <span class="rval" id="score">0<small> / 0</small></span>
+    </div>
+  </header>
+
+  <nav id="nav"></nav>
+
+  <div class="card">
+    <div class="head">
+      <span class="tag" id="cardTag">—</span>
+      <span class="pts" id="cardStreak">Serie: 0</span>
+    </div>
+    <div class="body" id="cardBody"></div>
+    <div class="actions">
+      <button class="act primary" id="btnCheck">Prüfen</button>
+      <button class="act amber" id="btnSolve">Lösung zeigen</button>
+      <button class="act ghost" id="btnNext">Neue Aufgabe</button>
+    </div>
+    <div class="solution" id="solution"></div>
+  </div>
+
+  <p class="foot">Eingabe mit Komma oder Punkt · Toleranz ±2,5 % · Rundung wie im Antestat</p>
+</div>
+
+<script>
+/* ============================================================
+   Hilfsfunktionen
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const el = (t,c,html)=>{const e=document.createElement(t); if(c)e.className=c; if(html!=null)e.innerHTML=html; return e;};
+const rint = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick = arr=>arr[Math.floor(Math.random()*arr.length)];
+const deci = (a,b)=>rint(a*10,b*10)/10;      // eine Nachkommastelle
+const fmtDE = (x,d=2)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const parseNum = s => parseFloat(String(s).trim().replace(/\s/g,'').replace(',','.'));
+function check(user,target,absFloor){
+  if(!isFinite(user)) return false;
+  const rel = Math.abs(user-target)/Math.abs(target);
+  return rel<=0.025 || Math.abs(user-target)<=absFloor;
+}
+
+/* ============================================================
+   Aufgaben-Generatoren  →  liefern ein "Aufgabe"-Objekt
+   ============================================================ */
+
+// 1) Driftverstärkung  v_D = -R_C / R_E  (C_E bei DC unwirksam → Gegenkopplung voll wirksam)
+function genDrift(){
+  const RC = rint(100,220)*10;     // 1000..2200
+  const RE = rint(30,72)*10;       // 300..720
+  const RB = rint(80,140);         // kΩ Distraktor
+  const Rq = rint(22,48);          // kΩ Distraktor
+  const vD = -RC/RE;
+  return {
+    tag:'Driftverstärkung', pts:'1 Punkt',
+    prompt:`Für die Verstärkerschaltung mit Strom-Gegenkopplung ist die <b>Driftverstärkung v<sub>D</sub></b> zu ermitteln. Beachte: für die Drift (Gleichgrößen) ist die Gegenkopplung über R<sub>E</sub> voll wirksam, C<sub>E</sub> überbrückt R<sub>E</sub> nicht.`,
+    given:[['C₁ = C₂','470 nF'],['C_E','330 µF'],['R_C',RC+' Ω'],['R_B',RB+' kΩ'],['R_q',Rq+' kΩ'],['R_E',RE+' Ω']],
+    fields:[{key:'vD',label:'v<sub>D</sub>',unit:'',target:vD,abs:0.05,dec:2,signfree:true}],
+    solve:()=>[
+      {lhs:`Bei DC ist X<sub>CE</sub> groß → C_E unwirksam, R_E wirkt voll`, res:''},
+      {lhs:`v<sub>D</sub> = −R_C / R_E = −${RC} Ω / ${RE} Ω`, res:fmtDE(vD,2)}
+    ],
+    note:'Das Minuszeichen ist die 180°-Phasendrehung der Emitterschaltung. Der Betrag wird hier akzeptiert, im Antestat aber den negativen Wert eintragen.'
+  };
+}
+
+// 2) Vollständige Dimensionierung: ES mit Strom-Gegenkopplung + Basisspannungsteiler (4 Widerstände)
+function genDimGK(){
+  const UB  = pick([10,12,13,15]);
+  const B   = rint(120,240);
+  const UBE = 0.7;
+  const IC  = deci(2.0,6.0);                 // mA
+  const pRE = pick([10,12,15]);              // % von UB über R_E
+  const k   = pick([3,4,5]);                 // I_q = k·I_B
+  const URE = +(UB*pRE/100).toFixed(3);
+  // U_CE0 sinnvoll wählen, sodass U_RC > 0.5 V
+  let UCE = pick([Math.round(UB*0.4),Math.round(UB*0.45),Math.round(UB/2)]);
+  if(UB-UCE-URE < 0.8) UCE = Math.round(UB*0.4);
+  const IB  = IC/B;                           // mA
+  const IE  = IC+IB;                          // mA
+  const RE  = URE/IE*1000;                    // Ω
+  const URC = UB-UCE-URE;                     // V
+  const RC  = URC/IC*1000;                    // Ω
+  const UBas= URE+UBE;                        // V
+  const Iq  = k*IB;                           // mA
+  const Rq  = UBas/Iq;                         // kΩ  (V / mA = kΩ)
+  const RB  = (UB-UBas)/(Iq+IB);               // kΩ
+  return {
+    tag:'Dimensionierung · Gegenkopplung', pts:'4 Punkte',
+    prompt:`Gegeben ist eine <b>Emitterschaltung mit Strom-Gegenkopplung und Basisspannungsteiler</b>. Berechne die vier Widerstände für den angegebenen Arbeitspunkt. Über R<sub>E</sub> fallen ${pRE}% der Betriebsspannung ab, I<sub>q</sub> ist der ${k}-fache Basisstrom.`,
+    given:[['U_B',UB+' V'],['B',''+B],['U_BE0',fmtDE(UBE,1)+' V'],['U_CE0',UCE+' V'],['I_C0',fmtDE(IC,2)+' mA'],['U_RE',`${pRE}% U_B`],['I_q',`${k}·I_B`]],
+    fields:[
+      {key:'RE',label:'R<sub>E</sub>',unit:'Ω', target:RE,abs:2,  dec:1},
+      {key:'RC',label:'R<sub>C</sub>',unit:'Ω', target:RC,abs:5,  dec:1},
+      {key:'Rq',label:'R<sub>q</sub>',unit:'kΩ',target:Rq,abs:0.2,dec:2},
+      {key:'RB',label:'R<sub>B</sub>',unit:'kΩ',target:RB,abs:0.4,dec:2},
+    ],
+    solve:()=>[
+      {lhs:`I_B = I_C0 / B = ${fmtDE(IC,2)} mA / ${B}`,                              res:fmtDE(IB*1000,2)+' µA'},
+      {lhs:`I_E = I_C0 + I_B`,                                                       res:fmtDE(IE,3)+' mA'},
+      {lhs:`U_RE = ${pRE}% · ${UB} V`,                                               res:fmtDE(URE,2)+' V'},
+      {lhs:`R_E = U_RE / I_E = ${fmtDE(URE,2)} V / ${fmtDE(IE,3)} mA`,               res:fmtDE(RE,1)+' Ω'},
+      {lhs:`U_RC = U_B − U_CE0 − U_RE = ${UB} − ${UCE} − ${fmtDE(URE,2)}`,           res:fmtDE(URC,2)+' V'},
+      {lhs:`R_C = U_RC / I_C0`,                                                      res:fmtDE(RC,1)+' Ω'},
+      {lhs:`U_Basis = U_RE + U_BE0 = ${fmtDE(URE,2)} + ${fmtDE(UBE,1)}`,             res:fmtDE(UBas,2)+' V'},
+      {lhs:`I_q = ${k} · I_B`,                                                       res:fmtDE(Iq*1000,2)+' µA'},
+      {lhs:`R_q = U_Basis / I_q`,                                                    res:fmtDE(Rq,2)+' kΩ'},
+      {lhs:`R_B = (U_B − U_Basis) / (I_q + I_B)`,                                    res:fmtDE(RB,2)+' kΩ'},
+    ],
+    note:'Reihenfolge merken: erst I_B, dann der Querzweig (R_E, R_C), dann der Basisteiler (R_q über I_q, R_B über I_q + I_B).'
+  };
+}
+
+// 3) Dimensionierung für maximale Ausgangsamplitude (einfache ES, R_C / I_B0 / R_B)
+function genMaxAmp(){
+  const UB  = rint(10,18);
+  const B   = rint(150,250);
+  const IC  = deci(2.0,10.0);   // mA
+  const UBE = 0.7;
+  const UCE = UB/2;             // max. symmetrische Aussteuerung
+  const RC  = (UB-UCE)/IC*1000; // Ω
+  const IB0 = IC/B*1000;        // µA
+  const RB  = (UB-UBE)/IB0*1000;// kΩ  (V / µA *1000 = kΩ)
+  return {
+    tag:'Dimensionierung · max. Amplitude', pts:'1,5 Punkte',
+    prompt:`Gegeben ist ein Transistorverstärker in <b>einfacher Emitterschaltung</b>. Dimensioniere die Schaltung so, dass eine <b>maximale Ausgangsamplitude</b> erreicht wird.`,
+    given:[['B',''+B],['U_B',UB+' V'],['I_C0',fmtDE(IC,2)+' mA'],['U_BE0',fmtDE(UBE,1)+' V']],
+    fields:[
+      {key:'RC', label:'R<sub>C</sub>', unit:'Ω', target:RC, abs:5,  dec:1},
+      {key:'IB0',label:'I<sub>B0</sub>',unit:'µA',target:IB0,abs:0.5,dec:2},
+      {key:'RB', label:'R<sub>B</sub>', unit:'kΩ',target:RB, abs:0.5,dec:2},
+    ],
+    solve:()=>[
+      {lhs:`Max. Aussteuerung → U_CE0 = U_B/2 = ${UB}/2`,                  res:fmtDE(UCE,2)+' V'},
+      {lhs:`R_C = (U_B − U_CE0) / I_C0 = ${fmtDE(UCE,2)} V / ${fmtDE(IC,2)} mA`, res:fmtDE(RC,1)+' Ω'},
+      {lhs:`I_B0 = I_C0 / B = ${fmtDE(IC,2)} mA / ${B}`,                   res:fmtDE(IB0,2)+' µA'},
+      {lhs:`R_B = (U_B − U_BE0) / I_B0 = ${fmtDE(UB-UBE,1)} V / ${fmtDE(IB0,2)} µA`, res:fmtDE(RB,2)+' kΩ'},
+    ],
+    note:'Der Kniff ist U_CE0 = U_B/2 — nur dort ist die symmetrische Aussteuerung (und damit die Amplitude) maximal.'
+  };
+}
+
+// 4) Konzeptfragen (Single Choice)
+function genKoppel(){
+  const opts=[
+    {t:'Koppelkondensatoren verstärken den frequenzbehafteten Signalanteil.',ok:false},
+    {t:'Koppelkondensatoren unterdrücken den frequenzbehafteten Signalanteil.',ok:false},
+    {t:'Koppelkondensatoren verstärken den Gleichanteil.',ok:false},
+    {t:'Koppelkondensatoren unterdrücken den Gleichanteil.',ok:true},
+  ];
+  return {
+    tag:'Konzept · Koppelkondensatoren', pts:'0,5 Punkte', type:'mc',
+    prompt:`Welchen Einfluss haben Koppelkondensatoren am Eingang und am Ausgang von Verstärkerschaltungen auf das Signal?`,
+    choices:shuffle(opts),
+    note:'Der Koppelkondensator ist ein Hochpass: er trennt den DC-Arbeitspunkt ab und lässt nur das Wechselsignal durch.'
+  };
+}
+function genBauelement(){
+  const opts=[
+    {t:'R_E',ok:true},{t:'C_E',ok:true},
+    {t:'R_C',ok:false},{t:'R_B',ok:false},{t:'C₁ / C₂',ok:false},{t:'R_q',ok:false},
+  ];
+  return {
+    tag:'Konzept · Stromgegenkopplung', pts:'1 Punkt', type:'mc', multi:true,
+    prompt:`Mit welchen Bauelementen wird in der Emitterschaltung die <b>Strom-Gegenkopplung</b> realisiert? (Mehrfachauswahl)`,
+    choices:shuffle(opts),
+    note:'R_E erzeugt die Gegenkopplung (Stromabhängige Spannung), C_E legt fest, ab welcher Frequenz sie aufgehoben wird (Wechselstrom-Kurzschluss).'
+  };
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+// 5) Kennlinienfeld: AP und Sperrbereich anklicken
+function genKennlinie(){
+  const UB = rint(8,12);
+  const IC = rint(3,8);          // mA
+  return {
+    tag:'Kennlinienfeld · AP & Sperrbereich', pts:'1 Punkt', type:'canvas',
+    prompt:`Gegeben ist eine Emitterschaltung mit Strom-Gegenkopplung. Markiere im Ausgangskennlinienfeld die <b>Lage des Arbeitspunktes</b> und die <b>Lage des Transistors im Sperrzustand</b>.`,
+    given:[['U_B',UB+' V'],['I_C0',IC+' mA'],['U_CE0','U_B/2']],
+    target:{uce:UB/2, ic:IC, ubMax:12, icMax:25},
+    note:'Der AP liegt bei U_CE0 = U_B/2 und I_C0 — mittig auf der Lastgeraden. Der Sperrbereich ist der schmale Streifen unterhalb der untersten Kennlinie (I_C ≈ 0) entlang der U_CE-Achse.'
+  };
+}
+
+/* Registry */
+const GENS = {
+  drift:   {name:'Driftverstärkung', fn:genDrift},
+  dim:     {name:'Dimensionierung GK', fn:genDimGK},
+  maxamp:  {name:'Max. Amplitude', fn:genMaxAmp},
+  koppel:  {name:'Koppel-C', fn:()=>pick([genKoppel,genBauelement])()},
+  kennlin: {name:'Kennlinienfeld', fn:genKennlinie},
+};
+const ALL = ['drift','dim','maxamp','koppel','kennlin'];
+
+/* ============================================================
+   Zustand + UI
+   ============================================================ */
+let state={cat:'random', q:null, answered:false, score:{ok:0,n:0}, streak:0, place:'ap', clicks:{ap:null,sp:null}};
+
+function buildNav(){
+  const nav=$('#nav');
+  const rng=el('button','cat rng','🎲 Zufall'); rng.dataset.cat='random'; nav.appendChild(rng);
+  ALL.forEach(k=>{const b=el('button','cat',GENS[k].name); b.dataset.cat=k; nav.appendChild(b);});
+  nav.addEventListener('click',e=>{
+    const b=e.target.closest('.cat'); if(!b)return;
+    state.cat=b.dataset.cat; syncNav(); newQuestion();
+  });
+  syncNav();
+}
+function syncNav(){
+  document.querySelectorAll('.cat').forEach(b=>b.setAttribute('aria-pressed', b.dataset.cat===state.cat));
+}
+
+function newQuestion(){
+  const key = state.cat==='random' ? pick(ALL) : state.cat;
+  state.q = GENS[key].fn();
+  state.q._key = key;
+  state.answered=false;
+  state.place='ap';
+  state.clicks={ap:null,sp:null};
+  render();
+}
+
+function render(){
+  const q=state.q;
+  $('#cardTag').textContent=q.tag;
+  $('#cardStreak').textContent='Serie: '+state.streak;
+  $('#solution').classList.remove('show');
+  $('#solution').innerHTML='';
+  $('#btnCheck').disabled=false;
+  $('#btnSolve').textContent='Lösung zeigen';
+
+  const body=$('#cardBody'); body.innerHTML='';
+  body.appendChild(el('p','prompt',q.prompt));
+
+  if(q.given){
+    const g=el('div','given');
+    q.given.forEach(([k,v])=>g.appendChild(el('span','chip', v?`${k} = <b>${v}</b>`:`<b>${k}</b>`)));
+    body.appendChild(g);
+  }
+
+  if(q.type==='mc'){ renderMC(body,q); }
+  else if(q.type==='canvas'){ renderCanvas(body,q); }
+  else { renderFields(body,q); }
+}
+
+function renderFields(body,q){
+  const wrap=el('div','fields');
+  q.fields.forEach(f=>{
+    const row=el('div','field');
+    row.innerHTML=`<label>${f.label}</label><span class="eq">=</span>`;
+    const inp=el('input','cell'); inp.id='f_'+f.key; inp.inputMode='decimal'; inp.autocomplete='off';
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')doCheck();});
+    row.appendChild(inp);
+    row.appendChild(el('span','unit',f.unit));
+    row.appendChild(el('span','verdict','')); 
+    wrap.appendChild(row);
+  });
+  body.appendChild(wrap);
+  setTimeout(()=>{const fi=body.querySelector('.cell'); if(fi)fi.focus();},30);
+}
+
+function renderMC(body,q){
+  const wrap=el('div','choices');
+  q.choices.forEach((c,i)=>{
+    const ch=el('div','choice'); ch.dataset.i=i; ch.setAttribute('aria-pressed','false');
+    ch.innerHTML=`<span class="box"></span><span>${c.t}</span>`;
+    ch.addEventListener('click',()=>{
+      if(state.answered)return;
+      if(q.multi){ const p=ch.getAttribute('aria-pressed')==='true'; ch.setAttribute('aria-pressed',!p); ch.querySelector('.box').textContent=!p?'✓':''; }
+      else { wrap.querySelectorAll('.choice').forEach(x=>{x.setAttribute('aria-pressed','false');x.querySelector('.box').textContent='';}); ch.setAttribute('aria-pressed','true'); ch.querySelector('.box').textContent='✓'; }
+    });
+    wrap.appendChild(ch);
+  });
+  body.appendChild(wrap);
+}
+
+/* ---------- Kennlinienfeld ---------- */
+function renderCanvas(body,q){
+  const wrap=el('div','canvas-wrap');
+  const tog=el('div','placetoggle');
+  const ap=el('button','ptog ap','<span class="dot"></span>Arbeitspunkt'); ap.dataset.m='ap'; ap.setAttribute('aria-pressed','true');
+  const sp=el('button','ptog sp','<span class="dot"></span>Sperrbereich'); sp.dataset.m='sp'; sp.setAttribute('aria-pressed','false');
+  tog.append(ap,sp);
+  tog.addEventListener('click',e=>{const b=e.target.closest('.ptog');if(!b)return; state.place=b.dataset.m; ap.setAttribute('aria-pressed',state.place==='ap'); sp.setAttribute('aria-pressed',state.place==='sp');});
+  const cv=el('canvas'); cv.width=520; cv.height=340; cv.id='kfeld';
+  cv.addEventListener('pointerdown',e=>{
+    if(state.answered)return;
+    const r=cv.getBoundingClientRect();
+    const x=(e.clientX-r.left)*(cv.width/r.width), y=(e.clientY-r.top)*(cv.height/r.height);
+    state.clicks[state.place]={x,y};
+    drawKfeld(cv,q,false);
+  });
+  wrap.append(tog,cv);
+  body.appendChild(wrap);
+  drawKfeld(cv,q,false);
+}
+function kfeldGeom(cv){return {x0:54,y0:cv.height-42,x1:cv.width-26,y1:22};}
+function toPx(cv,q,uce,ic){const g=kfeldGeom(cv);const t=q.target;return {px:g.x0+(uce/t.ubMax)*(g.x1-g.x0), py:g.y0-(ic/t.icMax)*(g.y0-g.y1)};}
+function fromPx(cv,q,px,py){const g=kfeldGeom(cv);const t=q.target;return {uce:(px-g.x0)/(g.x1-g.x0)*t.ubMax, ic:(g.y0-py)/(g.y0-g.y1)*t.icMax};}
+function drawKfeld(cv,q,reveal){
+  const ctx=cv.getContext('2d'), g=kfeldGeom(cv), t=q.target;
+  ctx.clearRect(0,0,cv.width,cv.height);
+  // Gitter
+  ctx.strokeStyle='#eef1f4'; ctx.lineWidth=1;
+  for(let v=0;v<=t.ubMax;v+=1){const p=toPx(cv,q,v,0); ctx.beginPath();ctx.moveTo(p.px,g.y0);ctx.lineTo(p.px,g.y1);ctx.stroke();}
+  for(let a=0;a<=t.icMax;a+=5){const p=toPx(cv,q,0,a); ctx.beginPath();ctx.moveTo(g.x0,p.py);ctx.lineTo(g.x1,p.py);ctx.stroke();}
+  // Kennlinien (5 IB-Stufen)
+  ctx.strokeStyle='#9aa6b0'; ctx.lineWidth=1.6;
+  const sat=[5.5,11,16.5,21,24];
+  sat.forEach((icSat,i)=>{
+    ctx.beginPath();
+    for(let u=0;u<=t.ubMax;u+=0.15){
+      const ic = icSat*(1-Math.exp(-u/0.25)) + icSat*0.004*u;
+      const p=toPx(cv,q,u,ic);
+      u===0?ctx.moveTo(p.px,p.py):ctx.lineTo(p.px,p.py);
+    }
+    ctx.stroke();
+  });
+  // Achsen
+  ctx.strokeStyle='#1a2024'; ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(g.x0,g.y1-6);ctx.lineTo(g.x0,g.y0);ctx.lineTo(g.x1+6,g.y0);ctx.stroke();
+  ctx.fillStyle='#55606a'; ctx.font='12px ui-monospace,monospace';
+  ctx.fillText('I_C / mA',8,g.y1+2);
+  ctx.fillText('U_CE / V',g.x1-46,g.y0+30);
+  for(let v=2;v<=t.ubMax;v+=2){const p=toPx(cv,q,v,0);ctx.fillText(v,p.px-4,g.y0+16);}
+  for(let a=5;a<=t.icMax;a+=5){const p=toPx(cv,q,0,a);ctx.fillText(a,g.x0-28,p.py+4);}
+
+  // Ziel-Bereiche bei reveal
+  if(reveal){
+    const tp=toPx(cv,q,t.uce,t.ic);
+    ctx.strokeStyle='#17a35b';ctx.lineWidth=2;ctx.beginPath();ctx.arc(tp.px,tp.py,14,0,7);ctx.stroke();
+    // Sperrbereich-Streifen
+    const s0=toPx(cv,q,0,0.9), s1=toPx(cv,q,t.ubMax,0);
+    ctx.strokeStyle='#d98a1f';ctx.lineWidth=2;ctx.setLineDash([5,4]);
+    ctx.strokeRect(g.x0+2, s0.py, (s1.px-g.x0)-4, g.y0-s0.py-2);
+    ctx.setLineDash([]);
+  }
+  // Klicks
+  const drawMark=(c,col)=>{if(!c)return;ctx.fillStyle=col;ctx.beginPath();ctx.arc(c.x,c.y,6,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();};
+  drawMark(state.clicks.ap,'#17a35b');
+  drawMark(state.clicks.sp,'#d98a1f');
+}
+
+/* ============================================================
+   Prüfen / Lösung
+   ============================================================ */
+function doCheck(){
+  if(state.answered) return;
+  const q=state.q; let allOk=true;
+
+  if(q.type==='mc'){
+    const chosen=[...document.querySelectorAll('.choice[aria-pressed="true"]')].map(c=>+c.dataset.i);
+    if(chosen.length===0) return;
+    document.querySelectorAll('.choice').forEach((c,i)=>{
+      const correct=q.choices[i].ok;
+      if(correct) c.classList.add('reveal-ok');
+      if(chosen.includes(i)&&!correct) c.classList.add('reveal-bad');
+    });
+    const want=q.choices.map((c,i)=>c.ok?i:-1).filter(i=>i>=0);
+    allOk = chosen.length===want.length && want.every(i=>chosen.includes(i));
+  }
+  else if(q.type==='canvas'){
+    const cv=$('#kfeld');
+    if(!state.clicks.ap||!state.clicks.sp) return;
+    const ap=fromPx(cv,q,state.clicks.ap.x,state.clicks.ap.y);
+    const sp=fromPx(cv,q,state.clicks.sp.x,state.clicks.sp.y);
+    const apOk = Math.abs(ap.uce-q.target.uce)<=1.1 && Math.abs(ap.ic-q.target.ic)<=2.2;
+    const spOk = sp.ic<=1.3 && sp.uce>=0.5 && sp.uce<=q.target.ubMax;
+    allOk = apOk && spOk;
+    drawKfeld(cv,q,true);
+  }
+  else {
+    q.fields.forEach(f=>{
+      const inp=$('#f_'+f.key); let val=parseNum(inp.value);
+      if(f.signfree && isFinite(val)) { if(check(Math.abs(val),Math.abs(f.target),f.abs)){} }
+      const ok = f.signfree ? check(Math.abs(val),Math.abs(f.target),f.abs) : check(val,f.target,f.abs);
+      const verdict=inp.parentElement.querySelector('.verdict');
+      inp.classList.remove('ok','bad'); verdict.classList.remove('ok','bad');
+      inp.classList.add(ok?'ok':'bad');
+      verdict.classList.add(ok?'ok':'bad'); verdict.textContent=ok?'✓':'✕';
+      if(!ok) allOk=false;
+    });
+  }
+
+  state.answered=true;
+  state.score.n++; if(allOk){state.score.ok++; state.streak++;} else state.streak=0;
+  $('#score').innerHTML=state.score.ok+'<small> / '+state.score.n+'</small>';
+  $('#cardStreak').textContent='Serie: '+state.streak;
+  $('#btnCheck').disabled=true;
+  showSolution(allOk);
+}
+
+function showSolution(ok){
+  const q=state.q, sol=$('#solution');
+  let h=`<h3>${ok?'✓ Richtig — Rechenweg':'Lösung'}</h3>`;
+  if(q.solve){
+    h+='<div class="steps">';
+    q.solve().forEach(s=>{ h+=`<div class="step"><span class="lhs">${s.lhs}</span><span class="res">${s.res}</span></div>`; });
+    h+='</div>';
+  } else if(q.type==='mc'){
+    const corr=q.choices.filter(c=>c.ok).map(c=>c.t).join(' · ');
+    h+=`<div class="steps"><div class="step"><span class="lhs">Richtige Auswahl</span><span class="res">${corr}</span></div></div>`;
+  } else if(q.type==='canvas'){
+    h+=`<div class="steps"><div class="step"><span class="lhs">Arbeitspunkt</span><span class="res">U_CE0 = ${fmtDE(q.target.uce,1)} V · I_C0 = ${q.target.ic} mA</span></div>`;
+    h+=`<div class="step"><span class="lhs">Sperrbereich</span><span class="res">I_C ≈ 0, unterste Kennlinie</span></div></div>`;
+  }
+  if(q.note) h+=`<p class="note">${q.note}</p>`;
+  sol.innerHTML=h; sol.classList.add('show');
+}
+
+/* Buttons */
+$('#btnCheck').addEventListener('click',doCheck);
+$('#btnNext').addEventListener('click',newQuestion);
+$('#btnSolve').addEventListener('click',()=>{
+  const sol=$('#solution');
+  if(sol.classList.contains('show')){ sol.classList.remove('show'); $('#btnSolve').textContent='Lösung zeigen'; }
+  else {
+    if(!state.answered && state.q.type==='canvas'){ drawKfeld($('#kfeld'),state.q,true); }
+    showSolution(false); $('#btnSolve').textContent='Lösung verbergen';
+  }
+});
+
+/* Start */
+buildNav();
+newQuestion();
+</script>
+</body>
+</html>

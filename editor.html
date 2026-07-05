@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übersichts-Editor</title>
+<link rel="stylesheet" href="stil.css">
+<script src="config.js"></script>
+<script src="sammlung.js" defer></script>
+<style>
+  /* ---------- Editor-spezifisch ---------- */
+  .werkbank{position:sticky;top:0;z-index:40;background:var(--paper);padding:10px 0 12px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .leiste{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px}
+  .leiste .sep{width:1px;height:20px;background:var(--line);margin:0 4px}
+  .fbtn{font-family:var(--mono);font-size:12.5px;min-width:30px;border:1px solid var(--line);background:#fbfcfd;border-radius:6px;padding:5px 8px;cursor:pointer}
+  .fbtn:hover{background:#f2f6f8;border-color:#b9c2cc}
+  .fbtn b{font-weight:800} .fbtn i{font-style:italic} .fbtn u{text-decoration:underline}
+  .leiste .frei{flex:1}
+  .speicher-status{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+
+  /* Titelzeile im Blatt editierbar */
+  .blatt-kopf h1[contenteditable], .blatt-kopf .untertitel[contenteditable]{outline:none;border-radius:4px}
+  [contenteditable]:empty::before{content:attr(data-platzhalter);color:#a7b0ba}
+  [contenteditable]:focus{background:#f3fbf6}
+
+  /* Block-Rahmen im Editor */
+  .eblock{position:relative;border:1px solid transparent;border-radius:8px;padding:6px 8px;margin:0 -8px 8px}
+  .eblock:hover,.eblock:focus-within{border-color:var(--grid)}
+  .eblock .griff{
+    position:absolute;left:-88px;top:4px;display:none;gap:3px;flex-direction:row;
+  }
+  .eblock:hover .griff,.eblock:focus-within .griff{display:flex}
+  .gbtn{width:24px;height:24px;border:1px solid var(--line);background:#fff;border-radius:5px;cursor:pointer;font-size:12px;line-height:1;color:var(--ink-soft)}
+  .gbtn:hover{border-color:var(--teal);color:var(--teal)}
+  .gbtn.loeschen:hover{border-color:var(--red);color:var(--red)}
+  @media (max-width:1020px){
+    .eblock .griff{position:static;margin-bottom:4px}
+  }
+  .eblock [contenteditable]{outline:none;min-height:1.2em}
+
+  /* Einfüge-Zeile zwischen Blöcken */
+  .einfueger{height:14px;position:relative;margin:0 -8px}
+  .einfueger button{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    font-family:var(--mono);font-size:10.5px;border:1px dashed var(--line);border-radius:20px;
+    background:#fff;color:var(--ink-soft);padding:2px 10px;cursor:pointer;opacity:0;transition:opacity .1s;
+  }
+  .einfueger:hover button,.einfueger button:focus{opacity:1}
+  .einfueger.immer button{opacity:1;position:static;transform:none;display:block;margin:6px auto}
+
+  /* Block-Menü */
+  .blockmenue{
+    position:absolute;z-index:50;background:#fff;border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 10px 30px rgba(20,30,40,.18);padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px;width:340px;
+  }
+  .blockmenue button{
+    text-align:left;border:1px solid transparent;background:none;border-radius:7px;padding:7px 9px;cursor:pointer;font-size:12.5px;
+  }
+  .blockmenue button:hover{background:#f2f6f8;border-color:var(--grid)}
+  .blockmenue .bm-t{font-weight:700;display:block}
+  .blockmenue .bm-s{color:var(--ink-soft);font-size:11px}
+
+  /* Tabellen-Werkzeuge */
+  .tab-tools{display:flex;gap:4px;margin-top:5px}
+  .blk-tabelle td[contenteditable]:focus,.blk-tabelle th[contenteditable]:focus{background:#f3fbf6}
+
+  .spalten .spalte{border:1px dashed transparent;border-radius:6px}
+  .eblock:hover .spalten .spalte{border-color:var(--grid)}
+
+  .bild-tools{display:flex;gap:6px;align-items:center;margin-top:5px;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top kein-druck">
+    <div class="brand">
+      <p class="eyebrow">Editor</p>
+      <h1>Übersicht bauen</h1>
+      <div class="sub">Blöcke einfügen, Text direkt im Blatt schreiben — wie in Word, nur fürs Labor.</div>
+    </div>
+    <div class="kopf-aktionen">
+      <div class="readout" id="modusReadout"><span class="rlabel">Speicherziel</span><span class="rval" id="modusWert">–</span></div>
+      <a class="btn" href="index.html">← Portal</a>
+      <button class="btn" id="btnVorschau">PDF-Vorschau</button>
+      <button class="btn gruen" id="btnSpeichern">Speichern</button>
+    </div>
+  </header>
+
+  <div class="werkbank kein-druck">
+    <div class="leiste" role="toolbar" aria-label="Textformatierung">
+      <button class="fbtn" data-cmd="bold" title="Fett (Strg+B)"><b>F</b></button>
+      <button class="fbtn" data-cmd="italic" title="Kursiv (Strg+I)"><i>K</i></button>
+      <button class="fbtn" data-cmd="underline" title="Unterstrichen (Strg+U)"><u>U</u></button>
+      <span class="sep"></span>
+      <button class="fbtn" data-cmd="subscript" title="Tiefgestellt — für U<sub>BE</sub>">x<sub>i</sub></button>
+      <button class="fbtn" data-cmd="superscript" title="Hochgestellt — für x²">x<sup>2</sup></button>
+      <span class="sep"></span>
+      <button class="fbtn" id="btnMark" title="Markieren"><span style="background:#fff3bf;padding:0 3px;border-radius:2px">ab</span></button>
+      <button class="fbtn" data-cmd="removeFormat" title="Formatierung entfernen">⌫F</button>
+      <span class="sep"></span>
+      <button class="fbtn" id="btnSonder" title="Sonderzeichen einfügen">Ω μ °</button>
+      <span class="frei"></span>
+      <span class="speicher-status" id="speicherStatus"></span>
+    </div>
+  </div>
+
+  <div id="blattHalter"></div>
+
+  <div class="dialog-fuss kein-druck" style="max-width:820px;margin:14px auto 0;justify-content:space-between">
+    <button class="btn gefahr" id="btnLoeschen" hidden>Übersicht löschen</button>
+    <span></span>
+    <button class="btn gruen" id="btnSpeichern2">Speichern</button>
+  </div>
+
+</div>
+
+<!-- Sonderzeichen -->
+<dialog id="dlgSonder">
+  <h2>Sonderzeichen</h2>
+  <p>Klicken zum Einfügen an der Cursor-Position.</p>
+  <div id="sonderRaster" style="display:grid;grid-template-columns:repeat(8,1fr);gap:4px"></div>
+  <div class="dialog-fuss"><button class="btn" id="btnSonderZu">Schließen</button></div>
+</dialog>
+
+<script defer>
+document.addEventListener("DOMContentLoaded", async () => {
+  const S = window.Sammlung;
+  const $ = id => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  let doc = { id:"", titel:"", untertitel:"", stand:"", bloecke:[] };
+  let geaendert = false;
+
+  /* ---------- Zugangs-Hürde: Editor nur mit Login ---------- */
+  if (!S.eingeloggt()){
+    const pw = prompt("Editor-Zugang: Bitte GitHub-Token einfügen (bleibt nur in diesem Browser).\nOhne Token: Feld leer lassen für den Lokal-Modus (Entwürfe nur auf diesem Gerät).");
+    if (pw && pw.trim()) S.setToken(pw.trim());
+  }
+  $("modusWert").textContent = S.schreibmodus() === "github" ? "GITHUB" : "LOKAL";
+  $("modusReadout").classList.toggle("aus", S.schreibmodus() !== "github");
+
+  /* ---------- Dokument laden ---------- */
+  const wollteId = params.get("doc");
+  if (wollteId){
+    const geladen = await S.docLaden(wollteId);
+    if (geladen){ doc = geladen; $("btnLoeschen").hidden = false; }
+  }
+  if (!doc.bloecke.length) doc.bloecke = [{typ:"h2", html:"Erster Abschnitt"}, {typ:"absatz", html:""}];
+
+  /* ============================================================
+     Editor-Rendering
+     ============================================================ */
+  const halter = $("blattHalter");
+  function bauen(){
+    halter.innerHTML = "";
+    const blatt = document.createElement("article");
+    blatt.className = "blatt";
+    blatt.innerHTML = `
+      <header class="blatt-kopf">
+        <div class="eyebrow">Übersicht · Stand ${S.esc(doc.stand || new Date().toISOString().slice(0,10))}</div>
+        <h1 contenteditable="true" data-platzhalter="Titel der Übersicht" id="edTitel">${doc.titel ? S.esc(doc.titel) : ""}</h1>
+        <p class="untertitel" contenteditable="true" data-platzhalter="Untertitel (optional)" id="edUntertitel">${doc.untertitel ? S.esc(doc.untertitel) : ""}</p>
+      </header>
+      <div id="blockListe"></div>
+      <div class="einfueger immer"><button type="button" data-pos="ende">+ Block hinzufügen</button></div>`;
+    halter.appendChild(blatt);
+    const liste = blatt.querySelector("#blockListe");
+    doc.bloecke.forEach((b, i) => {
+      liste.appendChild(einfuegerBauen(i));
+      liste.appendChild(blockBauen(b, i));
+    });
+    blatt.querySelector('[data-pos="ende"]').addEventListener("click", e => menueZeigen(e.target, doc.bloecke.length));
+    ["edTitel","edUntertitel"].forEach(id => $(id).addEventListener("input", () => markiereGeaendert()));
+  }
+
+  function einfuegerBauen(pos){
+    const d = document.createElement("div");
+    d.className = "einfueger kein-druck";
+    d.innerHTML = `<button type="button">+ Block</button>`;
+    d.querySelector("button").addEventListener("click", e => menueZeigen(e.target, pos));
+    return d;
+  }
+
+  function blockBauen(b, i){
+    const w = document.createElement("div");
+    w.className = "eblock";
+    w.dataset.index = i;
+    const griff = document.createElement("div");
+    griff.className = "griff kein-druck";
+    griff.innerHTML = `
+      <button class="gbtn" title="Nach oben" data-akt="hoch">↑</button>
+      <button class="gbtn" title="Nach unten" data-akt="runter">↓</button>
+      <button class="gbtn" title="Duplizieren" data-akt="dupl">⧉</button>
+      <button class="gbtn loeschen" title="Block löschen" data-akt="weg">✕</button>`;
+    griff.addEventListener("click", e => {
+      const akt = e.target.dataset.akt; if (!akt) return;
+      sichern(); // aktuellen Stand aus DOM übernehmen
+      if (akt === "hoch"   && i > 0){ [doc.bloecke[i-1], doc.bloecke[i]] = [doc.bloecke[i], doc.bloecke[i-1]]; }
+      if (akt === "runter" && i < doc.bloecke.length-1){ [doc.bloecke[i+1], doc.bloecke[i]] = [doc.bloecke[i], doc.bloecke[i+1]]; }
+      if (akt === "dupl"){ doc.bloecke.splice(i+1, 0, JSON.parse(JSON.stringify(doc.bloecke[i]))); }
+      if (akt === "weg"){ doc.bloecke.splice(i, 1); }
+      markiereGeaendert(); bauen();
+    });
+    w.appendChild(griff);
+
+    const inhalt = document.createElement("div");
+    inhalt.className = "blk blk-" + b.typ;
+    switch(b.typ){
+      case "h2": inhalt.innerHTML = `<h2 contenteditable="true" data-feld="html" data-platzhalter="Überschrift">${b.html||""}</h2>`; break;
+      case "h3": inhalt.innerHTML = `<h3 contenteditable="true" data-feld="html" data-platzhalter="Zwischenüberschrift">${b.html||""}</h3>`; break;
+      case "absatz": inhalt.innerHTML = `<p contenteditable="true" data-feld="html" data-platzhalter="Text schreiben …">${b.html||""}</p>`; break;
+      case "liste": inhalt.innerHTML = `${b.geordnet?"<ol":"<ul"} contenteditable="true" data-feld="html">${b.html||"<li></li>"}${b.geordnet?"</ol>":"</ul>"}`; break;
+      case "formel": inhalt.innerHTML = `<div class="formel" contenteditable="true" data-feld="html" data-platzhalter="U_BE = 0,7 V — Tief-/Hochstellen über die Leiste">${b.html||""}</div>`; break;
+      case "box": inhalt.innerHTML = `
+        <div class="box box-${b.variante||"info"}">
+          <div class="box-label" style="display:flex;justify-content:space-between;align-items:center">
+            <span>${{info:"Info",merke:"Merke",achtung:"Achtung",beispiel:"Beispiel"}[b.variante||"info"]}</span>
+            <select class="kein-druck" data-feld="variante" style="font-size:11px">
+              ${["info","merke","achtung","beispiel"].map(v=>`<option value="${v}" ${v===(b.variante||"info")?"selected":""}>${v}</option>`).join("")}
+            </select>
+          </div>
+          <div contenteditable="true" data-feld="html" data-platzhalter="Inhalt der Box …">${b.html||""}</div>
+        </div>`; break;
+      case "spalten": inhalt.innerHTML = `
+        <div class="spalten">
+          <div class="spalte" contenteditable="true" data-feld="links" data-platzhalter="Linke Spalte …">${b.links||""}</div>
+          <div class="spalte" contenteditable="true" data-feld="rechts" data-platzhalter="Rechte Spalte …">${b.rechts||""}</div>
+        </div>`; break;
+      case "tabelle": {
+        inhalt.innerHTML = `<div class="tabelle-huelle"><table data-feld="tabelle">${b.html || "<tr><th>Größe</th><th>Formel</th></tr><tr><td></td><td></td></tr>"}</table></div>
+          <div class="tab-tools kein-druck">
+            <button class="btn klein" data-tab="zeile">+ Zeile</button>
+            <button class="btn klein" data-tab="spalte">+ Spalte</button>
+            <button class="btn klein" data-tab="zeile-weg">− Zeile</button>
+            <button class="btn klein" data-tab="spalte-weg">− Spalte</button>
+          </div>`;
+        break;
+      }
+      case "bild": inhalt.innerHTML = `
+        <figure>
+          ${b.src ? `<img src="${b.src}" style="width:${b.breite||100}%">` : `<div class="leer">Bild wählen ↓</div>`}
+          <figcaption contenteditable="true" data-feld="unterschrift" data-platzhalter="Bildunterschrift (optional)">${S.esc(b.unterschrift||"")}</figcaption>
+        </figure>
+        <div class="bild-tools kein-druck">
+          <input type="file" accept="image/*" data-feld="datei">
+          <label>Breite <input type="range" min="25" max="100" value="${b.breite||100}" data-feld="breite"> <span data-feld="breiteAnzeige">${b.breite||100}%</span></label>
+        </div>`; break;
+      case "linie": inhalt.innerHTML = `<hr>`; break;
+    }
+    w.appendChild(inhalt);
+
+    // Editierbare Felder → bei Eingabe merken
+    inhalt.querySelectorAll("[contenteditable]").forEach(el => el.addEventListener("input", markiereGeaendert));
+    // Box-Variante
+    const sel = inhalt.querySelector("select[data-feld=variante]");
+    if (sel) sel.addEventListener("change", () => { sichern(); doc.bloecke[i].variante = sel.value; markiereGeaendert(); bauen(); });
+    // Tabellen-Werkzeuge
+    inhalt.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => tabAktion(inhalt, btn.dataset.tab)));
+    tabellenZellenEditierbar(inhalt);
+    // Bild
+    const dateiIn = inhalt.querySelector("input[data-feld=datei]");
+    if (dateiIn) dateiIn.addEventListener("change", () => {
+      const f = dateiIn.files[0]; if (!f) return;
+      const fr = new FileReader();
+      fr.onload = () => { sichern(); doc.bloecke[i].src = fr.result; markiereGeaendert(); bauen(); };
+      fr.readAsDataURL(f);
+    });
+    const breiteIn = inhalt.querySelector("input[data-feld=breite]");
+    if (breiteIn) breiteIn.addEventListener("input", () => {
+      doc.bloecke[i].breite = +breiteIn.value;
+      const img = inhalt.querySelector("img"); if (img) img.style.width = breiteIn.value + "%";
+      inhalt.querySelector("[data-feld=breiteAnzeige]").textContent = breiteIn.value + "%";
+      markiereGeaendert();
+    });
+    return w;
+  }
+
+  function tabellenZellenEditierbar(inhalt){
+    inhalt.querySelectorAll("table td, table th").forEach(z => {
+      z.setAttribute("contenteditable", "true");
+      z.addEventListener("input", markiereGeaendert);
+    });
+  }
+  function tabAktion(inhalt, akt){
+    const t = inhalt.querySelector("table");
+    const zeilen = [...t.rows];
+    if (akt === "zeile"){
+      const n = zeilen[zeilen.length-1].cells.length;
+      const tr = t.insertRow(); for (let k=0;k<n;k++) tr.insertCell();
+    }
+    if (akt === "spalte") zeilen.forEach((r,ri) => {
+      const z = ri===0 && r.cells[0] && r.cells[0].tagName==="TH" ? document.createElement("th") : document.createElement("td");
+      r.appendChild(z);
+    });
+    if (akt === "zeile-weg" && zeilen.length > 1) t.deleteRow(-1);
+    if (akt === "spalte-weg" && zeilen[0].cells.length > 1) zeilen.forEach(r => r.deleteCell(-1));
+    tabellenZellenEditierbar(inhalt); markiereGeaendert();
+  }
+
+  /* ---------- Block-Menü ---------- */
+  const TYPEN = [
+    {typ:"h2",      t:"Überschrift",        s:"Abschnitts-Titel"},
+    {typ:"h3",      t:"Zwischenüberschrift",s:"kleinere Gliederung"},
+    {typ:"absatz",  t:"Text",               s:"normaler Absatz"},
+    {typ:"liste",   t:"Aufzählung",         s:"Punkte-Liste"},
+    {typ:"liste",   t:"Nummerierte Liste",  s:"1., 2., 3. …", extra:{geordnet:true}},
+    {typ:"formel",  t:"Formel",             s:"zentriert, Monospace, U_BE etc."},
+    {typ:"tabelle", t:"Tabelle",            s:"Zeilen/Spalten anpassbar"},
+    {typ:"box",     t:"Merk-Box",           s:"Info · Merke · Achtung · Beispiel", extra:{variante:"merke"}},
+    {typ:"spalten", t:"Zwei Spalten",       s:"nebeneinander, z. B. Vergleich"},
+    {typ:"bild",    t:"Bild",               s:"Skizze/Foto einbetten"},
+    {typ:"linie",   t:"Trennlinie",         s:"gestrichelte Linie"},
+  ];
+  let menue = null;
+  function menueZeigen(anker, pos){
+    menueZu();
+    menue = document.createElement("div");
+    menue.className = "blockmenue";
+    TYPEN.forEach(t => {
+      const b = document.createElement("button");
+      b.innerHTML = `<span class="bm-t">${t.t}</span><span class="bm-s">${t.s}</span>`;
+      b.addEventListener("click", () => {
+        sichern();
+        doc.bloecke.splice(pos, 0, Object.assign({typ:t.typ, html:""}, t.extra||{}));
+        markiereGeaendert(); menueZu(); bauen();
+        // Fokus auf den neuen Block
+        setTimeout(() => {
+          const neu = halter.querySelectorAll(".eblock")[pos];
+          const ed = neu && neu.querySelector("[contenteditable]");
+          if (ed) ed.focus();
+        }, 30);
+      });
+      menue.appendChild(b);
+    });
+    document.body.appendChild(menue);
+    const r = anker.getBoundingClientRect();
+    menue.style.left = Math.max(10, Math.min(window.innerWidth-360, r.left)) + "px";
+    menue.style.top = (r.bottom + window.scrollY + 6) + "px";
+    setTimeout(() => document.addEventListener("click", menueKlickWeg), 0);
+  }
+  function menueKlickWeg(e){ if (menue && !menue.contains(e.target)) menueZu(); }
+  function menueZu(){ if (menue){ menue.remove(); menue = null; document.removeEventListener("click", menueKlickWeg); } }
+
+  /* ---------- DOM → doc übernehmen ---------- */
+  function sichern(){
+    doc.titel = $("edTitel") ? $("edTitel").textContent.trim() : doc.titel;
+    doc.untertitel = $("edUntertitel") ? $("edUntertitel").textContent.trim() : doc.untertitel;
+    halter.querySelectorAll(".eblock").forEach((w, i) => {
+      const b = doc.bloecke[i]; if (!b) return;
+      w.querySelectorAll("[data-feld]").forEach(el => {
+        const f = el.dataset.feld;
+        if (f === "html" || f === "links" || f === "rechts"){
+          b[f] = el.tagName === "UL" || el.tagName === "OL" ? el.innerHTML : el.innerHTML;
+        }
+        if (f === "tabelle"){
+          const klon = el.cloneNode(true);
+          klon.querySelectorAll("[contenteditable]").forEach(z => z.removeAttribute("contenteditable"));
+          b.html = klon.innerHTML;
+        }
+        if (f === "unterschrift") b.unterschrift = el.textContent.trim();
+      });
+    });
+  }
+
+  /* ---------- Formatleiste ---------- */
+  document.querySelectorAll(".fbtn[data-cmd]").forEach(b =>
+    b.addEventListener("mousedown", e => { e.preventDefault(); document.execCommand(b.dataset.cmd, false, null); markiereGeaendert(); }));
+  $("btnMark").addEventListener("mousedown", e => {
+    e.preventDefault();
+    document.execCommand("hiliteColor", false, "#fff3bf");
+    markiereGeaendert();
+  });
+
+  /* ---------- Sonderzeichen ---------- */
+  const ZEICHEN = ["Ω","μ","π","Δ","φ","ω","τ","λ","α","β","γ","η","θ","σ","ρ","∞","≈","≠","≤","≥","±","·","×","÷","√","∫","∑","→","⇒","↔","∥","⊥","°","′","″","‰","€","½","¼","¾","≙"];
+  const sr = $("sonderRaster");
+  ZEICHEN.forEach(z => {
+    const b = document.createElement("button");
+    b.className = "fbtn"; b.textContent = z;
+    b.addEventListener("mousedown", e => { e.preventDefault(); document.execCommand("insertText", false, z); markiereGeaendert(); });
+    sr.appendChild(b);
+  });
+  $("btnSonder").addEventListener("click", () => $("dlgSonder").show());
+  $("btnSonderZu").addEventListener("click", () => $("dlgSonder").close());
+
+  /* ---------- Speichern ---------- */
+  let autoTimer = null;
+  function markiereGeaendert(){
+    geaendert = true;
+    $("speicherStatus").textContent = "ungespeicherte Änderungen …";
+    clearTimeout(autoTimer);
+    autoTimer = setTimeout(() => { // Auto-Entwurf lokal alle 4 s
+      sichern();
+      if (doc.titel){ if (!doc.id) doc.id = S.slug(doc.titel); S.lokalSpeichern(doc); $("speicherStatus").textContent = "Entwurf lokal gesichert · " + new Date().toLocaleTimeString(); }
+    }, 4000);
+  }
+  async function speichern(){
+    sichern();
+    if (!doc.titel){ alert("Bitte zuerst einen Titel eintragen."); $("edTitel").focus(); return; }
+    if (!doc.id) doc.id = S.slug(doc.titel);
+    const btns = [$("btnSpeichern"), $("btnSpeichern2")];
+    btns.forEach(b => { b.disabled = true; b.textContent = "Speichert …"; });
+    try{
+      const wohin = await S.docSpeichern(doc);
+      geaendert = false;
+      $("speicherStatus").textContent = wohin === "github"
+        ? "Veröffentlicht ✓ (GitHub Pages braucht 1–2 min) · " + new Date().toLocaleTimeString()
+        : "Lokal gespeichert ✓ (nur dieser Browser) · " + new Date().toLocaleTimeString();
+      $("btnLoeschen").hidden = false;
+      history.replaceState(null, "", "editor.html?doc=" + encodeURIComponent(doc.id));
+    }catch(e){
+      alert("Speichern fehlgeschlagen:\n" + e.message);
+    }finally{
+      btns.forEach(b => { b.disabled = false; b.textContent = "Speichern"; });
+    }
+  }
+  $("btnSpeichern").addEventListener("click", speichern);
+  $("btnSpeichern2").addEventListener("click", speichern);
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s"){ e.preventDefault(); speichern(); }
+  });
+  window.addEventListener("beforeunload", e => { if (geaendert){ e.preventDefault(); e.returnValue = ""; } });
+
+  /* ---------- Löschen / Vorschau ---------- */
+  $("btnLoeschen").addEventListener("click", async () => {
+    if (!doc.id) return;
+    if (!confirm(`„${doc.titel || doc.id}" wirklich löschen? Das entfernt sie auch aus dem Portal.`)) return;
+    try{ await S.docEntfernen(doc.id); location.href = "index.html"; }
+    catch(e){ alert("Löschen fehlgeschlagen:\n" + e.message); }
+  });
+  $("btnVorschau").addEventListener("click", () => {
+    sichern();
+    if (!doc.id) doc.id = S.slug(doc.titel || "vorschau");
+    S.lokalSpeichern(doc);
+    window.open("viewer.html?doc=" + encodeURIComponent(doc.id), "_blank");
+  });
+
+  bauen();
+});
+</script>
+</body>
+</html>

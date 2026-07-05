@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LTI-Glieder · Klassifikations-Trainer</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --panel:#ffffff; --ink:#1a1d24; --ink2:#5b6472;
+    --line:#e2e5ea; --grid:#eceef2; --accent:#0b7a8c; --accent2:#0e94aa;
+    --trace:#0b7a8c; --trace2:#c2410c;
+    --ok:#2f9e44; --okbg:#ebfbee; --bad:#e03131; --badbg:#fff0f0;
+    --warn:#c2410c;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Inter,Arial,sans-serif;
+    --r:10px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:18px 16px 64px;}
+
+  header.top{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 14px; margin-bottom:14px;}
+  header.top .hgroup{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .navlink{font-family:var(--mono); font-size:12px; color:var(--accent); text-decoration:none; white-space:nowrap;
+           border:1px solid var(--line); padding:6px 11px; border-radius:7px; background:#fbfcfd;}
+  .navlink:hover{background:#effbfd; border-color:#cdd2da}
+  header.top h1{font-size:18px; margin:0; letter-spacing:-.01em; font-weight:650;}
+  header.top h1 .tag{font-family:var(--mono); color:var(--accent); font-weight:600;}
+  header.top .sub{color:var(--ink2); font-size:12.5px; font-family:var(--mono);}
+
+  .bar{display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center;
+       background:var(--panel); border:1px solid var(--line); border-radius:var(--r);
+       padding:11px 14px; margin-bottom:14px;}
+  .bar .group{display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
+  .bar .lbl{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink2); font-weight:600; margin-right:2px;}
+
+  .chip{font-family:var(--mono); font-size:12.5px; border:1px solid var(--line); background:#fbfcfd;
+        color:var(--ink2); padding:5px 9px; border-radius:7px; cursor:pointer; user-select:none;
+        transition:all .12s;}
+  .chip:hover{border-color:#cdd2da}
+  .chip.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .chip.small{padding:4px 8px; font-size:11.5px;}
+  .chip.locked{opacity:.4; pointer-events:none; filter:grayscale(.5)}
+  .chip[data-hard].on{background:var(--trace2); border-color:var(--trace2)}
+  .chip[data-exam].on{background:#5f3dc4; border-color:#5f3dc4}
+  .exambox{margin-top:11px; border:1px solid #d0c4f0; background:#f6f3fd; border-radius:8px; padding:10px 12px;}
+  .exhead{font-size:12px; font-weight:700; color:#5f3dc4; margin-bottom:7px;}
+  .exrow{display:flex; gap:8px; font-size:12.5px; padding:4px 0; border-top:1px solid #ece6f9;}
+  .exrow:first-of-type{border-top:0}
+  .exq{flex:0 0 86px; font-weight:650; color:#5f3dc4}
+  .ext{flex:1; line-height:1.5}
+  .ext b{font-family:var(--mono)}
+
+  .btn{font-family:var(--sans); font-weight:600; font-size:13.5px; border:1px solid var(--accent);
+       background:var(--accent); color:#fff; padding:8px 15px; border-radius:8px; cursor:pointer; transition:.12s;}
+  .btn:hover{background:var(--accent2); border-color:var(--accent2)}
+  .btn.ghost{background:transparent; color:var(--accent); }
+  .btn.ghost:hover{background:#effbfd}
+  .btn:disabled{opacity:.45; cursor:not-allowed}
+  .btn.sm{padding:6px 11px; font-size:12.5px}
+
+  .layout{display:grid; grid-template-columns:1.55fr 1fr; gap:14px; align-items:start;}
+  @media(max-width:880px){ .layout{grid-template-columns:1fr} }
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:14px;}
+  .card h2{font-size:12px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink2);
+           margin:0 0 10px; font-weight:700;}
+
+  .plots{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media(max-width:560px){ .plots{grid-template-columns:1fr} }
+  .plot{border:1px solid var(--line); border-radius:8px; background:#fff; padding:8px 8px 4px; min-width:0;}
+  .plot .pt{font-size:11.5px; font-weight:600; color:var(--ink); font-family:var(--mono); margin:0 0 4px 2px;}
+  .plot canvas{width:100%; height:auto; display:block;}
+  .plot.note{display:flex; align-items:center; justify-content:center; color:var(--ink2);
+             font-size:12px; min-height:120px; text-align:center; padding:14px; font-family:var(--mono)}
+
+  /* answer form */
+  .field{margin-bottom:14px;}
+  .field > .q{font-size:13px; font-weight:650; margin-bottom:6px; display:flex; gap:6px; align-items:center;}
+  .field .def{font-size:11.5px; color:var(--ink2); margin:-2px 0 7px; line-height:1.45;}
+  .opts{display:flex; gap:7px; flex-wrap:wrap;}
+  .opt{font-family:var(--mono); font-size:13px; border:1px solid var(--line); background:#fbfcfd;
+       padding:7px 12px; border-radius:8px; cursor:pointer; transition:.12s; user-select:none;}
+  .opt:hover{border-color:#cdd2da}
+  .opt.sel{border-color:var(--accent); background:#effbfd; color:var(--accent); font-weight:600;}
+  .opt.disabled{pointer-events:none; opacity:.85}
+  .opt.correct{border-color:var(--ok); background:var(--okbg); color:var(--ok); font-weight:600}
+  .opt.wrong{border-color:var(--bad); background:var(--badbg); color:var(--bad); text-decoration:line-through}
+
+  .tfopts{display:flex; flex-direction:column; gap:7px;}
+  .tfopt{border:1px solid var(--line); background:#fbfcfd; border-radius:8px; padding:9px 11px; cursor:pointer;
+         font-family:var(--mono); font-size:13.5px; transition:.12s;}
+  .tfopt:hover{border-color:#cdd2da}
+  .tfopt.sel{border-color:var(--accent); background:#effbfd}
+  .tfopt.disabled{pointer-events:none}
+  .tfopt.correct{border-color:var(--ok); background:var(--okbg)}
+  .tfopt.wrong{border-color:var(--bad); background:var(--badbg); opacity:.7}
+  .tfopt sub{font-size:.8em} .tfopt sup{font-size:.8em}
+
+  input.txt{font-family:var(--mono); font-size:14px; padding:8px 11px; border:1px solid var(--line);
+            border-radius:8px; width:160px; background:#fbfcfd; color:var(--ink)}
+  input.txt:focus{outline:none; border-color:var(--accent); background:#fff}
+  input.txt.correct{border-color:var(--ok); background:var(--okbg)}
+  input.txt.wrong{border-color:var(--bad); background:var(--badbg)}
+
+  .ja-nein{display:grid; grid-template-columns:repeat(4,1fr); gap:9px;}
+  @media(max-width:560px){ .ja-nein{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:420px){ .ja-nein{grid-template-columns:1fr} }
+  .jn{border:1px solid var(--line); border-radius:8px; padding:8px 9px;}
+  .jn .jq{font-size:12.5px; font-weight:650; margin-bottom:6px;}
+  .jn .jbtns{display:flex; gap:6px;}
+  .jn .opt{flex:1; text-align:center; padding:6px 0;}
+
+  .actions{display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;}
+
+  .feedback{margin-top:13px; border-top:1px dashed var(--line); padding-top:12px; display:none;}
+  .feedback.show{display:block;}
+  .verdict{font-family:var(--mono); font-size:14px; font-weight:700; margin-bottom:9px;}
+  .verdict.good{color:var(--ok)} .verdict.mid{color:var(--warn)} .verdict.bad{color:var(--bad)}
+  .fbrow{font-size:12.5px; padding:4px 0; border-bottom:1px solid var(--grid); display:flex; gap:8px; align-items:flex-start;}
+  .fbrow:last-child{border-bottom:0}
+  .fbrow .mk{font-family:var(--mono); font-weight:700; flex:0 0 auto;}
+  .fbrow .mk.ok{color:var(--ok)} .fbrow .mk.no{color:var(--bad)}
+  .fbrow .ft{flex:1}
+  .fbrow .ft b{font-family:var(--mono)}
+  .sysnote{font-size:12px; color:var(--ink2); background:#f7f9fa; border:1px solid var(--line);
+           border-radius:8px; padding:9px 11px; margin-top:10px; line-height:1.5}
+  .sysnote b{color:var(--ink); font-family:var(--mono)}
+
+  /* score */
+  .scorebar{display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-family:var(--mono); font-size:12.5px; color:var(--ink2);}
+  .scorebar b{color:var(--ink); font-size:15px}
+  .score-pct{color:var(--accent)}
+
+  dialog{border:1px solid var(--line); border-radius:14px; padding:0; max-width:520px; width:92%;}
+  dialog::backdrop{background:rgba(20,24,30,.4)}
+  .modal{padding:20px}
+  .modal h3{margin:0 0 12px; font-size:16px}
+  .summary-grid{display:grid; grid-template-columns:1fr auto auto; gap:6px 14px; font-family:var(--mono); font-size:13px; margin:10px 0;}
+  .summary-grid .sh{color:var(--ink2); font-size:11px; text-transform:uppercase; letter-spacing:.05em}
+  .meter{height:7px; background:var(--grid); border-radius:4px; overflow:hidden; align-self:center; min-width:90px}
+  .meter > i{display:block; height:100%; background:var(--accent)}
+  .modal .close{margin-top:14px; display:flex; gap:8px; justify-content:flex-end}
+  .muted{color:var(--ink2); font-size:12px}
+  kbd{font-family:var(--mono); background:#eef0f3; border:1px solid var(--line); border-bottom-width:2px;
+      border-radius:5px; padding:1px 6px; font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="hgroup">
+      <h1>LTI&#8209;Glieder <span class="tag">· Klassifikations&#8209;Trainer</span></h1>
+      <div class="sub" id="convNote">Verzögerung = Pol (−1-Knick) · Vorhalt = endl. Nullstelle (+1, Phase ↑) · Allpass = (1−T·s), Phase ↓ · Totzeit = e<sup>−Tₜ·s</sup></div>
+    </div>
+    <a class="navlink" href="./lti-explorer.html">Lernmodus →</a>
+  </header>
+
+  <div class="bar">
+    <div class="group">
+      <span class="lbl">Glieder</span>
+      <span class="chip on" data-level="grund">Grundglieder</span>
+      <span class="chip" data-level="erw">+ Erweitert</span>
+    </div>
+    <div class="group">
+      <span class="lbl">Angezeigte Graphen</span>
+      <span class="chip small on" data-plot="bode">Amplitudengang</span>
+      <span class="chip small on" data-plot="phase">Phasengang</span>
+      <span class="chip small" data-plot="nyq">Ortskurve</span>
+      <span class="chip small on" data-plot="step">Sprungantwort</span>
+      <span class="chip small" data-plot="pn">Pol&#8209;/Nullstellenplan</span>
+    </div>
+    <div class="group">
+      <span class="lbl">Modus</span>
+      <span class="chip small" data-hard="1">🔒 Hard-Mode · 1 Graph</span>
+      <span class="chip small" data-exam="1">📝 Prüfungsmodus</span>
+      <span class="chip small" data-rand="1">🎲 Zufallsraum</span>
+    </div>
+    <div class="group" style="margin-left:auto">
+      <button class="btn" id="newBtn">Neue Aufgabe</button>
+      <button class="btn ghost sm" id="endBtn">Auswertung</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- LEFT: plots -->
+    <div class="card">
+      <h2>Charakteristische Systemfunktionen</h2>
+      <div class="plots" id="plots"></div>
+    </div>
+
+    <!-- RIGHT: answer -->
+    <div class="card">
+      <h2>Auswertung der Aufgabe</h2>
+
+      <div class="field">
+        <div class="q">1 · Stationäres Verhalten</div>
+        <div class="def">Verhalten für ω→0 (s→0): <b>P</b> = |G| endlich ≠ 0 · <b>I</b> = |G|→∞ (Pol im Ursprung) · <b>D</b> = |G|→0 (Nullstelle im Ursprung).</div>
+        <div class="opts" id="optStat">
+          <div class="opt" data-v="P">P · proportional</div>
+          <div class="opt" data-v="I">I · integral</div>
+          <div class="opt" data-v="D">D · differenzierend</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="q">2 · Dynamisches Verhalten (ja/nein)</div>
+        <div class="ja-nein">
+          <div class="jn">
+            <div class="jq">Verzögerung</div>
+            <div class="jbtns" data-jn="verz">
+              <div class="opt" data-v="ja">ja</div><div class="opt" data-v="nein">nein</div>
+            </div>
+          </div>
+          <div class="jn">
+            <div class="jq">Vorhalt</div>
+            <div class="jbtns" data-jn="vorhalt">
+              <div class="opt" data-v="ja">ja</div><div class="opt" data-v="nein">nein</div>
+            </div>
+          </div>
+          <div class="jn">
+            <div class="jq">Allpass</div>
+            <div class="jbtns" data-jn="allpass">
+              <div class="opt" data-v="ja">ja</div><div class="opt" data-v="nein">nein</div>
+            </div>
+          </div>
+          <div class="jn">
+            <div class="jq">Totzeit</div>
+            <div class="jbtns" data-jn="tot">
+              <div class="opt" data-v="ja">ja</div><div class="opt" data-v="nein">nein</div>
+            </div>
+          </div>
+        </div>
+        <div class="def" style="margin-top:7px">
+          Verzögerung = endlicher Pol 1/(1+T·s) (−1-Knick) · Vorhalt = endliche Nullstelle (1+T·s) im Zähler (+1-Knick, Phase nach oben) · Allpass = rechtsseitige Nullstelle (1−T·s), gleicher Betrag wie Vorhalt, aber Phase nach unten / Sprungantwort schwingt zuerst zurück · Totzeit = e<sup>−Tₜ·s</sup>.
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="q">3 · Übertragungsfunktion (allgemeine Form)</div>
+        <div class="tfopts" id="optTF"></div>
+      </div>
+
+      <div class="field">
+        <div class="q">4 · Bezeichner</div>
+        <div class="def">Klassifikation aus stationärem + dynamischem Verhalten, z.&nbsp;B. <b>PT1</b>, <b>DT1</b>, <b>PT1Tt</b>.</div>
+        <input class="txt" id="optBez" type="text" autocomplete="off" spellcheck="false" placeholder="z. B. PT1">
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="checkBtn">Auswerten</button>
+        <button class="btn ghost sm" id="revealBtn">Lösung zeigen</button>
+        <button class="btn ghost sm" id="nextBtn" style="display:none">Nächste Aufgabe →</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="scorebar">
+      <span>Aufgaben: <b id="scN">0</b></span>
+      <span>Vollständig richtig: <b id="scFull">0</b></span>
+      <span>Teilpunkte: <b id="scPts">0</b> / <b id="scMax">0</b> <span class="score-pct" id="scPct"></span></span>
+      <span class="muted" style="margin-left:auto"><kbd>Enter</kbd> auswerten · <kbd>N</kbd> nächste</span>
+    </div>
+  </div>
+
+</div>
+
+<dialog id="sumDlg">
+  <div class="modal">
+    <h3>Sitzungsauswertung</h3>
+    <div id="sumBody"></div>
+    <div class="close">
+      <button class="btn ghost sm" id="sumReset">Zurücksetzen</button>
+      <button class="btn sm" id="sumClose">Weiter üben</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="lti-systems.js"></script>
+<script>
+"use strict";
+
+/* ---------- Komplexe Hilfsfunktionen ---------- */
+const cadd=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+const cmul=(a,b)=>[a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]];
+const cdiv=(a,b)=>{const d=b[0]*b[0]+b[1]*b[1]; return [(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d];};
+const cabs=(a)=>Math.hypot(a[0],a[1]);
+const carg=(a)=>Math.atan2(a[1],a[0]);
+
+/* ---------- System-Katalog ----------
+   Parameter für die Plots: K=2, KI=1, KD=1, T=1, D=0.5, Ti=1, Td=3, Tt=1
+*/
+const K=2, KI=1, KD=1, T=1, Dd=0.5, Ti=1, Td=3, Tt=1, T1=2, T2=0.5;
+
+const SYSTEMS = LTI.CAT.map(s=>LTI.bake(s, LTI.DEF));
+
+/* TF als HTML rendern (K_I -> K mit Index etc.) */
+function tfHTML(s){
+  return s
+    .replace(/K_I/g,"K<sub>I</sub>")
+    .replace(/K_D/g,"K<sub>D</sub>")
+    .replace(/T_I/g,"T<sub>I</sub>")
+    .replace(/T_D/g,"T<sub>D</sub>")
+    .replace(/Tₜ/g,"T<sub>t</sub>")
+    .replace(/s²/g,"s<sup>2</sup>")
+    .replace(/T²/g,"T<sup>2</sup>")
+    .replace(/e\^\(([^)]*)\)/g,"e<sup>$1</sup>");
+}
+
+/* ---------- Canvas-Plot-Engine ---------- */
+const COL={axis:"#9aa3af", grid:"#eceef2", text:"#5b6472", trace:"#0b7a8c", trace2:"#c2410c", zero:"#1a1d24"};
+const W_MIN=0.05, W_MAX=60, NW=420;
+const wArr=(()=>{const a=[],l0=Math.log10(W_MIN),l1=Math.log10(W_MAX);
+  for(let i=0;i<NW;i++) a.push(Math.pow(10,l0+(l1-l0)*i/(NW-1))); return a;})();
+
+function setupCanvas(cv,wCss,hCss){
+  const dpr=window.devicePixelRatio||1;
+  cv.style.width=wCss+"px"; // hint; CSS overrides width:100%
+  cv.width=Math.round(wCss*dpr); cv.height=Math.round(hCss*dpr);
+  const ctx=cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,wCss,hCss);
+  return {ctx,W:wCss,H:hCss};
+}
+function fmtTick(v){ if(v===0) return "0"; const a=Math.abs(v);
+  if(a>=1000||a<0.01) return v.toExponential(0);
+  if(Number.isInteger(v)) return ""+v; return (Math.round(v*100)/100).toString(); }
+
+function logTicks(){ return [0.1,1,10]; }
+
+/* generic frame */
+function frame(ctx,m,W,H,title,xlab,ylab){
+  ctx.fillStyle="#fff"; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle=COL.axis; ctx.lineWidth=1;
+  ctx.strokeRect(m.l,m.t, W-m.l-m.r, H-m.t-m.b);
+  ctx.fillStyle=COL.text; ctx.font="10px ui-monospace,monospace";
+  ctx.textAlign="center"; ctx.fillText(xlab, m.l+(W-m.l-m.r)/2, H-3);
+  ctx.save(); ctx.translate(9, m.t+(H-m.t-m.b)/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText(ylab,0,0); ctx.restore();
+}
+
+function drawBode(cv){
+  const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:42,r:10,t:10,b:24};
+  const px=W-m.l-m.r, py=H-m.t-m.b;
+  // data dB
+  const db=wArr.map(w=>20*Math.log10(Math.max(1e-9,cabs(SYS.G(w)))));
+  let ymin=Math.min(...db), ymax=Math.max(...db);
+  ymin=Math.floor(ymin/20)*20; ymax=Math.ceil(ymax/20)*20;
+  if(ymax-ymin<40){ymax=ymin+40;} ymin=Math.max(ymin,-80); ymax=Math.min(ymax,80);
+  const lx0=Math.log10(W_MIN), lx1=Math.log10(W_MAX);
+  const X=w=>m.l+(Math.log10(w)-lx0)/(lx1-lx0)*px;
+  const Y=d=>m.t+(ymax-d)/(ymax-ymin)*py;
+  frame(ctx,m,W,H,"","ω (log)","|G| / dB");
+  // grid: decade lines + dB lines
+  ctx.strokeStyle=COL.grid; ctx.lineWidth=1; ctx.fillStyle=COL.text; ctx.font="9px ui-monospace,monospace";
+  ctx.textAlign="center";
+  logTicks().forEach(w=>{const x=X(w); ctx.beginPath();ctx.moveTo(x,m.t);ctx.lineTo(x,m.t+py);ctx.stroke();
+    ctx.fillText(fmtTick(w),x,H-13);});
+  ctx.textAlign="right";
+  for(let d=ymin; d<=ymax; d+=20){const y=Y(d); ctx.strokeStyle=COL.grid;
+    ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(m.l+px,y);ctx.stroke();
+    ctx.fillStyle=COL.text; ctx.fillText(d,m.l-4,y+3);}
+  // trace
+  ctx.strokeStyle=COL.trace; ctx.lineWidth=2; ctx.beginPath();
+  let started=false;
+  wArr.forEach((w,i)=>{const y=Y(Math.max(ymin,Math.min(ymax,db[i]))); const x=X(w);
+    if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);});
+  ctx.stroke();
+}
+
+function unwrap(arr){ const o=[arr[0]]; for(let i=1;i<arr.length;i++){let d=arr[i]-arr[i-1];
+  while(d>Math.PI)d-=2*Math.PI; while(d<-Math.PI)d+=2*Math.PI; o.push(o[i-1]+d);} return o; }
+
+function drawPhase(cv){
+  const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:42,r:10,t:10,b:24};
+  const px=W-m.l-m.r, py=H-m.t-m.b;
+  let ph=unwrap(wArr.map(w=>carg(SYS.G(w)))).map(r=>r*180/Math.PI);
+  let ymin=Math.min(...ph), ymax=Math.max(...ph);
+  ymin=Math.floor(ymin/45)*45; ymax=Math.ceil(ymax/45)*45;
+  if(ymax-ymin<90){ymax=ymin+90;}
+  const lx0=Math.log10(W_MIN), lx1=Math.log10(W_MAX);
+  const X=w=>m.l+(Math.log10(w)-lx0)/(lx1-lx0)*px;
+  const Y=d=>m.t+(ymax-d)/(ymax-ymin)*py;
+  frame(ctx,m,W,H,"","ω (log)","φ / °");
+  ctx.strokeStyle=COL.grid; ctx.font="9px ui-monospace,monospace";
+  ctx.textAlign="center";
+  logTicks().forEach(w=>{const x=X(w); ctx.beginPath();ctx.moveTo(x,m.t);ctx.lineTo(x,m.t+py);ctx.stroke();
+    ctx.fillStyle=COL.text; ctx.fillText(fmtTick(w),x,H-13);});
+  ctx.textAlign="right";
+  for(let d=ymin; d<=ymax; d+=45){const y=Y(d); ctx.strokeStyle= d===0?COL.axis:COL.grid;
+    ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(m.l+px,y);ctx.stroke();
+    ctx.fillStyle=COL.text; ctx.fillText(d+"°",m.l-4,y+3);}
+  ctx.strokeStyle=COL.trace2; ctx.lineWidth=2; ctx.beginPath();
+  wArr.forEach((w,i)=>{const x=X(w),y=Y(Math.max(ymin,Math.min(ymax,ph[i])));
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
+  ctx.stroke();
+}
+
+function drawNyquist(cv){
+  const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:30,r:12,t:10,b:24};
+  const px=W-m.l-m.r, py=H-m.t-m.b;
+  const pts=wArr.map(w=>SYS.G(w)).filter(p=>isFinite(p[0])&&isFinite(p[1]));
+  let re=pts.map(p=>p[0]), im=pts.map(p=>p[1]);
+  // clamp extreme (I etc.)
+  const LIM=8;
+  re=re.map(v=>Math.max(-LIM*3,Math.min(LIM*3,v)));
+  im=im.map(v=>Math.max(-LIM*3,Math.min(LIM*3,v)));
+  let xmin=Math.min(0,...re), xmax=Math.max(0,...re);
+  let ymin=Math.min(0,...im), ymax=Math.max(0,...im);
+  // symmetric-ish padding & equal aspect
+  let span=Math.max(xmax-xmin,ymin*0+ymax-ymin,1)*1.12;
+  const cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  const sc=Math.min(px,py)/span;
+  const X=v=>m.l+px/2+(v-cx)*sc;
+  const Y=v=>m.t+py/2-(v-cy)*sc;
+  frame(ctx,m,W,H,"","Re","Im");
+  // axes
+  ctx.strokeStyle=COL.axis; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(m.l,Y(0));ctx.lineTo(m.l+px,Y(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(X(0),m.t);ctx.lineTo(X(0),m.t+py);ctx.stroke();
+  // trace
+  ctx.strokeStyle=COL.trace; ctx.lineWidth=2; ctx.beginPath();
+  let drawn=false;
+  for(let i=0;i<re.length;i++){const x=X(re[i]),y=Y(im[i]);
+    if(x<m.l-2||x>m.l+px+2||y<m.t-2||y>m.t+py+2){drawn=false;continue;}
+    if(!drawn){ctx.moveTo(x,y);drawn=true;}else ctx.lineTo(x,y);}
+  ctx.stroke();
+  // arrow at mid for direction of increasing ω
+  const k=Math.floor(re.length*0.5);
+  if(k>1){const x1=X(re[k-1]),y1=Y(im[k-1]),x2=X(re[k]),y2=Y(im[k]);
+    const a=Math.atan2(y2-y1,x2-x1);
+    ctx.fillStyle=COL.trace; ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-7*Math.cos(a-.4),y2-7*Math.sin(a-.4));
+    ctx.lineTo(x2-7*Math.cos(a+.4),y2-7*Math.sin(a+.4));
+    ctx.closePath();ctx.fill();}
+  // start point
+  ctx.fillStyle=COL.zero; ctx.beginPath();ctx.arc(X(re[0]),Y(im[0]),2.5,0,7);ctx.fill();
+}
+
+function drawStep(cv){
+  const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:38,r:10,t:12,b:24};
+  const px=W-m.l-m.r, py=H-m.t-m.b;
+  const tmax=8, N=300;
+  const ts=[],ys=[];
+  for(let i=0;i<=N;i++){const t=tmax*i/N; ts.push(t); ys.push(SYS.step(t));}
+  let ymin=Math.min(0,...ys), ymax=Math.max(...ys);
+  if(SYS.impulse && SYS.impBase!=="ramp" && typeof SYS.impBase==="number") ymax=Math.max(ymax,SYS.impBase);
+  if(ymax-ymin<0.5)ymax=ymin+1;
+  const pad=(ymax-ymin)*0.12; ymin-=pad*0.3; ymax+=pad;
+  const X=t=>m.l+t/tmax*px;
+  const Y=v=>m.t+(ymax-v)/(ymax-ymin)*py;
+  frame(ctx,m,W,H,"","t","h(t)");
+  // grid y
+  ctx.strokeStyle=COL.grid; ctx.font="9px ui-monospace,monospace"; ctx.textAlign="right";
+  const ny=4;
+  for(let i=0;i<=ny;i++){const v=ymin+(ymax-ymin)*i/ny;const y=Y(v);
+    ctx.strokeStyle= Math.abs(v)<1e-9?COL.axis:COL.grid;
+    ctx.beginPath();ctx.moveTo(m.l,y);ctx.lineTo(m.l+px,y);ctx.stroke();
+    ctx.fillStyle=COL.text; ctx.fillText(fmtTick(v),m.l-4,y+3);}
+  ctx.textAlign="center";
+  for(let t=0;t<=tmax;t+=2){const x=X(t);ctx.fillStyle=COL.text;ctx.fillText(t,x,H-13);}
+  // trace
+  ctx.strokeStyle=COL.trace; ctx.lineWidth=2; ctx.beginPath();
+  ts.forEach((t,i)=>{const x=X(t),y=Y(Math.max(ymin,Math.min(ymax,ys[i])));
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
+  ctx.stroke();
+  // Dirac arrow for differentiating systems
+    // Dirac arrow for differentiating systems
+  if(SYS.impulse){
+    const tImp = SYS.impShift || 0;
+    const x0 = X(tImp) + 0.5;
+    const yTop = m.t + 8;
+    const yBase = (SYS.impBase === "ramp") ? Y(SYS.step(tImp)) : Y(typeof SYS.impBase === "number" ? SYS.impBase : 0);
+    ctx.strokeStyle = COL.trace2; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(x0, yBase); ctx.lineTo(x0, yTop); ctx.stroke();
+    ctx.fillStyle = COL.trace2; ctx.beginPath();
+    ctx.moveTo(x0, yTop - 1); ctx.lineTo(x0 - 4, yTop + 7); ctx.lineTo(x0 + 4, yTop + 7); ctx.closePath(); ctx.fill();
+    ctx.font = "9px ui-monospace,monospace"; ctx.textAlign = "left";
+    ctx.fillText("δ", x0 + 5, yTop + 6);
+  }
+}
+
+function drawPN(cv){
+  const {ctx,W,H}=setupCanvas(cv,cv.clientWidth||300,180);
+  const m={l:30,r:12,t:10,b:24};
+  const px=W-m.l-m.r, py=H-m.t-m.b;
+  const all=[...SYS.poles,...SYS.zeros];
+  let xmin=-2.2,xmax=0.6,ymin=-1.6,ymax=1.6;
+  all.forEach(p=>{xmin=Math.min(xmin,p[0]-0.4);xmax=Math.max(xmax,p[0]+0.4);
+    ymin=Math.min(ymin,p[1]-0.4);ymax=Math.max(ymax,p[1]+0.4);});
+  // equal aspect
+  const spanX=xmax-xmin, spanY=ymax-ymin, span=Math.max(spanX,spanY);
+  const cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  const sc=Math.min(px,py)/(span*1.1);
+  const X=v=>m.l+px/2+(v-cx)*sc;
+  const Y=v=>m.t+py/2-(v-cy)*sc;
+  frame(ctx,m,W,H,"","Re(s)","Im(s)");
+  ctx.strokeStyle=COL.axis;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(m.l,Y(0));ctx.lineTo(m.l+px,Y(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(X(0),m.t);ctx.lineTo(X(0),m.t+py);ctx.stroke();
+  // poles ×
+  ctx.strokeStyle=COL.trace; ctx.lineWidth=2.2;
+  SYS.poles.forEach(p=>{const x=X(p[0]),y=Y(p[1]),r=5;
+    ctx.beginPath();ctx.moveTo(x-r,y-r);ctx.lineTo(x+r,y+r);ctx.moveTo(x+r,y-r);ctx.lineTo(x-r,y+r);ctx.stroke();});
+  // zeros ○
+  ctx.strokeStyle=COL.trace2; ctx.lineWidth=2.2;
+  SYS.zeros.forEach(p=>{const x=X(p[0]),y=Y(p[1]);
+    ctx.beginPath();ctx.arc(x,y,5,0,7);ctx.stroke();});
+  // legend
+  ctx.font="9px ui-monospace,monospace";ctx.textAlign="left";
+  ctx.fillStyle=COL.trace;ctx.fillText("× Pol",m.l+4,m.t+11);
+  ctx.fillStyle=COL.trace2;ctx.fillText("○ Nullstelle",m.l+48,m.t+11);
+}
+
+const PLOTS={
+  bode:{title:"Amplitudengang  |G(jω)|", fn:drawBode},
+  phase:{title:"Phasengang  arg G(jω)", fn:drawPhase},
+  nyq:{title:"Ortskurve  G(jω)", fn:drawNyquist},
+  step:{title:"Sprungantwort  h(t)", fn:drawStep},
+  pn:{title:"Pol-/Nullstellenplan", fn:drawPN},
+};
+
+/* ---------- App-State ---------- */
+let SYS=null;
+let answered=false;
+let hardMode=false;     // nur ein, fixer Graph
+let singlePlot=null;    // gewählter Graph im Hard-Mode
+let examMode=false;     // Prüfungsmodus: realistische Graph-Sätze
+let randMode=false;     // Zufallsraum: Glieder aus dem ganzen Baukasten generieren
+let examSet=null;       // aktueller Graph-Satz im Prüfungsmodus
+const sel={stat:null, verz:null, vorhalt:null, allpass:null, tot:null, tf:null};
+const score={n:0, full:0, pts:0, max:0, cat:{stat:[0,0],dyn:[0,0],tf:[0,0],bez:[0,0]}, seen:{}};
+
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+
+function activeLevels(){
+  return $(".chip[data-level='erw']").classList.contains("on") ? ["grund","erw"] : ["grund"];
+}
+function activePlots(){
+  return $$(".chip[data-plot]").filter(c=>c.classList.contains("on")).map(c=>c.dataset.plot);
+}
+function pickSinglePlot(){
+  // im Hard-Mode genau einen Graphen wählen; Pol-/Nullstellenplan nur,
+  // wenn das System überhaupt endliche Pole/Nullstellen besitzt (sonst nicht lösbar)
+  let keys=["bode","phase","nyq","step","pn"];
+  if(SYS.poles.length===0 && SYS.zeros.length===0) keys=keys.filter(k=>k!=="pn");
+  return keys[Math.floor(Math.random()*keys.length)];
+}
+function lockPlotChips(lock){
+  $$(".chip[data-plot]").forEach(c=>c.classList.toggle("locked",lock));
+}
+function pickExamSet(){
+  // realistische Klausur-Sätze: meist Bode, oft Sprungantwort, selten Ortskurve
+  const r=Math.random();
+  if(r<0.50) return ["bode","phase"];
+  if(r<0.85) return ["step"];
+  return ["nyq"];
+}
+function explainReading(){
+  // erklärt, woran man jede Eigenschaft im aktuell gezeigten Graph-Satz erkennt
+  const fp=SYS.poles.filter(p=>!(p[0]===0&&p[1]===0));
+  const fz=SYS.zeros.filter(z=>!(z[0]===0&&z[1]===0));
+  const nfp=fp.length, cplx=fp.some(p=>p[1]!==0);
+  const nVor=fz.filter(z=>z[0]<0).length;   // linksseitige Nullstellen → Vorhalt
+  const nAll=fz.filter(z=>z[0]>0).length;   // rechtsseitige Nullstellen → Allpass
+  const visLag=nfp-nAll;                     // im Betrag sichtbare −1-Knicke
+  const relDeg=SYS.poles.length-SYS.zeros.length;
+  const stat=SYS.stat, tot=SYS.tot, ap=SYS.allpass;
+  const mode=(examSet.includes("bode")||examSet.includes("phase"))?"bode":examSet[0];
+  let where,stE,veE,voE,aE,toE;
+  if(mode==="bode"){
+    where="Amplituden- &amp; Phasengang";
+    stE = stat==="P" ? "|G| läuft für ω→0 in eine waagerechte Gerade (konstanter Wert), Phase startet bei 0° → <b>P</b>."
+        : stat==="I" ? "|G| fällt für ω→0 mit −20&nbsp;dB/Dek., Phase liegt bei −90° → <b>I</b> (Pol im Ursprung)."
+        : "|G| steigt für ω→0 mit +20&nbsp;dB/Dek., Phase liegt bei +90° → <b>D</b> (Nullstelle im Ursprung).";
+    veE = nfp===0 ? "Kein zusätzlicher −20-dB/Dek.-Knick an endlicher Frequenz → <b>keine Verzögerung</b>."
+        : ap ? (visLag<=0
+            ? "Der Betrag bleibt flach — der −1-Knick des Pols wird vom +1-Knick der Allpass-Nullstelle aufgehoben. Dass ein Pol da ist, verrät nur die Phase (geht bis −180°): <b>Verzögerung ja</b>."
+            : "Im Betrag "+visLag+" sichtbarer −1-Knick (der zweite Pol ist durch die Allpass-Nullstelle kompensiert): <b>Verzögerung ja</b>.")
+        : cplx ? "Abfall auf −40&nbsp;dB/Dek. mit Resonanzbuckel davor → komplexes Polpaar, <b>Verzögerung 2.&nbsp;Ordnung</b>."
+        : nfp>=2 ? "−40-dB/Dek.-Abfall (Doppelpol) bzw. zwei −1-Knicke → <b>Verzögerung 2.&nbsp;Ordnung</b>."
+        : "ein −1-Knick (−20&nbsp;dB/Dek.) an der Knickfrequenz → <b>Verzögerung 1.&nbsp;Ordnung</b>.";
+    voE = nVor===0 ? ("Kein +1-Knick mit Phase nach <i>oben</i> → <b>kein Vorhalt</b>."+(stat==="D"?" Die Nullstelle im Ursprung ist das D-Verhalten.":""))
+        : (nVor+"&times; +1-Knick im Betrag <i>und</i> Phase dreht nach oben → <b>Vorhalt "+(nVor>=2?"2.":"1.")+"&nbsp;Ordnung</b>.");
+    aE = ap ? "Im Betrag ein +1-Knick (wie Vorhalt), aber die Phase dreht nach <b>unten</b> statt oben — zusätzliche −180°-Drehung, die der Betrag nicht erklärt → <b>Allpass</b> (rechtsseitige Nullstelle)."
+        : "Phase und Betrag passen zusammen (keine unerklärte −180°-Drehung) → <b>kein Allpass</b>.";
+    toE = tot ? "Die Phase fällt für große ω unbegrenzt weiter Richtung −∞, obwohl der Betrag schon konstant ist/abklingt → <b>Totzeit</b>."
+        : "Die Phase bleibt beschränkt (endlicher Endwert) → <b>keine Totzeit</b>.";
+  } else if(mode==="step"){
+    where="der Sprungantwort";
+    stE = stat==="P" ? "Endwert h(∞) ist konstant und ≠&nbsp;0 → <b>P</b>."
+        : stat==="I" ? "h(t) wächst für große t linear weiter (Rampe, kein Endwert) → <b>I</b>."
+        : "h(t) kehrt nach dem Ausschlag auf 0 zurück (Endwert 0) → <b>D</b>.";
+    veE = nfp===0 ? "Kein endlicher Pol: nicht zusätzlich verzögert/gekrümmt (sofortiger Sprung bzw. gerade Rampe) → <b>keine Verzögerung</b>."
+        : nfp===1 ? "Verzögerter, exponentieller Anstieg → <b>Verzögerung 1.&nbsp;Ordnung</b>."
+        : cplx ? "Überschwingen/Einschwingen um den Endwert → <b>Verzögerung 2.&nbsp;Ordnung</b> (schwingungsfähig, D&lt;1)."
+        : "Waagerechte Anfangstangente und S-Form mit Wendepunkt → <b>Verzögerung 2.&nbsp;Ordnung</b>.";
+    voE = nVor===0 ? "Zu Beginn kein Sprung/Impuls über den Verlauf hinaus → <b>kein Vorhalt</b>."
+        : SYS.impulse ? "Dirac-Spitze bei t=0 (Pfeil im Plot) → <b>Vorhalt</b> (idealer D-Anteil)."
+        : "Sprung auf einen Anfangswert bei t=0⁺, der danach zum Endwert relaxiert → <b>Vorhalt</b>.";
+    aE = ap ? "h(t) schwingt zu Beginn in die <b>Gegenrichtung</b> (Unterschwinger, falsches Vorzeichen), bevor es zum Endwert läuft → <b>Allpass</b> (nichtminimalphasig)."
+        : "h(t) startet ohne Gegenschwingung in die richtige Richtung → <b>kein Allpass</b>.";
+    toE = tot ? "h(t) bleibt bis t=Tₜ exakt null und startet erst dann — die Verschiebung nach rechts ist die <b>Totzeit</b> Tₜ."
+        : "h(t) reagiert sofort ab t=0 → <b>keine Totzeit</b>.";
+  } else {
+    where="der Ortskurve";
+    stE = stat==="P" ? "Startpunkt (ω→0) ist ein endlicher Punkt auf der reellen Achse → <b>P</b>."
+        : stat==="I" ? "Für ω→0 läuft die Kurve ins Unendliche (entlang der negativen Imaginärachse) → <b>I</b>."
+        : "Für ω→0 startet die Kurve im Ursprung → <b>D</b>.";
+    veE = "Die Ortskurve zeigt vor allem den <b>Polüberschuss n−m = "+relDeg+"</b>. "
+        + (relDeg>0 ? "Sie läuft für ω→∞ unter −"+(relDeg*90)+"° in den Ursprung. " : "Sie läuft nicht in den Ursprung (Zählergrad ≥ Nennergrad). ")
+        + "Die <i>absolute</i> Polzahl ist daraus nicht direkt ablesbar — Verzögerung hier: <b>"+(SYS.verz?"ja":"nein")+"</b>.";
+    voE = "Indirekt: Ausgreifen in die obere Halbebene/Schleife deutet auf Vorhalt. Hier: <b>"+(SYS.vorhalt?"ja":"nein")+"</b>.";
+    aE = ap ? "Reiner Allpass: Halbkreis mit konstantem |G| von (K,0) nach (−K,0). Allgemein dreht die Kurve weiter im Uhrzeigersinn, als die Pole allein erklären → <b>Allpass</b>."
+        : "Keine zusätzliche Drehung über den Polüberschuss hinaus → <b>kein Allpass</b>.";
+    toE = tot ? "Die Kurve spiralt um den Ursprung (dreht mit wachsendem ω endlos weiter) → <b>Totzeit</b>."
+        : "Keine Spirale, die Kurve läuft direkt hinein → <b>keine Totzeit</b>.";
+  }
+  const r=(l,t)=>`<div class="exrow"><span class="exq">${l}</span><span class="ext">${t}</span></div>`;
+  return `<div class="exambox"><div class="exhead">📍 So war es aus ${where} abzulesen</div>`
+    + r("Stationär",stE)+r("Verzögerung",veE)+r("Vorhalt",voE)+r("Allpass",aE)+r("Totzeit",toE)+`</div>`;
+}
+
+function pickSystem(){
+  if(randMode){
+    // Glied aus dem gesamten Baukasten erzeugen (Schwierigkeit über Level-Chips)
+    const erw=activeLevels().includes("erw");
+    let sys, tries=0;
+    do{ sys=LTI.bake(LTI.compose(LTI.randomRecipe()), LTI.DEF); tries++; }
+    while(tries<8 && !erw && (sys.verz&&sys.vorhalt||sys.allpass||sys.tot)); // ohne Erweitert einfacher halten
+    return sys;
+  }
+  const levels=activeLevels();
+  const pool=SYSTEMS.filter(s=>levels.includes(s.level));
+  let cand=pool;
+  if(SYS && pool.length>1) cand=pool.filter(s=>s.id!==SYS.id);
+  return cand[Math.floor(Math.random()*cand.length)];
+}
+
+function buildTFOptions(correct){
+  const pool=SYSTEMS.map(s=>s.tf);
+  const opts=new Set([correct.tf]);
+  while(opts.size<4 && opts.size<pool.length){
+    opts.add(pool[Math.floor(Math.random()*pool.length)]);
+  }
+  const arr=[...opts]; for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+let tfOptionList=[];
+
+function renderPlots(){
+  const host=$("#plots"); host.innerHTML="";
+  const plots = examMode ? (examSet||[]) : (hardMode ? (singlePlot?[singlePlot]:[]) : activePlots());
+  if(plots.length===0){
+    host.innerHTML='<div class="plot note" style="grid-column:1/-1">Keine Graphen ausgewählt – oben mindestens einen Typ aktivieren.</div>';
+    return;
+  }
+  plots.forEach(key=>{
+    const wrap=document.createElement("div"); wrap.className="plot";
+    const t=document.createElement("div"); t.className="pt"; t.textContent=PLOTS[key].title;
+    wrap.appendChild(t);
+    // special-case: pure Totzeit pole-zero has nothing finite
+    if(key==="pn" && SYS.poles.length===0 && SYS.zeros.length===0){
+      const n=document.createElement("div"); n.className="plot note";
+      n.style.minHeight="120px";
+      n.textContent = SYS.dtNote ? "Totzeit besitzt keine endlichen Pole/Nullstellen (wesentliche Singularität)."
+                                 : "Keine endlichen Pole oder Nullstellen.";
+      wrap.appendChild(n); host.appendChild(wrap); return;
+    }
+    const cv=document.createElement("canvas"); wrap.appendChild(cv); host.appendChild(wrap);
+    requestAnimationFrame(()=>PLOTS[key].fn(cv));
+  });
+}
+
+function clearSelections(){
+  sel.stat=sel.verz=sel.vorhalt=sel.allpass=sel.tot=sel.tf=null;
+  $$("#optStat .opt").forEach(o=>o.className="opt");
+  $$(".jbtns .opt").forEach(o=>o.className="opt");
+  $("#optBez").value=""; $("#optBez").className="txt";
+}
+
+function renderQuestion(){
+  answered=false;
+  SYS=pickSystem();
+  if(examMode) examSet=pickExamSet();
+  else if(hardMode) singlePlot=pickSinglePlot();
+  clearSelections();
+  // TF options
+  tfOptionList=buildTFOptions(SYS);
+  const box=$("#optTF"); box.innerHTML="";
+  tfOptionList.forEach(tf=>{
+    const d=document.createElement("div"); d.className="tfopt"; d.dataset.tf=tf;
+    d.innerHTML=tfHTML(tf);
+    d.addEventListener("click",()=>{ if(answered)return;
+      sel.tf=tf; $$("#optTF .tfopt").forEach(x=>x.classList.toggle("sel",x.dataset.tf===tf)); });
+    box.appendChild(d);
+  });
+  // reset UI
+  $("#feedback").classList.remove("show"); $("#feedback").innerHTML="";
+  $("#nextBtn").style.display="none";
+  $("#checkBtn").disabled=false; $("#revealBtn").disabled=false;
+  enableInputs(true);
+  renderPlots();
+}
+
+function enableInputs(on){
+  $$("#optStat .opt,.jbtns .opt").forEach(o=>o.classList.toggle("disabled",!on));
+  $$("#optTF .tfopt").forEach(o=>o.classList.toggle("disabled",!on));
+  $("#optBez").disabled=!on;
+}
+
+/* selection handlers */
+$$("#optStat .opt").forEach(o=>o.addEventListener("click",()=>{ if(answered)return;
+  sel.stat=o.dataset.v; $$("#optStat .opt").forEach(x=>x.classList.toggle("sel",x===o)); }));
+$$(".jbtns").forEach(g=>{const key=g.dataset.jn;
+  g.querySelectorAll(".opt").forEach(o=>o.addEventListener("click",()=>{ if(answered)return;
+    sel[key]=o.dataset.v; g.querySelectorAll(".opt").forEach(x=>x.classList.toggle("sel",x===o)); }));});
+
+/* normalize Bezeichner */
+function norm(s){return (s||"").toUpperCase().replace(/[\s\-_.·]/g,"");}
+function bezOk(input,sys){const v=norm(input);
+  return v.length>0 && (v===norm(sys.name) || sys.aliases.some(a=>norm(a)===v));}
+
+/* ---------- Auswertung ---------- */
+function evaluate(reveal){
+  if(answered) return;
+  answered=true;
+  enableInputs(false);
+  $("#checkBtn").disabled=true; $("#revealBtn").disabled=true;
+  $("#nextBtn").style.display="inline-block";
+
+  const truth={stat:SYS.stat, verz:SYS.verz?"ja":"nein", vorhalt:SYS.vorhalt?"ja":"nein", allpass:SYS.allpass?"ja":"nein", tot:SYS.tot?"ja":"nein"};
+  const got={...sel};
+  // mark stat
+  $$("#optStat .opt").forEach(o=>{
+    if(o.dataset.v===truth.stat)o.classList.add("correct");
+    else if(o.dataset.v===got.stat)o.classList.add("wrong");
+  });
+  // mark ja/nein
+  ["verz","vorhalt","allpass","tot"].forEach(key=>{
+    const g=$(`.jbtns[data-jn='${key}']`);
+    g.querySelectorAll(".opt").forEach(o=>{
+      if(o.dataset.v===truth[key])o.classList.add("correct");
+      else if(o.dataset.v===got[key])o.classList.add("wrong");
+    });
+  });
+  // mark TF
+  $$("#optTF .tfopt").forEach(o=>{
+    if(o.dataset.tf===SYS.tf)o.classList.add("correct");
+    else if(o.dataset.tf===got.tf)o.classList.add("wrong");
+  });
+  // mark bez
+  const bezInput=$("#optBez").value;
+  const bezCorrect=bezOk(bezInput,SYS);
+  $("#optBez").classList.add(bezCorrect?"correct":"wrong");
+
+  // correctness
+  const cStat = got.stat===truth.stat;
+  const cVerz = got.verz===truth.verz, cVor=got.vorhalt===truth.vorhalt, cAll=got.allpass===truth.allpass, cTot=got.tot===truth.tot;
+  const cDyn = cVerz&&cVor&&cAll&&cTot;
+  const cTF = got.tf===SYS.tf;
+  const cBez = bezCorrect;
+
+  // scoring (7 Teilpunkte: stat, verz, vorhalt, allpass, tot, tf, bez)
+  if(!reveal){
+    const partsHit=[cStat,cVerz,cVor,cAll,cTot,cTF,cBez].filter(Boolean).length;
+    score.n++; score.pts+=partsHit; score.max+=7;
+    if(cStat&&cDyn&&cTF&&cBez) score.full++;
+    score.cat.stat[0]+=cStat?1:0; score.cat.stat[1]++;
+    score.cat.dyn[0]+=cDyn?1:0; score.cat.dyn[1]++;
+    score.cat.tf[0]+=cTF?1:0; score.cat.tf[1]++;
+    score.cat.bez[0]+=cBez?1:0; score.cat.bez[1]++;
+    score.seen[SYS.name]=(score.seen[SYS.name]||0)+1;
+    updateScore();
+  }
+
+  // feedback
+  const fb=$("#feedback"); fb.classList.add("show");
+  const hit=[cStat,cVerz,cVor,cAll,cTot,cTF,cBez].filter(Boolean).length;
+  let vClass = hit===7?"good":hit>=5?"mid":"bad";
+  const head = reveal ? `Lösung · ${SYS.name}` : `${hit}/7 Teilantworten richtig · ${SYS.name}`;
+  const row=(ok,label,detail)=>`<div class="fbrow"><span class="mk ${ok?'ok':'no'}">${ok?'✓':'✗'}</span><span class="ft"><b>${label}</b> ${detail}</span></div>`;
+  let html=`<div class="verdict ${vClass}">${head}</div>`;
+  html+=row(cStat,"Stationär:", `richtig <b>${truth.stat}</b>${cStat?'':` (deine Wahl: ${got.stat||'–'})`}`);
+  html+=row(cVerz,"Verzögerung:", `<b>${truth.verz}</b>${cVerz?'':` (deine Wahl: ${got.verz||'–'})`}`);
+  html+=row(cVor,"Vorhalt:", `<b>${truth.vorhalt}</b>${cVor?'':` (deine Wahl: ${got.vorhalt||'–'})`}`);
+  html+=row(cAll,"Allpass:", `<b>${truth.allpass}</b>${cAll?'':` (deine Wahl: ${got.allpass||'–'})`}`);
+  html+=row(cTot,"Totzeit:", `<b>${truth.tot}</b>${cTot?'':` (deine Wahl: ${got.tot||'–'})`}`);
+  html+=row(cTF,"Übertragungsfunktion:", tfHTML(SYS.tf));
+  html+=row(cBez,"Bezeichner:", `<b>${SYS.name}</b>${cBez?'':` (deine Eingabe: ${bezInput||'–'})`}`);
+  html+=`<div class="sysnote">${SYS.note}</div>`;
+  if(examMode) html+=explainReading();
+  fb.innerHTML=html;
+}
+
+function updateScore(){
+  $("#scN").textContent=score.n;
+  $("#scFull").textContent=score.full;
+  $("#scPts").textContent=score.pts;
+  $("#scMax").textContent=score.max;
+  $("#scPct").textContent = score.max? `(${Math.round(score.pts/score.max*100)} %)` : "";
+}
+
+/* ---------- Sitzungsauswertung ---------- */
+function showSummary(){
+  const dlg=$("#sumDlg"); const b=$("#sumBody");
+  if(score.n===0){ b.innerHTML=`<p class="muted">Noch keine Aufgabe ausgewertet. Bearbeite zuerst ein paar Aufgaben mit „Auswerten".</p>`; dlg.showModal(); return; }
+  const pct=Math.round(score.pts/score.max*100);
+  const cat=(name,arr)=>{const p=arr[1]?Math.round(arr[0]/arr[1]*100):0;
+    return `<div>${name}</div><div>${arr[0]}/${arr[1]}</div><div class="meter"><i style="width:${p}%"></i></div>`;};
+  const seen=Object.entries(score.seen).sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`${k}×${v}`).join(" · ");
+  b.innerHTML=`
+    <p style="font-family:var(--mono);font-size:14px">
+      <b>${score.n}</b> Aufgaben · vollständig richtig: <b>${score.full}</b> ·
+      Teilpunkte <b>${score.pts}/${score.max}</b> · <span style="color:var(--accent)">${pct} %</span>
+    </p>
+    <div class="summary-grid">
+      <div class="sh">Kategorie</div><div class="sh">richtig</div><div class="sh">Quote</div>
+      ${cat("Stationäres Verhalten",score.cat.stat)}
+      ${cat("Dynamik (alle 4 ja/nein)",score.cat.dyn)}
+      ${cat("Übertragungsfunktion",score.cat.tf)}
+      ${cat("Bezeichner",score.cat.bez)}
+    </div>
+    <p class="muted">Bisher gesehen: ${seen}</p>`;
+  dlg.showModal();
+}
+
+/* ---------- Events ---------- */
+$$(".chip[data-level]").forEach(c=>c.addEventListener("click",()=>{
+  $$(".chip[data-level]").forEach(x=>x.classList.remove("on"));
+  // levels are cumulative via the 'erw' chip; treat as toggle between grund / grund+erw
+  if(c.dataset.level==="erw"){ c.classList.add("on"); }
+  else { c.classList.add("on"); }
+  // re-evaluate active set: grund always on, erw optional
+  $(".chip[data-level='grund']").classList.add("on");
+  if(c.dataset.level==="grund"){ $(".chip[data-level='erw']").classList.remove("on"); }
+  renderQuestion();
+}));
+
+$$(".chip[data-plot]").forEach(c=>c.addEventListener("click",()=>{
+  if(hardMode||examMode) return;
+  c.classList.toggle("on");
+  if(activePlots().length===0){ c.classList.add("on"); } // keep at least one
+  renderPlots();
+}));
+
+$(".chip[data-hard]").addEventListener("click",()=>{
+  hardMode=!hardMode;
+  if(hardMode && examMode){ examMode=false; $(".chip[data-exam]").classList.remove("on"); }
+  $(".chip[data-hard]").classList.toggle("on",hardMode);
+  lockPlotChips(hardMode||examMode);
+  if(hardMode) singlePlot=pickSinglePlot(); else singlePlot=null;
+  renderPlots();
+});
+
+$(".chip[data-exam]").addEventListener("click",()=>{
+  examMode=!examMode;
+  if(examMode && hardMode){ hardMode=false; $(".chip[data-hard]").classList.remove("on"); singlePlot=null; }
+  $(".chip[data-exam]").classList.toggle("on",examMode);
+  lockPlotChips(hardMode||examMode);
+  if(examMode) examSet=pickExamSet(); else examSet=null;
+  renderPlots();
+});
+
+$(".chip[data-rand]").addEventListener("click",()=>{
+  randMode=!randMode;
+  $(".chip[data-rand]").classList.toggle("on",randMode);
+  renderQuestion();
+});
+
+$("#newBtn").addEventListener("click",renderQuestion);
+$("#nextBtn").addEventListener("click",renderQuestion);
+$("#checkBtn").addEventListener("click",()=>evaluate(false));
+$("#revealBtn").addEventListener("click",()=>evaluate(true));
+$("#endBtn").addEventListener("click",showSummary);
+$("#sumClose").addEventListener("click",()=>$("#sumDlg").close());
+$("#sumReset").addEventListener("click",()=>{
+  score.n=score.full=score.pts=score.max=0;
+  score.cat={stat:[0,0],dyn:[0,0],tf:[0,0],bez:[0,0]}; score.seen={};
+  updateScore(); $("#sumDlg").close();
+});
+
+$("#optBez").addEventListener("keydown",e=>{ if(e.key==="Enter"){e.preventDefault(); if(!answered)evaluate(false); else renderQuestion();}});
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT")return;
+  if(e.key==="Enter"){ if(!answered)evaluate(false); }
+  if(e.key.toLowerCase()==="n"){ if(answered)renderQuestion(); }
+});
+
+let rT;
+window.addEventListener("resize",()=>{clearTimeout(rT);rT=setTimeout(renderPlots,150);});
+
+/* init */
+renderQuestion();
+updateScore();
+</script>
+</body>
+</html>

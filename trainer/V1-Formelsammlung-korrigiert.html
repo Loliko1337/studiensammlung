@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V1 · Formelsammlung (korrigiert)</title>
+<style>
+  :root{
+    --paper:#eef1f4;--panel:#fff;--ink:#1a2024;--soft:#55606a;--line:#d4dbe2;
+    --green:#0f7c44;--green-bg:#e6f6ee;--red:#c0392b;--red-bg:#fbeae9;--amber:#b9760f;--amber-bg:#fcf3e2;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);padding:0 14px 56px}
+  .wrap{max-width:600px;margin:0 auto}
+  header{padding:24px 0 14px;border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);margin:0 0 4px}
+  h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-top:18px;overflow:hidden}
+  .card h2{margin:0;padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px;font-family:var(--mono);letter-spacing:.02em}
+  .card h2 small{color:var(--soft);font-weight:400;text-transform:none;letter-spacing:0}
+  .rows{padding:6px 16px 14px}
+  .row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px dashed var(--line);font-family:var(--mono);font-size:13.5px}
+  .row:last-child{border-bottom:none}
+  .row .name{color:var(--soft);min-width:46px}
+  .row .f{flex:1;text-align:right}
+  .fix{background:var(--green-bg);border-left:3px solid var(--green);padding-left:10px;margin:0 -16px;padding-right:16px;border-radius:0}
+  .fix .name{color:var(--green);font-weight:700}
+  .tagfix{display:inline-block;font-size:9.5px;background:var(--green);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.06em;margin-left:6px;vertical-align:middle}
+  .was{display:block;font-size:11px;color:var(--red);margin-top:3px}
+  sub{font-size:.72em}
+  .note{font-size:12.5px;color:var(--soft);padding:0 16px 14px;font-family:var(--sans)}
+  .const{font-family:var(--mono);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">HTWK · V1 · Bipolartransistor als Verstärker</p>
+    <h1>Formelsammlung — korrigiert</h1>
+  </header>
+
+  <!-- GK -->
+  <div class="card">
+    <h2>① AP-Dimensionierung · ES MIT Stromgegenkopplung <small>(Abb. 2 — Basisteiler R_B/R_q, R_E)</small></h2>
+    <div class="rows">
+      <div class="row"><span class="name">I<sub>B</sub></span><span class="f">= I<sub>C0</sub> / B</span></div>
+      <div class="row"><span class="name">I<sub>E</sub></span><span class="f">= I<sub>C0</sub> + I<sub>B</sub></span></div>
+      <div class="row"><span class="name">R<sub>E</sub></span><span class="f">= U<sub>RE</sub> / I<sub>E</sub></span></div>
+      <div class="row"><span class="name">R<sub>C</sub></span><span class="f">= (U<sub>B</sub> − U<sub>CE0</sub> − U<sub>RE</sub>) / I<sub>C0</sub></span></div>
+      <div class="row"><span class="name">U<sub>Basis</sub></span><span class="f">= U<sub>RE</sub> + U<sub>BE0</sub> &nbsp;← Schlüssel!</span></div>
+      <div class="row"><span class="name">I<sub>q</sub></span><span class="f">= k · I<sub>B</sub> &nbsp;<span style="color:var(--soft)">(k gegeben)</span></span></div>
+      <div class="row fix"><span class="name">R<sub>q</sub><span class="tagfix">FIX</span></span><span class="f">= U<sub>Basis</sub> / I<sub>q</sub> = (U<sub>RE</sub> + U<sub>BE0</sub>) / I<sub>q</sub><span class="was">vorher: U<sub>BE</sub> / I<sub>q</sub> — U<sub>RE</sub> fehlte</span></span></div>
+      <div class="row fix"><span class="name">R<sub>B</sub><span class="tagfix">FIX</span></span><span class="f">= (U<sub>B</sub> − U<sub>Basis</sub>) / (I<sub>q</sub> + I<sub>B</sub>)<span class="was">vorher: (U<sub>B</sub> − U<sub>BE</sub>) / I<sub>B</sub> — U<sub>RE</sub> fehlte, Strom ist I<sub>q</sub>+I<sub>B</sub></span></span></div>
+    </div>
+    <p class="note">Merksatz: R_E hebt den Emitter auf U<sub>RE</sub>. Die Basis liegt eine Diodenspannung darüber → U<sub>Basis</sub> = U<sub>RE</sub> + U<sub>BE</sub>. Durch R<sub>B</sub> fließt Quer- plus Basisstrom (I<sub>q</sub>+I<sub>B</sub>), durch R<sub>q</sub> nur I<sub>q</sub>.</p>
+  </div>
+
+  <!-- einfache ES -->
+  <div class="card">
+    <h2>② AP-Dimensionierung · EINFACHE ES <small>(nur R_B/R_C — „max. Ausgangsamplitude")</small></h2>
+    <div class="rows">
+      <div class="row"><span class="name">U<sub>CE0</sub></span><span class="f">= U<sub>B</sub> / 2 &nbsp;<span style="color:var(--soft)">(max. Aussteuerung)</span></span></div>
+      <div class="row"><span class="name">R<sub>C</sub></span><span class="f">= (U<sub>B</sub> − U<sub>CE0</sub>) / I<sub>C0</sub></span></div>
+      <div class="row"><span class="name">I<sub>B0</sub></span><span class="f">= I<sub>C0</sub> / B</span></div>
+      <div class="row"><span class="name">R<sub>B</sub></span><span class="f">= (U<sub>B</sub> − U<sub>BE0</sub>) / I<sub>B0</sub></span></div>
+    </div>
+    <p class="note">Hier ist deine alte R<sub>B</sub>-Formel richtig — weil es keinen R<sub>E</sub> und keinen Teiler gibt (U<sub>RE</sub>=0, der ganze Basisstrom fließt durch R<sub>B</sub>).</p>
+  </div>
+
+  <!-- Kleinsignal -->
+  <div class="card">
+    <h2>③ Kleinsignal (Wechselgrößen, MIT C_E)</h2>
+    <div class="rows">
+      <div class="row"><span class="name">S = g<sub>m</sub></span><span class="f">= I<sub>C0</sub> / U<sub>T</sub></span></div>
+      <div class="row"><span class="name">r<sub>BE</sub></span><span class="f">= B / S = B · U<sub>T</sub> / I<sub>C0</sub></span></div>
+      <div class="row"><span class="name">r<sub>a</sub></span><span class="f">= R<sub>C</sub> ∥ r<sub>CE</sub> &nbsp;<span style="color:var(--soft)">(meist ≈ R<sub>C</sub>)</span></span></div>
+      <div class="row fix"><span class="name">v<sub>u</sub><span class="tagfix">FIX</span></span><span class="f">= −S · r<sub>a</sub> = −(B · r<sub>a</sub>) / r<sub>BE</sub> ≈ −S·R<sub>C</sub><span class="was">dein „r<sub>a</sub> = −B·R<sub>C</sub>/r<sub>BE</sub>" war in Wahrheit v<sub>u</sub></span></span></div>
+      <div class="row"><span class="name">r<sub>e</sub></span><span class="f">= R<sub>B</sub> ∥ R<sub>q</sub> ∥ r<sub>BE</sub></span></div>
+      <div class="row"><span class="name">Û<sub>a,max</sub></span><span class="f">= Î<sub>c</sub> · r<sub>a</sub></span></div>
+      <div class="row"><span class="name">f<sub>gu,C1</sub></span><span class="f">= 1 / (2π · C<sub>1</sub> · r<sub>e</sub>)</span></div>
+    </div>
+  </div>
+
+  <!-- Drift -->
+  <div class="card">
+    <h2>④ Driftverstärkung (Gleichgrößen, OHNE C_E-Wirkung)</h2>
+    <div class="rows">
+      <div class="row"><span class="name">v<sub>D</sub></span><span class="f">= −R<sub>C</sub> / R<sub>E</sub></span></div>
+    </div>
+    <p class="note">Nicht mit v<sub>u</sub> verwechseln: bei DC (Drift) überbrückt C<sub>E</sub> den R<sub>E</sub> nicht → die Gegenkopplung wirkt voll, die Verstärkung ist nur R<sub>C</sub>/R<sub>E</sub>. Erst C<sub>E</sub> hebt sie für Wechselsignale auf und liefert v<sub>u</sub>.</p>
+  </div>
+
+  <!-- Konstanten -->
+  <div class="card">
+    <h2>⑤ Konstanten &amp; Hinweise</h2>
+    <div class="rows">
+      <div class="row"><span class="name const">U<sub>T</sub></span><span class="f">≈ 26 mV &nbsp;<span style="color:var(--soft)">(Temperaturspannung, 25 °C)</span></span></div>
+      <div class="row"><span class="name const">U<sub>BE0</sub></span><span class="f">≈ 0,66 … 0,7 V &nbsp;<span style="color:var(--soft)">(Datenblatt BC546A)</span></span></div>
+      <div class="row"><span class="name const">I<sub>E</sub></span><span class="f">= I<sub>C</sub> + I<sub>B</sub> ; &nbsp; I<sub>C</sub> = B · I<sub>B</sub></span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+ "trainer": [
+  {
+   "datei": "trainer/lti-klassifikation.html",
+   "titel": "LTI-Glieder · Klassifikations-Trainer",
+   "beschreibung": "Übertragungsglieder erkennen und klassifizieren — mit Prüfungsmodus."
+  },
+  {
+   "datei": "trainer/lti-explorer.html",
+   "titel": "LTI-Explorer",
+   "beschreibung": "Sprungantworten, Bode & Co. interaktiv erkunden."
+  },
+  {
+   "datei": "trainer/antestat-trainer-v1.html",
+   "titel": "Antestat-Trainer · V1",
+   "beschreibung": "Bipolartransistor als Verstärker — Fragen fürs Antestat üben."
+  },
+  {
+   "datei": "trainer/V1-Formelsammlung-korrigiert.html",
+   "titel": "Formelsammlung · V1",
+   "beschreibung": "Alle Formeln zum Bipolartransistor-Versuch auf einen Blick."
+  }
+ ]
+}
