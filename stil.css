@@ -125,10 +125,11 @@ code{font-family:var(--mono);font-size:.92em;background:#f2f6f8;border:1px solid
 .blatt-kopf h1{margin:4px 0 0;font-size:26px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
 .blatt-kopf .untertitel{margin:6px 0 0;color:var(--ink-soft);font-size:14px}
 
-.blk{margin:0 0 14px}
-.blk h2{font-size:19px;margin:26px 0 8px;padding-bottom:5px;border-bottom:1.5px solid var(--grid);font-weight:800}
-.blk h3{font-size:15.5px;margin:18px 0 6px;font-weight:750}
-.blk p{margin:0}
+.blk{margin:0 0 14px} /* Fallback; wird pro Block inline überschrieben */
+.blk h2{font-size:19px;margin:12px 0 8px;padding-bottom:5px;border-bottom:1.5px solid var(--grid);font-weight:800}
+.blk h3{font-size:15.5px;margin:6px 0 6px;font-weight:750}
+.blk p,.blk .fliess{margin:0}
+.blk .fliess ul,.blk .fliess ol,.box ul,.box ol,.spalte ul,.spalte ol,.blk td ul,.blk td ol{margin:4px 0}
 .blk ul,.blk ol{margin:0;padding-left:24px}
 .blk li{margin:3px 0}
 .blk mark{background:#fff3bf;padding:0 2px;border-radius:2px}

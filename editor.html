@@ -99,7 +99,18 @@
       <button class="fbtn" id="btnMark" title="Markieren"><span style="background:#fff3bf;padding:0 3px;border-radius:2px">ab</span></button>
       <button class="fbtn" data-cmd="removeFormat" title="Formatierung entfernen">⌫F</button>
       <span class="sep"></span>
+      <button class="fbtn" data-cmd="insertUnorderedList" title="Aufzählung — funktioniert in Text, Boxen, Spalten und Tabellenzellen">•≡</button>
+      <button class="fbtn" data-cmd="insertOrderedList" title="Nummerierte Liste">1≡</button>
+      <span class="sep"></span>
       <button class="fbtn" id="btnSonder" title="Sonderzeichen einfügen">Ω μ °</button>
+      <span class="sep"></span>
+      <label style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11px;color:var(--ink-soft)" title="Standard-Abstand zwischen allen Blöcken (pro Block über ⇕ am Block überschreibbar)">
+        Abstand
+        <select id="selStandardAbstand" style="font:inherit;border:1px solid var(--line);border-radius:6px;padding:4px 5px;background:#fbfcfd">
+          <option value="0">kein</option><option value="s">eng</option>
+          <option value="m" selected>normal</option><option value="l">weit</option><option value="xl">sehr weit</option>
+        </select>
+      </label>
       <span class="frei"></span>
       <span class="speicher-status" id="speicherStatus"></span>
     </div>
@@ -185,13 +196,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     const w = document.createElement("div");
     w.className = "eblock";
     w.dataset.index = i;
+    w.style.marginBottom = S.abstandPx(b, doc.abstand);
     const griff = document.createElement("div");
     griff.className = "griff kein-druck";
     griff.innerHTML = `
       <button class="gbtn" title="Nach oben" data-akt="hoch">↑</button>
       <button class="gbtn" title="Nach unten" data-akt="runter">↓</button>
       <button class="gbtn" title="Duplizieren" data-akt="dupl">⧉</button>
-      <button class="gbtn loeschen" title="Block löschen" data-akt="weg">✕</button>`;
+      <button class="gbtn loeschen" title="Block löschen" data-akt="weg">✕</button>
+      <select class="gbtn" title="Abstand unter diesem Block" data-feld="abstand" style="width:auto;padding:0 3px;font-size:10px">
+        <option value="">⇕ auto</option>
+        <option value="0" ${b.abstand==="0"?"selected":""}>kein</option>
+        <option value="s" ${b.abstand==="s"?"selected":""}>eng</option>
+        <option value="m" ${b.abstand==="m"?"selected":""}>normal</option>
+        <option value="l" ${b.abstand==="l"?"selected":""}>weit</option>
+        <option value="xl" ${b.abstand==="xl"?"selected":""}>sehr weit</option>
+      </select>`;
+    const selAb = griff.querySelector("select[data-feld=abstand]");
+    selAb.addEventListener("click", e => e.stopPropagation());
+    selAb.addEventListener("change", () => {
+      if (selAb.value) b.abstand = selAb.value; else delete b.abstand;
+      w.style.marginBottom = S.abstandPx(b, doc.abstand);
+      markiereGeaendert();
+    });
     griff.addEventListener("click", e => {
       const akt = e.target.dataset.akt; if (!akt) return;
       sichern(); // aktuellen Stand aus DOM übernehmen
@@ -208,7 +235,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     switch(b.typ){
       case "h2": inhalt.innerHTML = `<h2 contenteditable="true" data-feld="html" data-platzhalter="Überschrift">${b.html||""}</h2>`; break;
       case "h3": inhalt.innerHTML = `<h3 contenteditable="true" data-feld="html" data-platzhalter="Zwischenüberschrift">${b.html||""}</h3>`; break;
-      case "absatz": inhalt.innerHTML = `<p contenteditable="true" data-feld="html" data-platzhalter="Text schreiben …">${b.html||""}</p>`; break;
+      case "absatz": inhalt.innerHTML = `<div class="fliess" contenteditable="true" data-feld="html" data-platzhalter="Text schreiben … (Listen über •≡ in der Leiste)">${b.html||""}</div>`; break;
       case "liste": inhalt.innerHTML = `${b.geordnet?"<ol":"<ul"} contenteditable="true" data-feld="html">${b.html||"<li></li>"}${b.geordnet?"</ol>":"</ul>"}`; break;
       case "formel": inhalt.innerHTML = `<div class="formel" contenteditable="true" data-feld="html" data-platzhalter="U_BE = 0,7 V — Tief-/Hochstellen über die Leiste">${b.html||""}</div>`; break;
       case "box": inhalt.innerHTML = `
@@ -365,6 +392,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* ---------- Formatleiste ---------- */
   document.querySelectorAll(".fbtn[data-cmd]").forEach(b =>
     b.addEventListener("mousedown", e => { e.preventDefault(); document.execCommand(b.dataset.cmd, false, null); markiereGeaendert(); }));
+  const selStd = $("selStandardAbstand");
+  selStd.value = doc.abstand || "m";
+  selStd.addEventListener("change", () => {
+    sichern();
+    doc.abstand = selStd.value;
+    markiereGeaendert(); bauen();
+  });
   $("btnMark").addEventListener("mousedown", e => {
     e.preventDefault();
     document.execCommand("hiliteColor", false, "#fff3bf");

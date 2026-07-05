@@ -179,6 +179,10 @@
   }
 
   /* ---------- Rendering der Blöcke (Viewer & Druck) ---------- */
+  const ABSTAENDE = { "0":"0px", "s":"6px", "m":"14px", "l":"28px", "xl":"48px" };
+  function abstandPx(block, standard){
+    return ABSTAENDE[(block && block.abstand) || standard || "m"] || ABSTAENDE.m;
+  }
   function esc(s){ const d=document.createElement("div"); d.textContent=s||""; return d.innerHTML; }
   function renderDoc(doc, ziel){
     ziel.innerHTML = "";
@@ -190,16 +194,17 @@
         <h1>${esc(doc.titel||"Ohne Titel")}</h1>
         ${doc.untertitel ? `<p class="untertitel">${esc(doc.untertitel)}</p>` : ""}
       </header>`;
-    (doc.bloecke||[]).forEach(b=> art.appendChild(renderBlock(b)));
+    (doc.bloecke||[]).forEach(b=> art.appendChild(renderBlock(b, doc.abstand)));
     ziel.appendChild(art);
   }
-  function renderBlock(b){
+  function renderBlock(b, standardAbstand){
     const el = document.createElement("div");
     el.className = "blk blk-" + b.typ;
+    el.style.marginBottom = abstandPx(b, standardAbstand);
     switch(b.typ){
       case "h2":     el.innerHTML = `<h2>${b.html||""}</h2>`; break;
       case "h3":     el.innerHTML = `<h3>${b.html||""}</h3>`; break;
-      case "absatz": el.innerHTML = `<p>${b.html||""}</p>`; break;
+      case "absatz": el.innerHTML = `<div class="fliess">${b.html||""}</div>`; break;
       case "liste":  el.innerHTML = b.geordnet ? `<ol>${b.html||""}</ol>` : `<ul>${b.html||""}</ul>`; break;
       case "formel": el.innerHTML = `<div class="formel">${b.html||""}</div>`; break;
       case "tabelle":el.innerHTML = `<div class="tabelle-huelle"><table>${b.html||""}</table></div>`; break;
@@ -220,6 +225,6 @@
     CFG, repoKonfiguriert, getToken, setToken, eingeloggt, schreibmodus, tokenPruefen,
     indexLaden, manifestLaden, docLaden, docSpeichern, docEntfernen,
     lokaleDocs, lokalSpeichern, lokalLoeschen,
-    trainerHochladen, slug, renderDoc, renderBlock, esc,
+    trainerHochladen, slug, renderDoc, renderBlock, esc, ABSTAENDE, abstandPx,
   };
 })();
