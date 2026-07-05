@@ -114,6 +114,59 @@
    "typ": "absatz",
    "html": "Der Zugriff erfolgt über drei Register pro Port (z.B. Port B):<div><ol><li>DDRB (Data Direction Register): Konfiguriert den Pin als Eingang (0) oder Ausgang (1)</li><li>PORTB (Port Output Register): Setzt den Ausgangspegel auf High/5V (1) oder Low/0V (0). Wenn der Pin ein Eingang ist, aktiviert eine 1 den internen Pull-Up-Widerstand</li><li>PINB (Port Input Register): Dient zum Einlesen des Pegels (0 oder 1) von der Außenwelt</li></ol></div>",
    "abstand": "0"
+  },
+  {
+   "typ": "h3",
+   "html": "Beispiel: Pin PB0 als Eingang mit Pull-Up und PB5 als Ausgang:"
+  },
+  {
+   "typ": "absatz",
+   "html": "<b>DDRB &amp;= ~(1 &lt;&lt; PB0);&nbsp;</b> // PB0 als Eingang (Bit löschen)<div><b>PORTB |= (1 &lt;&lt; PB0);</b>&nbsp; // Pull-Up an PB0 aktivieren</div><div><b>DDRB |= (1 &lt;&lt; PB5);</b>&nbsp; &nbsp;// PB5 als Ausgang (Bit setzen)</div>"
+  },
+  {
+   "typ": "h3",
+   "html": "Aussagen im Detail:"
+  },
+  {
+   "typ": "absatz",
+   "html": "<b>DDRB &amp;= ~(1 &lt;&lt; PB0);</b><div><ul><li><b>Das Ziel:</b> Pin PB0 soll ein <b>Eingang</b> werden. Das Bit im DDR-Register muss also zu einer <b>0</b> werden.</li><li><b>Die Technik (&amp;= ~):</b> Diese Zeichenkombination bedeutet in C/C++ immer \"Lösche dieses Bit\" (mach es zur 0). Alle anderen Pins am Port B bleiben exakt so, wie sie vorher waren (zum Beispiel PB1 oder PB7 bleiben so wie sie waren).</li></ul><div><br></div></div><div><b>PORTB |= (1 &lt;&lt; PB0);</b></div><div><ul><li><b>Das Ziel:</b> Der interne Pull-Up-Widerstand für den Eingang PB0 soll aktiviert werden. Das verhindert, dass das Signal am Pin \"in der Luft hängt\", wenn kein Taster gedrückt wird.</li><li><b>Die Technik (|=):</b> Diese Zeichenkombination bedeutet immer \"Setze dieses Bit\" (mach es zur 1). Weil PB0 in der Zeile davor zu einem Eingang gemacht wurde, weiß der Mikrocontroller: Eine 1 im PORT-Register bedeutet hier \"Pull-Up an\".</li></ul><div><br></div></div><div><b>DDRB |= (1 &lt;&lt; PB5);</b></div><div><ul><li><b>Das Ziel: </b>Pin PB5 soll ein Ausgang werden. Das Bit im DDR-Register muss also zu einer 1 werden.</li><li><b>Die Technik (|=):</b> Genau wie in der Zeile darüber nutzt man hier das Setzen-Kommando. Das Bit für PB5 wird zur 1, der Rest des Ports B bleibt unberührt.</li></ul></div>"
+  },
+  {
+   "typ": "box",
+   "html": "<ul><li><b>Nutze \"&amp;= ~\", wenn du ein Bit auf 0 setzen willst (z. B. für einen Eingang).</b></li><li><b>Nutze \"|=\", wenn du ein Bit auf 1 setzen willst (z. B. für einen Ausgang oder Pull-Up)</b></li></ul>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "Interrupttechnik",
+   "abstand": "0"
+  },
+  {
+   "typ": "absatz",
+   "html": "Ein Interrupt ist ein Signal, das der CPU mitteilt, ihre aktuelle Aufgabe sofort zu unterbrechen. Sobald dieses Signal eintrifft, merkt sich die CPU ihre exakte Position im Hauptprogramm. Danach springt sie in ein spezielles, kurzes Unterprogramm, die sogenannte <b data-path-to-node=\"1\" data-index-in-node=\"274\">Interrupt Service Routine (ISR)</b>, und führt diese aus.&nbsp;<div>Sobald die ISR beendet ist, kehrt die CPU an ihre exakt gemerkte Stelle im Hauptprogramm zurück und arbeitet dort nahtlos weiter. Dadurch verpasst das System keine kritischen Signale und spart Ressourcen.&nbsp;<div>Dies ist <b>effizienter </b>als <b>Polling </b>(ständiges Abfragen), was die CPU unnötig auslastet</div></div>"
+  },
+  {
+   "typ": "box",
+   "html": "Beim <b>Polling </b>lauscht die CPU dauerhaft, ob sich etwas verändert hat. Das ist nicht nur sehr stromfressend, sondern kostet auch eine Menge an Ressourcen. Sollte die Veränderung stattfinden, während die CPU etwas anderes berechnet, kann es passieren, dass die Veränderung überhaupt nicht registriert wird.",
+   "variante": "info"
+  },
+  {
+   "typ": "h3",
+   "html": "Auslöser von Interrupts:",
+   "abstand": "0"
+  },
+  {
+   "typ": "absatz",
+   "html": "Ein Interrupt kann durch externe Ereignisse ausgelöst werden (z. B. ein Hardware-Interrupt, wenn ein Taster an einem Pin gedrückt wird) oder durch interne Vorgänge (z. B. ein Timer-Interrupt, wenn eine fest eingestellte Zeit im Mikrocontroller abgelaufen ist)."
+  },
+  {
+   "typ": "h3",
+   "html": "Vorgehensweise zur Aktivierung eines Pin-Change-Interrupts:"
+  },
+  {
+   "typ": "absatz",
+   "html": "<ol><li><b>Hardware-Aktivierung:</b> Im PCICR (Pin Change Interrupt Control Register) die Port-Gruppe (z.B. Port B) aktivieren.</li><li><b>Maskierung:</b> Im PCMSKx festlegen, welche spezifischen Pins den Interrupt auslösen dürfen.</li><li><b>ISR-Definition:</b> Das Unterprogramm schreiben, das ausgeführt werden soll: ISR(PCINT0_vect) { ... }.</li><li><b>Globale Freigabe:</b> Das I-Bit im Status-Register (SREG) mit dem Befehl sei() setzen</li></ol><div><br></div><div><b>Priorität:</b> Wenn zwei Interrupts gleichzeitig auftreten, gewinnt der mit der niedrigeren Vektor-Adresse (ein RESET hat immer die höchste Priorität)</div>"
   }
  ],
  "abstand": "0"
