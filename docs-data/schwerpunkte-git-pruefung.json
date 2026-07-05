@@ -6,35 +6,43 @@
  "bloecke": [
   {
    "typ": "h2",
-   "html": "Pointer (Zeiger)"
+   "html": "Pointer (Zeiger)",
+   "abstand": "0"
   },
   {
    "typ": "absatz",
-   "html": "Zeiger sind Variablen, die die Adresse einer anderen Variable speichern.&nbsp;Ihre Größe ist architekturabhängig"
+   "html": "Zeiger sind Variablen, die die Adresse einer anderen Variable speichern.&nbsp;Ihre Größe ist architekturabhängig",
+   "abstand": "0"
   },
   {
    "typ": "h3",
-   "html": "Syntax:"
+   "html": "Syntax:",
+   "abstand": "0"
   },
   {
    "typ": "liste",
-   "html": "<li><b>&amp; (Adress-Operator)</b>: Liefert die Speicheradresse einer Variablen</li><li><b>* (Inhalts-/Dereferenzierungs-Operator)</b>: Greift auf den Wert an der gespeicherten Adresse zu</li>"
+   "html": "<li><b>&amp; (Adress-Operator)</b>: Liefert die Speicheradresse einer Variablen</li><li><b>* (Inhalts-/Dereferenzierungs-Operator)</b>: Greift auf den Wert an der gespeicherten Adresse zu</li>",
+   "abstand": "0"
   },
   {
    "typ": "h3",
-   "html": "Zeigerarithmetik:"
+   "html": "Zeigerarithmetik:",
+   "abstand": "0"
   },
   {
    "typ": "absatz",
-   "html": "Wenn du einen Zeiger erhöhst (p++), erhöht sich die Adresse um die <b>Größe des Datentyps</b>, auf den er zeigt.&nbsp;"
+   "html": "Wenn du einen Zeiger erhöhst (p++), erhöht sich die Adresse um die <b>Größe des Datentyps</b>, auf den er zeigt.&nbsp;",
+   "abstand": "0"
   },
   {
    "typ": "h3",
-   "html": "Beispiel:"
+   "html": "Beispiel:",
+   "abstand": "0"
   },
   {
    "typ": "tabelle",
-   "html": "<tbody><tr><th>Adresse</th><th>Inhalt</th><th>Variable</th><th>Erklärung</th></tr><tr><td>0x08F2</td><td>0x007</td><td>n</td><td>Die Variable n hat den Wert 7</td></tr><tr><td>0x08F4</td><td>0x08F2</td><td>p</td><td>Der Zeiger p speichert die Adresse von n</td></tr></tbody>"
+   "html": "<tbody><tr><th>Adresse</th><th>Inhalt</th><th>Variable</th><th>Erklärung</th></tr><tr><td>0x08F2</td><td>0x007</td><td>n</td><td>Die Variable n hat den Wert 7</td></tr><tr><td>0x08F4</td><td>0x08F2</td><td>p</td><td>Der Zeiger p speichert die Adresse von n</td></tr></tbody>",
+   "abstand": "0"
   },
   {
    "typ": "box",
@@ -43,15 +51,18 @@
   },
   {
    "typ": "h2",
-   "html": "Variablentypen und Speicherorte"
+   "html": "Variablentypen und Speicherorte",
+   "abstand": "0"
   },
   {
    "typ": "absatz",
-   "html": "In der C-Programmierung für Mikrocontroller bestimmt der Typ und der Ort der Deklaration, wie lange eine Variable existiert und wer auf sie zugreifen kann."
+   "html": "In der C-Programmierung für Mikrocontroller bestimmt der Typ und der Ort der Deklaration, wie lange eine Variable existiert und wer auf sie zugreifen kann.",
+   "abstand": "0"
   },
   {
    "typ": "h3",
-   "html": "Arten von Variablen:"
+   "html": "Arten von Variablen:",
+   "abstand": "0"
   },
   {
    "typ": "liste",
