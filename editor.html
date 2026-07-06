@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Übersichts-Editor</title>
-<link rel="stylesheet" href="stil.css?v=8">
-<script src="config.js?v=8"></script>
-<script src="sammlung.js?v=8" defer></script>
+<link rel="stylesheet" href="stil.css?v=9">
+<script src="config.js?v=9"></script>
+<script src="sammlung.js?v=9" defer></script>
 <style>
   /* ---------- Editor-spezifisch ---------- */
   .werkbank{position:sticky;top:0;z-index:40;background:var(--paper);padding:10px 0 12px;border-bottom:1px solid var(--line);margin-bottom:22px}
@@ -299,10 +299,20 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="code-kopf kein-druck">
             <select data-feld="sprache" style="font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:6px;padding:3px 5px;background:#fbfcfd">${opts}</select>
             <label style="font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);display:flex;align-items:center;gap:5px;cursor:pointer">
-              <input type="checkbox" data-feld="ausfuehrbar" ${b.ausfuehrbar?"checked":""}> ▶ im Viewer ausführbar (nur JavaScript)
+              <input type="checkbox" data-feld="ausfuehrbar" ${b.ausfuehrbar?"checked":""}> ▶ ausführbar (nur JS)
+            </label>
+            <label style="font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);display:flex;align-items:center;gap:5px;cursor:pointer">
+              <input type="checkbox" data-feld="simCheck" ${b.simulation!=null?"checked":""}> ▶ Simulation beilegen (JS)
             </label>
           </div>
           <textarea class="code-edit" data-feld="text" rows="${zeilen}" spellcheck="false" placeholder="Code hier einfügen …">${S.esc(b.text||"")}</textarea>
+          ${b.simulation!=null ? `
+          <div class="kein-druck" style="font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);margin:8px 0 3px">
+            Simulation (JavaScript) — läuft beim ▶-Knopf, der Code oben bleibt sichtbar.
+            Hilfen: <code>console.log(…)</code>, <code>ctx</code> (Canvas), <code>Speicher()</code> für Pointer-Tabellen.
+          </div>
+          <textarea class="code-edit kein-druck" data-feld="simulation" rows="${Math.min(20, Math.max(4, (b.simulation||"").split("\n").length + 1))}" spellcheck="false"
+            placeholder="const sp = Speicher();&#10;sp.int('n', 7).ptr('p', 'n').tabelle('Start');&#10;sp.deref('p', 10).tabelle('nach *p = 10');">${S.esc(b.simulation||"")}</textarea>` : ""}
           <div class="code-lauf-huelle kein-druck">
             <button class="btn klein" type="button" data-feld="testlauf">▶ Testlauf</button>
             <div class="lauf-ziel"></div>
@@ -338,10 +348,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (selSpr) selSpr.addEventListener("change", () => { doc.bloecke[i].sprache = selSpr.value; markiereGeaendert(); });
     const chkAus = inhalt.querySelector("input[data-feld=ausfuehrbar]");
     if (chkAus) chkAus.addEventListener("change", () => { doc.bloecke[i].ausfuehrbar = chkAus.checked; markiereGeaendert(); });
+    const chkSim = inhalt.querySelector("input[data-feld=simCheck]");
+    if (chkSim) chkSim.addEventListener("change", () => {
+      sichern();
+      if (chkSim.checked) doc.bloecke[i].simulation = doc.bloecke[i].simulation || "";
+      else delete doc.bloecke[i].simulation;
+      markiereGeaendert(); bauen();
+    });
     const btnLauf = inhalt.querySelector("[data-feld=testlauf]");
     if (btnLauf) btnLauf.addEventListener("click", () => {
+      const taSim = inhalt.querySelector("textarea[data-feld=simulation]");
       const taCode = inhalt.querySelector("textarea[data-feld=text]");
-      S.codeAusfuehren(taCode ? taCode.value : "", inhalt.querySelector(".lauf-ziel"));
+      const code = taSim ? taSim.value : (taCode ? taCode.value : "");
+      S.codeAusfuehren(code, inhalt.querySelector(".lauf-ziel"));
     });
     // Diagramm-Block: Vorschau zeichnen (initial + auf Knopfdruck)
     const vorschau = inhalt.querySelector("[data-feld=vorschau]");
@@ -482,6 +501,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         if (f === "unterschrift") b.unterschrift = el.textContent.trim();
         if (f === "text") b.text = el.value;
+        if (f === "simulation") b.simulation = el.value;
         if (f === "funktionen") b.funktionen = el.value;
         if (f === "xmin") b.xmin = parseFloat(String(el.value).replace(",", "."));
         if (f === "xmax") b.xmax = parseFloat(String(el.value).replace(",", "."));

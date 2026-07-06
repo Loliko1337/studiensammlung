@@ -264,12 +264,15 @@
       case "box":    el.innerHTML = `<div class="box box-${b.variante||"info"}"><div class="box-label">${boxLabel(b.variante)}</div><div>${b.html||""}</div></div>`; break;
       case "code": {
         el.innerHTML = `<div class="codeblock"><span class="code-label">${CODE_SPRACHEN[b.sprache]||"Code"}</span><pre><code>${codeHighlight(b.text, b.sprache)}</code></pre></div>`;
-        if (b.sprache === "js" && b.ausfuehrbar){
+        const laufCode = (b.sprache === "js" && b.ausfuehrbar) ? b.text
+                       : (b.simulation && String(b.simulation).trim()) ? b.simulation : null;
+        if (laufCode != null){
+          const label = (b.sprache === "js" && b.ausfuehrbar) ? "▶ Ausführen" : "▶ Simulation ausführen";
           const huelle = document.createElement("div");
           huelle.className = "code-lauf-huelle kein-druck";
-          huelle.innerHTML = `<button class="btn klein lauf-btn" type="button">▶ Ausführen</button><div class="lauf-ziel"></div>`;
+          huelle.innerHTML = `<button class="btn klein lauf-btn" type="button">${label}</button><div class="lauf-ziel"></div>`;
           huelle.querySelector(".lauf-btn").addEventListener("click", () =>
-            codeAusfuehren(b.text, huelle.querySelector(".lauf-ziel")));
+            codeAusfuehren(laufCode, huelle.querySelector(".lauf-ziel")));
           el.appendChild(huelle);
         }
         break;
@@ -417,7 +420,13 @@
 <style>body{margin:0;font:12.5px/1.55 "JetBrains Mono",ui-monospace,Menlo,monospace;color:#1a2024;background:#fff}
 canvas{display:none;max-width:100%;border-bottom:1px solid #e3e8ed}
 #log{padding:9px 12px;white-space:pre-wrap;word-break:break-word}
-#log .err{color:#d6453d}</style>
+#log .err{color:#d6453d}
+#log .sp-titel{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#55606a;font-weight:700;margin:8px 0 3px}
+#log table.sp{border-collapse:collapse;margin:2px 0 6px;white-space:normal}
+#log table.sp th,#log table.sp td{border:1px solid #d4dbe2;padding:3px 10px;font-size:12px;text-align:left}
+#log table.sp th{background:#f2f6f8;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em}
+#log table.sp tr.neu td{background:#fcf3e2}
+#log table.sp td.pfeil{color:#0b7a8c;font-weight:700}</style>
 <canvas id="cv" width="600" height="300"></canvas><div id="log"></div>
 <script>
 const log = document.getElementById("log"), canvas = document.getElementById("cv");
@@ -429,11 +438,55 @@ function schreib(cls, args){ const d = document.createElement("div"); if (cls) d
 console.log = (...a) => schreib("", a); console.warn = console.log;
 console.error = (...a) => schreib("err", a);
 window.onerror = (m, s, l) => { schreib("err", ["⚠ " + m + (l ? " (Zeile " + l + ")" : "")]); };
+
+/* --- Speicher(): simulierter Speicher mit Tabellen-Ausgabe (für Pointer-Demos) --- */
+function Speicher(start){
+  let adr = (start == null ? 0x08F0 : start);
+  const zellen = [], geaendert = new Set();
+  const hex = a => "0x" + a.toString(16).toUpperCase().padStart(4, "0");
+  const finde = n => { const z = zellen.find(z => z.name === n); if (!z) throw new Error("Speicher: '" + n + "' ist nicht angelegt"); return z; };
+  function anlegen(name, wert, groesse, typ, ziel){
+    const z = { name: name, adresse: adr, groesse: groesse, wert: wert, typ: typ, ziel: ziel };
+    adr += groesse; zellen.push(z); geaendert.add(name); return z;
+  }
+  const api = {
+    int:  function(n, w){ anlegen(n, (w||0)|0, 2, "int");  return api; },   // 16-Bit int (2 Byte)
+    int8: function(n, w){ anlegen(n, (w||0) & 0xFF, 1, "int8"); return api; },
+    ptr:  function(n, zielName){ const z = finde(zielName); anlegen(n, z.adresse, 2, "ptr", zielName); return api; },
+    schreib: function(n, w){ const z = finde(n); z.wert = w; geaendert.add(n); return api; },  // n = w
+    deref: function(n, w){                                                   // *p  bzw.  *p = w
+      const p = finde(n); if (p.typ !== "ptr") throw new Error("'" + n + "' ist kein Zeiger");
+      const ziel = zellen.find(z => z.adresse === p.wert);
+      if (!ziel) throw new Error("an " + hex(p.wert) + " liegt keine bekannte Variable");
+      if (w === undefined) return ziel.wert;
+      ziel.wert = w; geaendert.add(ziel.name); return api;
+    },
+    inc: function(n){                                                        // p++ (Adresse += Typgröße)
+      const p = finde(n); if (p.typ !== "ptr") throw new Error("'" + n + "' ist kein Zeiger");
+      const ziel = zellen.find(z => z.name === p.ziel);
+      p.wert += (ziel ? ziel.groesse : 2); geaendert.add(n); return api;
+    },
+    wert: function(n){ return finde(n).wert; },
+    adresse: function(n){ return hex(finde(n).adresse); },
+    tabelle: function(titel){
+      if (titel){ const c = document.createElement("div"); c.className = "sp-titel"; c.textContent = titel; log.appendChild(c); }
+      const t = document.createElement("table"); t.className = "sp";
+      let html = "<tr><th>Adresse</th><th>Inhalt</th><th>Variable</th></tr>";
+      zellen.forEach(function(z){
+        html += "<tr" + (geaendert.has(z.name) ? " class=neu" : "") + "><td>" + hex(z.adresse) + "</td><td" +
+          (z.typ === "ptr" ? " class=pfeil>" + hex(z.wert) + " →" : ">" + z.wert) + "</td><td>" + z.name + "</td></tr>";
+      });
+      t.innerHTML = html; log.appendChild(t); geaendert.clear(); return api;
+    },
+  };
+  return api;
+}
+
 try { (function(){ "use strict";
 ${sicher}
 })(); } catch(e){ schreib("err", ["⚠ " + e.message]); }
 if (!log.childNodes.length && canvas.style.display === "none")
-  schreib("", ["(keine Ausgabe — console.log(…) schreibt hierher, ctx zeichnet auf die Fläche)"]);
+  schreib("", ["(keine Ausgabe — console.log(…) schreibt hierher, ctx zeichnet, Speicher() zeigt Speichertabellen)"]);
 <\/script>`;
     ziel.appendChild(iframe);
   }
