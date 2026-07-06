@@ -1,0 +1,33 @@
+{
+ "id": "test-uebersicht-fuer-bausteine",
+ "titel": "Test Übersicht für Bausteine",
+ "untertitel": "",
+ "stand": "2026-07-06",
+ "bloecke": [
+  {
+   "typ": "h2",
+   "html": "Erster Abschnitt"
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "js",
+   "text": "console.log(5);",
+   "ausfuehrbar": true
+  },
+  {
+   "typ": "diagramm",
+   "html": "",
+   "funktionen": "sin(x)",
+   "xmin": -6.3,
+   "xmax": 6.3
+  },
+  {
+   "typ": "diagramm",
+   "html": "",
+   "funktionen": "x^2",
+   "xmin": -6.3,
+   "xmax": 6.3
+  }
+ ]
+}
