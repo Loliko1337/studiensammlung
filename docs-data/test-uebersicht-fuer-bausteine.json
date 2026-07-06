@@ -11,7 +11,7 @@
   {
    "typ": "code",
    "html": "",
-   "sprache": "andere",
+   "sprache": "c",
    "text": "console.log(5);",
    "ausfuehrbar": true
   },
