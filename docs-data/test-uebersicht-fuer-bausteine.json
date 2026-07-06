@@ -28,6 +28,13 @@
    "funktionen": "x^2",
    "xmin": -6.3,
    "xmax": 6.3
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "int n = 5;\nint *p = &n; \n*p = 10; \np++;",
+   "abstand": "m"
   }
  ]
 }
