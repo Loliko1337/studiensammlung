@@ -32,7 +32,7 @@
   {
    "typ": "code",
    "html": "",
-   "sprache": "c",
+   "sprache": "js",
    "text": "int n = 5;\nint *p = &n; \n*p = 10; \np++;",
    "abstand": "m"
   }
