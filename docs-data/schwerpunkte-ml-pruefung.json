@@ -26,7 +26,7 @@
   },
   {
    "typ": "liste",
-   "html": "<li><b>Hypothese (h):</b> Die Funktion, die die Merkmale x auf das Ergebnis y abbildet (h: x &rarr; y&#770;).</li><li><b>Features/Merkmale:</b> Die Eingangsvariablen (Vektor x), die ein Sample beschreiben.</li><li><b>Label/Annotation:</b> Der bekannte Zielwert in überwachten Trainingsdaten.</li><li><b>Overfitting:</b> Modell ist zu komplex und lernt Rauschen der Trainingsdaten mit; Performance auf Testdaten sinkt.</li><li><b>Hyperparameter:</b> Parameter, die vor dem Training festgelegt werden (z. B. k bei kNN oder &lambda; bei der Regularisierung).</li><li><b>Lernrate (&alpha;):</b> Schrittweite beim Gradientenabstieg; bestimmt, wie schnell oder stabil das Modell konvergiert.</li><li><b>Regularisierung:</b> Methode (z. B. Tikhonov), die große Gewichte bestraft, um Overfitting zu verhindern.</li>",
+   "html": "<li><b>Hypothese (h):</b> Die Funktion, die die Merkmale x auf das Ergebnis y abbildet (h: x → ŷ).</li><li><b>Features/Merkmale:</b> Die Eingangsvariablen (Vektor x), die ein Sample beschreiben.</li><li><b>Label/Annotation:</b> Der bekannte Zielwert in überwachten Trainingsdaten.</li><li><b>Overfitting:</b> Modell ist zu komplex und lernt Rauschen der Trainingsdaten mit; Performance auf Testdaten sinkt.</li><li><b>Hyperparameter:</b> Parameter, die vor dem Training festgelegt werden (z. B. k bei kNN oder λ bei der Regularisierung).</li><li><b>Lernrate (α):</b> Schrittweite beim Gradientenabstieg; bestimmt, wie schnell oder stabil das Modell konvergiert.</li><li><b>Regularisierung:</b> Methode (z. B. Tikhonov), die große Gewichte bestraft, um Overfitting zu verhindern.</li>",
    "abstand": "l"
   },
   {
@@ -36,7 +36,7 @@
   },
   {
    "typ": "liste",
-   "html": "<li><b>k-Nearest-Neighbors (kNN):</b> Klassifiziert ein Sample basierend auf der Mehrheit der k nächsten Nachbarn; wird genutzt, da es kein explizites Training erfordert.</li><li><b>Gradient Descent (Gradientenverfahren):</b> Iteratives Optimierungsverfahren, um die Kostenfunktion zu minimieren, indem Gewichte entgegengesetzt zum Gradienten angepasst werden.</li><li><b>Sigmoid-Funktion (&sigma;(z) = 1 / (1 + e<sup>-z</sup>)):</b> Transformiert eine lineare Kombination in einen Bereich von 0 bis 1; essenziell für die logistische Regression zur Wahrscheinlichkeitsberechnung.</li><li><b>Kreuzvalidierung (Cross-Validation):</b> Teilt Daten in k Folds, um Hyperparameter robust zu optimieren, ohne den Testdatensatz zu \"verbrauchen\".</li><li><b>MSE (Mean Squared Error):</b> Fehlerfunktion für Regression; quadriert Differenzen, um größere Abweichungen stärker zu bestrafen.</li><li><b>Confusion Matrix:</b> Tabellarische Gegenüberstellung von Vorhersage und Realität (TP, FP, TN, FN); Basis für Metriken wie Precision und Recall.</li>",
+   "html": "<li><b>k-Nearest-Neighbors (kNN):</b> Klassifiziert ein Sample basierend auf der Mehrheit der k nächsten Nachbarn; wird genutzt, da es kein explizites Training erfordert.</li><li><b>Gradient Descent (Gradientenverfahren):</b> Iteratives Optimierungsverfahren, um die Kostenfunktion zu minimieren, indem Gewichte entgegengesetzt zum Gradienten angepasst werden.</li><li><b>Sigmoid-Funktion (σ(z) = 1 / (1 + e<sup>-z</sup>)):</b> Transformiert eine lineare Kombination in einen Bereich von 0 bis 1; essenziell für die logistische Regression zur Wahrscheinlichkeitsberechnung.</li><li><b>Kreuzvalidierung (Cross-Validation):</b> Teilt Daten in k Folds, um Hyperparameter robust zu optimieren, ohne den Testdatensatz zu \"verbrauchen\".</li><li><b>MSE (Mean Squared Error):</b> Fehlerfunktion für Regression; quadriert Differenzen, um größere Abweichungen stärker zu bestrafen.</li><li><b>Confusion Matrix:</b> Tabellarische Gegenüberstellung von Vorhersage und Realität (TP, FP, TN, FN); Basis für Metriken wie Precision und Recall.</li>",
    "abstand": "l"
   },
   {
@@ -51,7 +51,7 @@
   },
   {
    "typ": "absatz",
-   "html": "<b>1. Was passiert beim kNN-Verfahren, wenn k sehr klein gewählt wird (z. B. k=1)?</b><br>&bull; A) Das Modell wird sehr stabil gegenüber Rauschen.<br>&bull; B) Die Entscheidungsgrenzen werden glatter.<br>&bull; C) Die Tendenz zu Overfitting steigt. <i>(Richtig)</i><br><br><b>2. Warum ist Merkmalskalierung beim Gradientenabstieg wichtig?</b><br>&bull; A) Um die Sigmoid-Funktion zu umgehen.<br>&bull; B) Um eine schnellere und stabilere Konvergenz zu erreichen. <i>(Richtig)</i><br>&bull; C) Um die Anzahl der Features zu reduzieren.<br><br><b>3. Welche Metrik ist bei extrem unbalancierten Klassen (z. B. 0,1 % positiv) oft irreführend?</b><br>&bull; A) Recall.<br>&bull; B) Accuracy. <i>(Richtig)</i><br>&bull; C) F1-Score.",
+   "html": "<b>1. Was passiert beim kNN-Verfahren, wenn k sehr klein gewählt wird (z. B. k=1)?</b><br>• A) Das Modell wird sehr stabil gegenüber Rauschen.<br>• B) Die Entscheidungsgrenzen werden glatter.<br>• C) Die Tendenz zu Overfitting steigt. <i><b>(Richtig)</b></i><br><br><b>2. Warum ist Merkmalskalierung beim Gradientenabstieg wichtig?</b><br>• A) Um die Sigmoid-Funktion zu umgehen.<br>• B) Um eine schnellere und stabilere Konvergenz zu erreichen. <i><b>(Richtig)</b></i><br>• C) Um die Anzahl der Features zu reduzieren.<br><br><b>3. Welche Metrik ist bei extrem unbalancierten Klassen (z. B. 0,1 % positiv) oft irreführend?</b><br>• A) Recall.<br>• B) Accuracy. <i><b>(Richtig)</b></i><br>• C) F1-Score.",
    "abstand": "m"
   },
   {
@@ -71,7 +71,7 @@
   },
   {
    "typ": "absatz",
-   "html": "<b>1. Ein Modell hat eine Accuracy von 98 % auf den Trainingsdaten, aber nur 60 % auf den Testdaten. Diagnostiziere das Problem und nenne zwei Gegenmaßnahmen.</b><br><i>Lösung:</i> Das Problem ist <b>Overfitting</b>. Maßnahmen: 1. Regularisierung einführen (&lambda; erhöhen), 2. Modellkomplexität verringern (z. B. k bei kNN erhöhen), 3. Mehr Trainingsdaten sammeln.<br><br><b>2. Erkläre den Zusammenhang zwischen Schwellwertanpassung, Precision und Recall bei einer medizinischen Diagnose-App.</b><br><i>Lösung:</i> Senkt man den Schwellwert (z. B. von 0,5 auf 0,1), erkennt man mehr Kranke (<b>Recall steigt</b>), erhöht aber die Gefahr von Fehlalarmen (<b>Precision sinkt</b>). In der Medizin ist ein hoher Recall oft wichtiger, um niemanden zu übersehen.",
+   "html": "<b>1. Ein Modell hat eine Accuracy von 98 % auf den Trainingsdaten, aber nur 60 % auf den Testdaten. Diagnostiziere das Problem und nenne zwei Gegenmaßnahmen.</b><br><i>Lösung:</i> Das Problem ist <b>Overfitting</b>. Maßnahmen: 1. Regularisierung einführen (λ erhöhen), 2. Modellkomplexität verringern (z. B. k bei kNN erhöhen), 3. Mehr Trainingsdaten sammeln.<br><br><b>2. Erkläre den Zusammenhang zwischen Schwellwertanpassung, Precision und Recall bei einer medizinischen Diagnose-App.</b><br><i>Lösung:</i> Senkt man den Schwellwert (z. B. von 0,5 auf 0,1), erkennt man mehr Kranke (<b>Recall steigt</b>), erhöht aber die Gefahr von Fehlalarmen (<b>Precision sinkt</b>). In der Medizin ist ein hoher Recall oft wichtiger, um niemanden zu übersehen.",
    "abstand": "l"
   },
   {
