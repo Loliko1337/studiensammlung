@@ -1,6 +1,12 @@
 {
  "docs": [
   {
+   "id": "test-uebersicht-fuer-bausteine",
+   "titel": "Test Übersicht für Bausteine",
+   "untertitel": "",
+   "stand": "2026-07-06"
+  },
+  {
    "id": "schwerpunkte-git-pruefung",
    "titel": "Schwerpunkte GIT Prüfung",
    "untertitel": "",
