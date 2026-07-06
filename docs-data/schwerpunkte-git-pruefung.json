@@ -5,6 +5,11 @@
  "stand": "2026-07-06",
  "bloecke": [
   {
+   "typ": "box",
+   "html": "Noch nicht Finalisiert",
+   "variante": "achtung"
+  },
+  {
    "typ": "h2",
    "html": "Pointer (Zeiger)",
    "abstand": "m"
