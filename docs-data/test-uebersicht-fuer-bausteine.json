@@ -32,7 +32,7 @@
   {
    "typ": "code",
    "html": "",
-   "sprache": "js",
+   "sprache": "c",
    "text": "int n = 5;\nint *p = &n; \n*p = 10; \np++;",
    "abstand": "m",
    "simulation": "const sp = Speicher(0x08F2);\n\nsp.int(\"n\", 5);\nsp.ptr(\"p\", \"n\");\nsp.tabelle(\"int n = 5;  int *p = &n;\");\n\nsp.deref(\"p\", 10);\nsp.tabelle(\"nach  *p = 10;   (n wurde über den Zeiger geändert!)\");\n\nsp.inc(\"p\");\nsp.tabelle(\"nach  p++;   (Adresse in p ist um 2 Byte gesprungen)\");\n\nconsole.log(\"n =\", sp.wert(\"n\"), \"— geändert, ohne n direkt anzufassen!\");",
