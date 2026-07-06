@@ -262,7 +262,19 @@
       case "formel": el.innerHTML = `<div class="formel">${b.html||""}</div>`; break;
       case "tabelle":el.innerHTML = `<div class="tabelle-huelle"><table>${b.html||""}</table></div>`; break;
       case "box":    el.innerHTML = `<div class="box box-${b.variante||"info"}"><div class="box-label">${boxLabel(b.variante)}</div><div>${b.html||""}</div></div>`; break;
-      case "code":   el.innerHTML = `<div class="codeblock"><span class="code-label">${CODE_SPRACHEN[b.sprache]||"Code"}</span><pre><code>${codeHighlight(b.text, b.sprache)}</code></pre></div>`; break;
+      case "code": {
+        el.innerHTML = `<div class="codeblock"><span class="code-label">${CODE_SPRACHEN[b.sprache]||"Code"}</span><pre><code>${codeHighlight(b.text, b.sprache)}</code></pre></div>`;
+        if (b.sprache === "js" && b.ausfuehrbar){
+          const huelle = document.createElement("div");
+          huelle.className = "code-lauf-huelle kein-druck";
+          huelle.innerHTML = `<button class="btn klein lauf-btn" type="button">▶ Ausführen</button><div class="lauf-ziel"></div>`;
+          huelle.querySelector(".lauf-btn").addEventListener("click", () =>
+            codeAusfuehren(b.text, huelle.querySelector(".lauf-ziel")));
+          el.appendChild(huelle);
+        }
+        break;
+      }
+      case "diagramm": el.innerHTML = `<div class="diagramm">${diagrammSvg(b)}</div>`; break;
       case "spalten":el.innerHTML = `<div class="spalten"><div class="spalte">${b.links||""}</div><div class="spalte">${b.rechts||""}</div></div>`; break;
       case "bild":   el.innerHTML = `<figure><img src="${b.src||""}" alt="${esc(b.unterschrift||"")}" style="width:${b.breite||100}%">${b.unterschrift?`<figcaption>${esc(b.unterschrift)}</figcaption>`:""}</figure>`; break;
       case "linie":  el.innerHTML = `<hr>`; break;
@@ -304,11 +316,133 @@
   }
   const CODE_SPRACHEN = { c:"C", js:"JavaScript", html:"HTML", andere:"Code" };
 
+  /* ---------- Diagramm: abhängigkeitsfreier Funktionsplotter (SVG) ---------- */
+  function funktionKompilieren(ausdruck){
+    let s = String(ausdruck||"").trim();
+    if (!s || !/^[-+*/^().,0-9x\sA-Za-z]*$/.test(s)) return null;
+    s = s.replace(/\^/g, "**");
+    s = s.replace(/\b(sin|cos|tan|asin|acos|atan|sinh|cosh|tanh|exp|log10|log2|log|sqrt|abs|min|max|floor|ceil|round|sign|pow)\b/gi, m => "Math." + m.toLowerCase());
+    s = s.replace(/\bpi\b/gi, "Math.PI").replace(/\be\b/g, "Math.E");
+    try { const f = new Function("x", `"use strict"; return (${s});`); f(0.123); return f; }
+    catch(err){ return null; }
+  }
+  function niceStep(roh){
+    const pow = Math.pow(10, Math.floor(Math.log10(roh)));
+    const n = roh / pow;
+    return (n < 1.5 ? 1 : n < 3.5 ? 2 : n < 7.5 ? 5 : 10) * pow;
+  }
+  function fmtZahl(v){
+    if (Math.abs(v) < 1e-12) return "0";
+    const s = (Math.abs(v) >= 1e4 || Math.abs(v) < 1e-3) ? v.toExponential(1) : String(+v.toFixed(3));
+    return s.replace(".", ",");
+  }
+  function diagrammSvg(b){
+    const W = 640, H = Math.max(160, +b.hoehe || 280);
+    const pad = { l:48, r:14, t:12, b:28 };
+    let xmin = isFinite(+b.xmin) ? +b.xmin : -10;
+    let xmax = isFinite(+b.xmax) ? +b.xmax : 10;
+    if (xmax <= xmin) xmax = xmin + 1;
+    const farben = ["#0f7c44", "#0b7a8c", "#d98a1f", "#5f3dc4", "#d6453d"];
+    const zeilen = String(b.funktionen||"").split("\n").map(z => z.trim()).filter(Boolean);
+    const fns = zeilen.map(z => ({ z, f: funktionKompilieren(z) }));
+
+    // Abtasten + y-Bereich bestimmen
+    const N = 400;
+    let ymin = Infinity, ymax = -Infinity;
+    const daten = fns.map(o => {
+      if (!o.f) return null;
+      const pts = [];
+      for (let i = 0; i <= N; i++){
+        const x = xmin + (xmax - xmin) * i / N;
+        let y; try { y = o.f(x); } catch(err){ y = NaN; }
+        pts.push([x, y]);
+        if (isFinite(y)){ ymin = Math.min(ymin, y); ymax = Math.max(ymax, y); }
+      }
+      return pts;
+    });
+    if (!isFinite(ymin)){ ymin = -1; ymax = 1; }
+    if (ymin === ymax){ ymin -= 1; ymax += 1; }
+    const spann = ymax - ymin; ymin -= spann * 0.08; ymax += spann * 0.08;
+
+    const sx = x => pad.l + (x - xmin) / (xmax - xmin) * (W - pad.l - pad.r);
+    const sy = y => H - pad.b - (y - ymin) / (ymax - ymin) * (H - pad.t - pad.b);
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" style="width:100%;height:auto;display:block">`;
+    svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#fcfdfe"/>`;
+
+    // Raster + Beschriftung
+    const xs = niceStep((xmax - xmin) / 6), ys = niceStep((ymax - ymin) / 5);
+    for (let gx = Math.ceil(xmin / xs) * xs; gx <= xmax + 1e-9; gx += xs){
+      svg += `<line x1="${sx(gx)}" y1="${pad.t}" x2="${sx(gx)}" y2="${H - pad.b}" stroke="#e3e8ed" stroke-width="1"/>`;
+      svg += `<text x="${sx(gx)}" y="${H - pad.b + 15}" font-size="10" font-family="JetBrains Mono,monospace" fill="#55606a" text-anchor="middle">${fmtZahl(gx)}</text>`;
+    }
+    for (let gy = Math.ceil(ymin / ys) * ys; gy <= ymax + 1e-9; gy += ys){
+      svg += `<line x1="${pad.l}" y1="${sy(gy)}" x2="${W - pad.r}" y2="${sy(gy)}" stroke="#e3e8ed" stroke-width="1"/>`;
+      svg += `<text x="${pad.l - 6}" y="${sy(gy) + 3.5}" font-size="10" font-family="JetBrains Mono,monospace" fill="#55606a" text-anchor="end">${fmtZahl(gy)}</text>`;
+    }
+    // Nullachsen
+    if (ymin < 0 && ymax > 0) svg += `<line x1="${pad.l}" y1="${sy(0)}" x2="${W - pad.r}" y2="${sy(0)}" stroke="#9aa6af" stroke-width="1.3"/>`;
+    if (xmin < 0 && xmax > 0) svg += `<line x1="${sx(0)}" y1="${pad.t}" x2="${sx(0)}" y2="${H - pad.b}" stroke="#9aa6af" stroke-width="1.3"/>`;
+
+    // Kurven (bei Unendlichkeiten/Sprüngen Pfad unterbrechen)
+    daten.forEach((pts, i) => {
+      if (!pts) return;
+      let d = "", offen = false;
+      pts.forEach(([x, y]) => {
+        if (!isFinite(y) || y < ymin - spann || y > ymax + spann){ offen = false; return; }
+        d += (offen ? "L" : "M") + sx(x).toFixed(1) + " " + sy(y).toFixed(1);
+        offen = true;
+      });
+      svg += `<path d="${d}" fill="none" stroke="${farben[i % farben.length]}" stroke-width="1.8" stroke-linejoin="round"/>`;
+    });
+
+    // Legende
+    fns.forEach((o, i) => {
+      const farbe = o.f ? farben[i % farben.length] : "#d6453d";
+      const label = o.f ? "f(x) = " + o.z : "⚠ ungültig: " + o.z;
+      svg += `<text x="${pad.l + 8}" y="${pad.t + 14 + i * 15}" font-size="11" font-family="JetBrains Mono,monospace" fill="${farbe}" font-weight="700">${esc(label)}</text>`;
+    });
+    svg += `</svg>`;
+    return svg;
+  }
+
+  /* ---------- Ausführbarer JS-Code (Sandbox-iframe, kein Zugriff auf Token/Seite) ---------- */
+  function codeAusfuehren(codeText, ziel){
+    ziel.innerHTML = "";
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("sandbox", "allow-scripts"); // eigene Origin: kein localStorage/Token erreichbar
+    iframe.className = "code-lauf";
+    const sicher = String(codeText||"").replace(/<\/script/gi, "<\\/script");
+    iframe.srcdoc = `<!doctype html><meta charset="utf-8">
+<style>body{margin:0;font:12.5px/1.55 "JetBrains Mono",ui-monospace,Menlo,monospace;color:#1a2024;background:#fff}
+canvas{display:none;max-width:100%;border-bottom:1px solid #e3e8ed}
+#log{padding:9px 12px;white-space:pre-wrap;word-break:break-word}
+#log .err{color:#d6453d}</style>
+<canvas id="cv" width="600" height="300"></canvas><div id="log"></div>
+<script>
+const log = document.getElementById("log"), canvas = document.getElementById("cv");
+let _ctx = null;
+Object.defineProperty(window, "ctx", { get(){ canvas.style.display = "block"; if(!_ctx) _ctx = canvas.getContext("2d"); return _ctx; } });
+function schreib(cls, args){ const d = document.createElement("div"); if (cls) d.className = cls;
+  d.textContent = args.map(a => { try { return typeof a === "object" ? JSON.stringify(a) : String(a); } catch(e){ return String(a); } }).join(" ");
+  log.appendChild(d); }
+console.log = (...a) => schreib("", a); console.warn = console.log;
+console.error = (...a) => schreib("err", a);
+window.onerror = (m, s, l) => { schreib("err", ["⚠ " + m + (l ? " (Zeile " + l + ")" : "")]); };
+try { (function(){ "use strict";
+${sicher}
+})(); } catch(e){ schreib("err", ["⚠ " + e.message]); }
+if (!log.childNodes.length && canvas.style.display === "none")
+  schreib("", ["(keine Ausgabe — console.log(…) schreibt hierher, ctx zeichnet auf die Fläche)"]);
+<\/script>`;
+    ziel.appendChild(iframe);
+  }
+
   /* ---------- Export ---------- */
   window.Sammlung = {
     CFG, repoKonfiguriert, getToken, setToken, eingeloggt, schreibmodus, tokenPruefen,
     indexLaden, manifestLaden, docLaden, docSpeichern, docEntfernen, lebendLaden,
     lokaleDocs, lokalSpeichern, lokalLoeschen,
-    trainerHochladen, slug, renderDoc, renderBlock, esc, ABSTAENDE, abstandPx, codeHighlight, CODE_SPRACHEN,
+    trainerHochladen, slug, renderDoc, renderBlock, esc, ABSTAENDE, abstandPx, codeHighlight, CODE_SPRACHEN, diagrammSvg, codeAusfuehren,
   };
 })();
