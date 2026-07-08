@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DGL-Klausurtrainer · Mathematik II</title>
+<style>
+:root{
+  --bg:#10141a; --sheet:#151b25; --sheet2:#1a2230; --line:#2a3547;
+  --ink:#e9edf3; --muted:#8d99ab; --accent:#ff5d55; --ok:#58c98b; --warn:#f2b950;
+  --grid:rgba(125,160,215,.065);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink); min-height:100vh;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0/26px 26px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/26px 26px,
+    var(--bg);
+  padding:0 14px 60px;
+}
+.wrap{max-width:860px;margin:0 auto}
+header{padding:26px 4px 18px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:600;font-size:30px;margin:6px 0 2px}
+h1 .rot{color:var(--accent)}
+.sub{color:var(--muted);font-size:13.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 18px}
+.chip{
+  border:1px solid var(--line);background:var(--sheet);color:var(--ink);
+  padding:8px 14px;border-radius:999px;font-size:14px;cursor:pointer;transition:.15s;
+}
+.chip:hover{border-color:var(--muted)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#16090a;font-weight:600}
+.card{
+  background:var(--sheet);border:1px solid var(--line);border-radius:14px;
+  padding:20px 20px 18px;box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+.tasktitle{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.statement{
+  font-family:Georgia,"Times New Roman",serif;font-size:21px;line-height:1.85;
+  background:var(--sheet2);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;margin-bottom:10px;overflow-x:auto;
+}
+.given{color:var(--muted);font-size:14.5px;margin-bottom:18px}
+.given .m{font-family:Georgia,serif;color:var(--ink)}
+.m{font-family:Georgia,"Times New Roman",serif}
+.checks{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.check{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.check label{flex:1 1 300px;font-size:14.5px;line-height:1.5}
+.check input[type=text]{
+  width:130px;background:var(--sheet2);border:1px solid var(--line);color:var(--ink);
+  border-radius:8px;padding:9px 11px;font-size:15px;font-family:inherit;
+}
+.check input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.check.correct input{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+.check.wrong input{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.mark{width:20px;font-size:16px}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--accent)}
+.mcopts{display:flex;gap:8px}
+.mcbtn{border:1px solid var(--line);background:var(--sheet2);color:var(--ink);border-radius:8px;padding:8px 13px;cursor:pointer;font-size:14px}
+.mcbtn.sel{background:#26324a;border-color:var(--muted)}
+.mcbtn.okmark{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+.mcbtn.nomark{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+button.main{
+  background:var(--accent);color:#16090a;border:none;border-radius:9px;
+  padding:11px 20px;font-size:15px;font-weight:700;cursor:pointer;
+}
+button.main:hover{filter:brightness(1.08)}
+button.ghost{
+  background:transparent;color:var(--ink);border:1px solid var(--line);
+  border-radius:9px;padding:11px 18px;font-size:15px;cursor:pointer;
+}
+button.ghost:hover{border-color:var(--muted)}
+.feedback{margin-top:14px;font-size:15px;min-height:22px}
+.feedback.good{color:var(--ok)} .feedback.bad{color:var(--accent)} .feedback.hint{color:var(--warn)}
+.steps{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px;display:none}
+.steps.open{display:block}
+.steps h3{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.steps ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:9px}
+.steps li{font-size:15px;line-height:1.85;color:#d4dbe6}
+.steps .m{font-size:16.5px;color:var(--ink)}
+.stats{display:flex;gap:22px;margin-top:16px;color:var(--muted);font-size:13.5px;padding:0 4px}
+.stats b{color:var(--ink)}
+.hintline{color:var(--muted);font-size:12.5px;margin-top:10px}
+.fr{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;line-height:1.12;font-size:.8em;margin:0 2px}
+.fr sup{font-size:.7em;vertical-align:.35em}
+.fr>span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+.fr>span:last-child{padding:0 3px}
+.vec{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.25;position:relative;padding:1px 8px;margin:0 2px;font-size:.9em}
+.vec::before,.vec::after{content:'';position:absolute;top:0;bottom:0;width:5px;border:1.6px solid currentColor}
+.vec::before{left:0;border-right:none;border-radius:7px 0 0 7px}
+.vec::after{right:0;border-left:none;border-radius:0 7px 7px 0}
+sup,sub{line-height:0}
+@media (max-width:560px){
+  h1{font-size:24px}
+  .statement{font-size:18px;padding:13px 14px}
+  .check input[type=text]{flex:1 1 100%;width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Mathematik II · Klausurvorbereitung · HTWK-Niveau</div>
+    <h1>DGL<span class="rot">-</span>Klausurtrainer</h1>
+    <div class="sub">Generierte Aufgaben mit vollständigem Rechenweg – jede Aufgabe ist neu, alle Werte sind numerisch verifiziert.</div>
+  </header>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="card">
+    <div class="tasktitle" id="taskTitle">–</div>
+    <div class="statement m" id="statement"></div>
+    <div class="given" id="given"></div>
+    <div class="checks" id="checks"></div>
+    <div class="btnrow">
+      <button class="main" id="btnCheck">Prüfen</button>
+      <button class="ghost" id="btnSteps">Lösungsweg anzeigen</button>
+      <button class="ghost" id="btnNew">Neue Aufgabe</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="steps" id="steps"><h3>Rechenweg</h3><ol id="stepsList"></ol></div>
+    <div class="hintline">Eingabe: Dezimalzahlen (Komma oder Punkt) und Brüche wie <span class="m">3/4</span> oder <span class="m">−1/2</span>. Toleranz für gerundete Werte ist eingerechnet.</div>
+  </div>
+
+  <div class="stats">
+    <span>Gelöst: <b id="stSolved">0</b> / <b id="stTried">0</b></span>
+    <span>Serie: <b id="stStreak">0</b></span>
+    <span id="stTopic"></span>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DGL-Klausurtrainer – Generator-Kern (HTWK Mathe II Niveau)
+// Rückwärts-Konstruktion: erst schöne Lösung, dann Aufgabe.
+// Läuft in Browser (window.DGLCore) und Node (module.exports).
+// ============================================================
+(function (root) {
+'use strict';
+
+// ---------------- Utils ----------------
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = (arr) => arr[ri(0, arr.length - 1)];
+function pickNZ(a, b) { let x = 0; while (x === 0) x = ri(a, b); return x; }
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { const t = a % b; a = b; b = t; } return a || 1; }
+
+// ---------------- Formatierung ----------------
+const MIN = '\u2212'; // typografisches Minus
+function fnum(x, dec) {
+  if (dec === undefined) dec = 4;
+  if (Math.abs(x - Math.round(x)) < 1e-9) return String(Math.round(x)).replace('-', MIN);
+  for (let d = 2; d <= 24; d++) {
+    const n = x * d;
+    if (Math.abs(n - Math.round(n)) < 1e-9) return fracHTML(Math.round(n), d);
+  }
+  return String(+x.toFixed(dec)).replace('-', MIN);
+}
+function fracHTML(n, d) {
+  if (d < 0) { n = -n; d = -d; }
+  const g = gcd(n, d); n /= g; d /= g;
+  if (d === 1) return String(n).replace('-', MIN);
+  const s = n < 0 ? MIN : '';
+  return s + '<span class="fr"><span>' + Math.abs(n) + '</span><span>' + d + '</span></span>';
+}
+const sup = (n) => (n === 1 ? '' : '<sup>' + String(n).replace('-', MIN) + '</sup>');
+const tp = (n) => 't' + sup(n);
+function ex(c) { // e^{ct}
+  let inner;
+  if (c === 1) inner = 't';
+  else if (c === -1) inner = MIN + 't';
+  else inner = fnum(c) + 't';
+  return 'e<sup>' + inner + '</sup>';
+}
+function trg(fn, w) { return fn + '(' + (w === 1 ? '' : fnum(w)) + 't)'; }
+// Summe von Termen: [[coef, symHTML|null], ...]
+function terms(list) {
+  let out = '';
+  for (const [c, sym] of list) {
+    if (!c) continue;
+    const neg = c < 0; const a = Math.abs(c);
+    let body;
+    if (sym) body = (a === 1 ? sym : fnum(a) + sym);
+    else body = fnum(a);
+    if (out === '') out = (neg ? MIN : '') + body;
+    else out += (neg ? ' ' + MIN + ' ' : ' + ') + body;
+  }
+  return out || '0';
+}
+function eq(l, r) { return l + ' = ' + r; }
+const Y = 'y', YD = '\u1E8F', YDD = 'ÿ'; // y, ẏ, ÿ
+
+// numerische Checks
+function numCheck(label, value, tol) {
+  return { type: 'num', label, value, tol: tol !== undefined ? tol : Math.max(0.01, Math.abs(value) * 0.005) };
+}
+function mcCheck(label, options, correct) {
+  return { type: 'mc', label, options, correct };
+}
+
+// ============================================================
+// 1) SEPARIERBARE DGL
+// ============================================================
+function genSep() {
+  const variant = pick(['poly', 'power', 'tan']);
+  if (variant === 'poly') {
+    // ẏ = m·t^n·y ,  y(0)=y0  →  y = y0·e^{ m t^{n+1}/(n+1) }
+    const n = pick([1, 2]), m = pickNZ(-3, 3), y0 = pickNZ(-3, 3);
+    const e = n + 1, ce = m / e; // Exponenten-Koeffizient
+    const g = (t) => ce * Math.pow(t, e);
+    const t1 = 1, yt1 = y0 * Math.exp(g(t1));
+    const gS = terms([[ce, tp(e)]]);
+    return {
+      topic: 'sep', title: 'Separierbare DGL',
+      statement: eq(YD + '(t)', terms([[m, tp(n) + '·y(t)']])),
+      given: 'Anfangswert: ' + eq('y(0)', fnum(y0)),
+      checks: [
+        numCheck('Koeffizient vor ' + tp(e) + ' im Exponenten der Lösung', ce, 0.005),
+        numCheck('K in y(t) = K·e<sup>…</sup>', y0, 0.005),
+        numCheck('y(1) ≈ (auf 3 Stellen)', yt1)
+      ],
+      steps: [
+        'Trennung der Variablen: <span class="m">' + eq('<span class="fr"><span>dy</span><span>y</span></span>', terms([[m, tp(n)]]) + ' dt') + '</span>',
+        'Beide Seiten integrieren: <span class="m">' + eq('ln|y|', terms([[ce, tp(e)]]) + ' + C') + '</span>',
+        'Auflösen: <span class="m">' + eq('y(t)', 'K·e<sup>' + gS + '</sup>') + '</span> mit K = ±e<sup>C</sup>',
+        'AWP einsetzen: <span class="m">' + eq('y(0)', 'K·e<sup>0</sup> = K') + '</span> ⇒ <span class="m">' + eq('K', fnum(y0)) + '</span>',
+        '<b>Lösung:</b> <span class="m">' + eq('y(t)', fnum(y0) + '·e<sup>' + gS + '</sup>') + '</span>, also y(1) ≈ ' + fnum(yt1)
+      ],
+      sig: 'sep-poly-' + n + '-' + m + '-' + y0,
+      val: { kind: 'scalar', f: (t, y) => m * Math.pow(t, n) * y, t0: 0, y0: y0, t1: t1, expect: yt1 }
+    };
+  }
+  if (variant === 'power') {
+    // t^n·ẏ = m·y , y(t0)=y0  →  y = K·e^{ q0·t^{1-n} },  q0 = -m/(n-1)... genauer: m t^{1-n}/(1-n)
+    const n = pick([2, 3]), m = pickNZ(-4, 4);
+    const q0 = m / (1 - n); // Koeffizient vor t^{1-n}
+    const g = (t) => q0 * Math.pow(t, 1 - n);
+    const t0 = pick([1, 2, -1, -2]), y0 = pickNZ(-3, 3);
+    const K = y0 * Math.exp(-g(t0));
+    const t1 = 2 * t0, yt1 = K * Math.exp(g(t1));
+    if (!isFinite(K) || Math.abs(K) > 60 || Math.abs(yt1) > 60) return genSep();
+    const gS = terms([[q0, tp(1 - n)]]);
+    return {
+      topic: 'sep', title: 'Separierbare DGL',
+      statement: eq(tp(n) + '·' + YD + '(t)', terms([[m, 'y(t)']])),
+      given: 'Anfangswert: ' + eq('y(' + fnum(t0) + ')', fnum(y0)),
+      checks: [
+        numCheck('Koeffizient vor ' + tp(1 - n) + ' im Exponenten', q0, 0.005),
+        numCheck('K in y(t) = K·e<sup>…</sup> (3 Stellen)', K),
+        numCheck('y(' + fnum(t1) + ') ≈ (3 Stellen)', yt1)
+      ],
+      steps: [
+        'Trennung: <span class="m">' + eq('<span class="fr"><span>dy</span><span>y</span></span>', terms([[m, tp(-n)]]) + ' dt') + '</span>',
+        'Integrieren: <span class="m">' + eq('ln|y|', terms([[q0, tp(1 - n)]]) + ' + C') + '</span> &nbsp;(denn ∫t<sup>' + MIN + String(n) + '</sup>dt = t<sup>' + fnum(1 - n) + '</sup>/(' + fnum(1 - n) + '))',
+        'Auflösen: <span class="m">' + eq('y(t)', 'K·e<sup>' + gS + '</sup>') + '</span>',
+        'AWP: <span class="m">' + eq(fnum(y0), 'K·e<sup>' + fnum(g(t0)) + '</sup>') + '</span> ⇒ <span class="m">' + eq('K', fnum(y0) + '·e<sup>' + fnum(-g(t0)) + '</sup> ≈ ' + fnum(K)) + '</span>',
+        '<b>Lösung:</b> <span class="m">' + eq('y(t)', fnum(K) + '·e<sup>' + gS + '</sup>') + '</span>, also y(' + fnum(t1) + ') ≈ ' + fnum(yt1)
+      ],
+      sig: 'sep-power-' + n + '-' + m + '-' + t0 + '-' + y0,
+      val: { kind: 'scalar', f: (t, y) => m * y / Math.pow(t, n), t0: t0, y0: y0, t1: t1, expect: yt1 }
+    };
+  }
+  // tan: ẏ + a·y·tan(bt) = 0 , y(0)=y0 → y = y0·cos(bt)^{a/b}
+  const pairAB = pick([[1, 2], [1, 1], [2, 2], [2, 1], [4, 2]]);
+  const a = pairAB[0], b = pairAB[1], e = a / b;
+  const y0 = pickNZ(-3, 3);
+  const t1 = 0.4, yt1 = y0 * Math.pow(Math.cos(b * t1), e);
+  const expS = e === 1 ? '' : '<sup>' + fnum(e) + '</sup>';
+  return {
+    topic: 'sep', title: 'Separierbare DGL',
+    statement: eq(YD + '(t) + ' + terms([[a, 'y(t)·' + trg('tan', b)]]), '0'),
+    given: 'Anfangswert: ' + eq('y(0)', fnum(y0)),
+    checks: [
+      numCheck('Exponent von cos(' + (b === 1 ? '' : b) + 't) in der Lösung', e, 0.005),
+      numCheck('K in y(t) = K·cos(' + (b === 1 ? '' : b) + 't)<sup>…</sup>', y0, 0.005),
+      numCheck('y(0{,}4) ≈ (3 Stellen)', yt1)
+    ],
+    steps: [
+      'Trennung: <span class="m">' + eq('<span class="fr"><span>dy</span><span>y</span></span>', MIN + (a === 1 ? '' : fnum(a) + '·') + trg('tan', b) + ' dt') + '</span>',
+      'Integrieren (∫tan(bt)dt = ' + MIN + 'ln|cos(bt)|/b): <span class="m">' + eq('ln|y|', fnum(e) + '·ln|' + trg('cos', b) + '| + C') + '</span>',
+      'Auflösen: <span class="m">' + eq('y(t)', 'K·' + trg('cos', b) + expS) + '</span>',
+      'AWP: cos(0) = 1 ⇒ <span class="m">' + eq('K', fnum(y0)) + '</span>',
+      '<b>Lösung:</b> <span class="m">' + eq('y(t)', fnum(y0) + '·' + trg('cos', b) + expS) + '</span>, also y(0{,}4) ≈ ' + fnum(yt1)
+    ],
+    sig: 'sep-tan-' + a + '-' + b + '-' + y0,
+    val: { kind: 'scalar', f: (t, y) => -a * y * Math.tan(b * t), t0: 0, y0: y0, t1: t1, expect: yt1 }
+  };
+}
+
+// ============================================================
+// 2) SUBSTITUTION u = y/t
+// ============================================================
+function genSubst() {
+  const a = pick([1, 2]);
+  const bb = pick([-2, -1, 2, 3]); // b, c = b-1 ∈ {-3,-2,1,2}
+  const c = bb - 1;
+  const t0 = pick([1, 2, -2]);
+  const y0 = pickNZ(-3, 3);
+  const u0 = y0 / t0;
+  if (Math.abs(a * u0 + c) < 0.25) return genSubst();
+  const K = u0 / ((a * u0 + c) * Math.pow(t0, c));
+  const uF = (t) => { const s = K * Math.pow(t, c); return c * s / (1 - a * s); };
+  const yF = (t) => t * uF(t);
+  const t1 = t0 * 1.5;
+  const den1 = 1 - a * K * Math.pow(t1, c);
+  if (!isFinite(K) || Math.abs(den1) < 0.15 || Math.abs(yF(t1)) > 60) return genSubst();
+  // Existenz auf ganzem Intervall prüfen (kein Pol zwischen t0 und t1)
+  for (let s = 0; s <= 1; s += 0.02) {
+    const tt = t0 + (t1 - t0) * s;
+    if (Math.abs(1 - a * K * Math.pow(tt, c)) < 0.1 || Math.abs(yF(tt)) > 200) return genSubst();
+  }
+  const yt1 = yF(t1);
+  const stmt = eq(YD + '(t)', terms([[a, '<span class="fr"><span>y' + sup(2) + '</span><span>t' + sup(2) + '</span></span>'], [bb, '<span class="fr"><span>y</span><span>t</span></span>']]));
+  return {
+    topic: 'subst', title: 'Substitution u = y/t',
+    statement: stmt,
+    given: 'Anfangswert: ' + eq('y(' + fnum(t0) + ')', fnum(y0)) + ' &nbsp;·&nbsp; Substitution: u(t) = y(t)/t',
+    checks: [
+      numCheck('c in der transformierten Gleichung t·u̇ = ' + (a === 1 ? '' : fnum(a)) + 'u² + c·u', c, 0.005),
+      numCheck('K in u/(' + terms([[a, 'u'], [c, null]]) + ') = K·' + tp(c) + ' (3 Stellen)', K),
+      numCheck('y(' + fnum(t1) + ') ≈ (3 Stellen)', yt1)
+    ],
+    steps: [
+      'Substitution y = u·t ⇒ ' + YD + ' = u̇·t + u. Einsetzen: <span class="m">' + eq('u̇·t + u', terms([[a, 'u' + sup(2)], [bb, 'u']])) + '</span>',
+      'Umstellen: <span class="m">' + eq('t·u̇', terms([[a, 'u' + sup(2)], [c, 'u']]) + ' = u·(' + terms([[a, 'u'], [c, null]]) + ')') + '</span>',
+      'Trennung: <span class="m">' + eq('<span class="fr"><span>du</span><span>u·(' + terms([[a, 'u'], [c, null]]) + ')</span></span>', '<span class="fr"><span>dt</span><span>t</span></span>') + '</span>',
+      'Partialbruchzerlegung: <span class="m">' + eq('<span class="fr"><span>1</span><span>u(' + terms([[a, 'u'], [c, null]]) + ')</span></span>', fracHTML(1, c) + '·(<span class="fr"><span>1</span><span>u</span></span> ' + MIN + ' <span class="fr"><span>' + fnum(a) + '</span><span>' + terms([[a, 'u'], [c, null]]) + '</span></span>)') + '</span>',
+      'Integrieren: <span class="m">' + fracHTML(1, c) + '·ln|<span class="fr"><span>u</span><span>' + terms([[a, 'u'], [c, null]]) + '</span></span>| = ln|t| + C</span> ⇒ <span class="m">' + eq('<span class="fr"><span>u</span><span>' + terms([[a, 'u'], [c, null]]) + '</span></span>', 'K·' + tp(c)) + '</span>',
+      'AWP: u(' + fnum(t0) + ') = ' + fnum(u0) + ' ⇒ <span class="m">' + eq('K', fnum(K)) + '</span>',
+      'Nach u auflösen: <span class="m">' + eq('u(t)', '<span class="fr"><span>' + fnum(c) + 'K·' + tp(c) + '</span><span>1 ' + MIN + ' ' + fnum(a) + 'K·' + tp(c) + '</span></span>') + '</span>, dann <span class="m">y(t) = t·u(t)</span>',
+      '<b>Lösung:</b> y(' + fnum(t1) + ') ≈ ' + fnum(yt1)
+    ],
+    sig: 'subst-' + a + '-' + bb + '-' + t0 + '-' + y0,
+    val: { kind: 'scalar', f: (t, y) => a * y * y / (t * t) + bb * y / t, t0: t0, y0: y0, t1: t1, expect: yt1 }
+  };
+}
+
+// ============================================================
+// 3) LINEARE DGL 1. ORDNUNG (Variation der Konstanten)
+// ============================================================
+function genLin1() {
+  const a = pick([1, 2, 3]);       // t·ẏ + a·y = b·t^s
+  const s = pick([1, 2, 3]);
+  const B0 = pick([-3, -2, -1, 1, 2, 3]);  // Koeff. der partikulären Lösung
+  const b = B0 * (s + a);
+  const C = pick([-3, -2, -1, 1, 2, 3]);
+  const y0 = C + B0;               // y(1)
+  const yF = (t) => C * Math.pow(t, -a) + B0 * Math.pow(t, s);
+  const t1 = 2, yt1 = yF(t1);
+  return {
+    topic: 'lin1', title: 'Lineare DGL 1. Ordnung',
+    statement: eq('t·' + YD + '(t) + ' + terms([[a, 'y(t)']]), terms([[b, tp(s)]])),
+    given: 'Anfangswert: ' + eq('y(1)', fnum(y0)) + ' &nbsp;·&nbsp; (t &gt; 0)',
+    checks: [
+      numCheck('Exponent n in der homogenen Lösung y<sub>h</sub> = K·t<sup>n</sup>', -a, 0.005),
+      numCheck('Koeffizient vor ' + tp(s) + ' in y<sub>p</sub>', B0, 0.005),
+      numCheck('C in der Lösung des AWP', C, 0.005)
+    ],
+    steps: [
+      '<b>Homogene Lösung:</b> t·' + YD + ' + ' + terms([[a, 'y']]) + ' = 0 ⇒ <span class="m">' + eq('<span class="fr"><span>dy</span><span>y</span></span>', MIN + '<span class="fr"><span>' + fnum(a) + '</span><span>t</span></span> dt') + '</span> ⇒ <span class="m">' + eq('y<sub>h</sub>', 'K·' + tp(-a)) + '</span>',
+      '<b>Variation der Konstanten:</b> Ansatz y = K(t)·' + tp(-a) + '. Einsetzen (die K-Terme heben sich weg): <span class="m">' + eq('t·K̇(t)·' + tp(-a), terms([[b, tp(s)]])) + '</span>',
+      '⇒ <span class="m">' + eq('K̇(t)', terms([[b, tp(s - 1 + a)]])) + '</span> ⇒ <span class="m">' + eq('K(t)', terms([[B0, tp(s + a)]]) + ' + C') + '</span>',
+      'Partikuläre Lösung: <span class="m">' + eq('y<sub>p</sub>', terms([[B0, tp(s)]])) + '</span>',
+      '<b>Allgemeine Lösung:</b> <span class="m">' + eq('y(t)', 'C·' + tp(-a) + (B0 > 0 ? ' + ' : ' ' + MIN + ' ') + terms([[Math.abs(B0), tp(s)]])) + '</span>',
+      '<b>AWP:</b> <span class="m">' + eq('y(1)', 'C + ' + fnum(B0) + ' = ' + fnum(y0)) + '</span> ⇒ <span class="m">' + eq('C', fnum(C)) + '</span>',
+      '<b>Lösung:</b> <span class="m">' + eq('y(t)', terms([[C, tp(-a)], [B0, tp(s)]])) + '</span> &nbsp;(z. B. y(2) = ' + fnum(yt1) + ')'
+    ],
+    sig: 'lin1-' + a + '-' + s + '-' + B0 + '-' + C,
+    val: { kind: 'scalar', f: (t, y) => (b * Math.pow(t, s) - a * y) / t, t0: 1, y0: y0, t1: t1, expect: yt1 }
+  };
+}
+
+// ============================================================
+// 4) LINEARE DGL 2. ORDNUNG (Ansatz vom Typ der rechten Seite)
+// ============================================================
+function lhsStr(p, q) {
+  let sOut = YDD + '(t)';
+  if (p) sOut += (p > 0 ? ' + ' : ' ' + MIN + ' ') + (Math.abs(p) === 1 ? '' : fnum(Math.abs(p))) + YD + '(t)';
+  if (q) sOut += (q > 0 ? ' + ' : ' ' + MIN + ' ') + (Math.abs(q) === 1 ? '' : fnum(Math.abs(q))) + 'y(t)';
+  return sOut;
+}
+function pqSteps(p, q, rootsDescr) {
+  return 'Charakteristische Gleichung: <span class="m">' + eq('λ' + sup(2) + (p ? (p > 0 ? ' + ' : ' ' + MIN + ' ') + (Math.abs(p) === 1 ? '' : fnum(Math.abs(p))) + 'λ' : '') + (q ? (q > 0 ? ' + ' : ' ' + MIN + ' ') + fnum(Math.abs(q)) : ''), '0') + '</span> ⇒ ' + rootsDescr;
+}
+function genLin2() {
+  const kind = pick(['real-poly', 'real-exp', 'real-exp-res', 'double-exp-res', 'complex-trig', 'complex-poly', 'pure-res']);
+  let p, q, yhS, rootsDescr, rootChecks, ypS, yp0, yp0d, ypSteps, rhsS, rFun, ypFun, yhFun, sig;
+  let C1 = pick([-2, -1, 1, 2]), C2 = pick([-2, -1, 0, 1, 2]);
+
+  if (kind === 'real-poly' || kind === 'real-exp' || kind === 'real-exp-res') {
+    // reelle, verschiedene Nullstellen
+    let l1 = pickNZ(-3, 3), l2 = pickNZ(-3, 3);
+    let guard = 0;
+    while (l2 === l1 && guard++ < 50) l2 = pickNZ(-3, 3);
+    if (l1 < l2) { const t = l1; l1 = l2; l2 = t; }
+    p = -(l1 + l2); q = l1 * l2;
+    yhS = eq('y<sub>h</sub>(t)', 'C<sub>1</sub>·' + ex(l1) + ' + C<sub>2</sub>·' + ex(l2));
+    rootsDescr = '<span class="m">' + eq('λ<sub>1</sub>', fnum(l1)) + '</span>, <span class="m">' + eq('λ<sub>2</sub>', fnum(l2)) + '</span> (pq-Formel)';
+    rootChecks = [numCheck('λ<sub>1</sub> (größere Nullstelle)', l1, 0.005), numCheck('λ<sub>2</sub> (kleinere Nullstelle)', l2, 0.005)];
+    yhFun = (t) => C1 * Math.exp(l1 * t) + C2 * Math.exp(l2 * t);
+    var yhD0 = C1 + C2, yhD1 = l1 * C1 + l2 * C2;
+    var yhAWPeqs = (R0, R1) => [
+      '<span class="m">' + eq('C<sub>1</sub> + C<sub>2</sub>', fnum(R0)) + '</span> &nbsp; und &nbsp; <span class="m">' + eq(terms([[l1, 'C<sub>1</sub>'], [l2, 'C<sub>2</sub>']]), fnum(R1)) + '</span>',
+      '⇒ <span class="m">' + eq('C<sub>1</sub>', fnum(C1)) + '</span>, <span class="m">' + eq('C<sub>2</sub>', fnum(C2)) + '</span>'
+    ];
+
+    if (kind === 'real-poly') {
+      const A = pickNZ(-2, 2), B = ri(-2, 2), Cc = ri(-2, 2);
+      const r2 = q * A, r1 = 2 * p * A + q * B, r0 = 2 * A + p * B + q * Cc;
+      rhsS = terms([[r2, tp(2)], [r1, 't'], [r0, null]]);
+      rFun = (t) => r2 * t * t + r1 * t + r0;
+      ypFun = (t) => A * t * t + B * t + Cc;
+      yp0 = Cc; yp0d = B;
+      ypS = eq('y<sub>p</sub>(t)', terms([[A, tp(2)], [B, 't'], [Cc, null]]));
+      ypSteps = [
+        'Ansatz vom Typ der rechten Seite: <span class="m">y<sub>p</sub> = A·t² + B·t + C</span> (keine Resonanz, da 0 keine Nullstelle ist)',
+        'Einsetzen und Koeffizientenvergleich:',
+        '<span class="m">t²: ' + eq(terms([[q, 'A']]), fnum(r2)) + '</span> ⇒ <span class="m">' + eq('A', fnum(A)) + '</span>',
+        '<span class="m">t¹: ' + eq(terms([[2 * p, 'A'], [q, 'B']]), fnum(r1)) + '</span> ⇒ <span class="m">' + eq('B', fnum(B)) + '</span>',
+        '<span class="m">t⁰: ' + eq(terms([[2, 'A'], [p, 'B'], [q, 'C']]), fnum(r0)) + '</span> ⇒ <span class="m">' + eq('C', fnum(Cc)) + '</span>',
+        '⇒ <span class="m">' + ypS + '</span>'
+      ];
+      rootChecks.push(numCheck('A in y<sub>p</sub> = A·t² + B·t + C', A, 0.005));
+      rootChecks.push(numCheck('B in y<sub>p</sub>', B, 0.005));
+      sig = 'lin2-rp-' + l1 + '-' + l2 + '-' + A + '-' + B + '-' + Cc;
+    } else if (kind === 'real-exp') {
+      let c = pickNZ(-3, 3), g2 = 0;
+      while ((c === l1 || c === l2) && g2++ < 50) c = pickNZ(-3, 3);
+      const A = pickNZ(-3, 3);
+      const k = A * (c * c + p * c + q);
+      if (k === 0 || Math.abs(k) > 40) return genLin2();
+      rhsS = terms([[k, ex(c)]]);
+      rFun = (t) => k * Math.exp(c * t);
+      ypFun = (t) => A * Math.exp(c * t);
+      yp0 = A; yp0d = A * c;
+      ypS = eq('y<sub>p</sub>(t)', terms([[A, ex(c)]]));
+      ypSteps = [
+        'Rechte Seite e<sup>' + fnum(c) + 't</sup>: c = ' + fnum(c) + ' ist <i>keine</i> Nullstelle ⇒ Ansatz <span class="m">y<sub>p</sub> = A·' + ex(c) + '</span>',
+        'Einsetzen: <span class="m">' + eq('A·(' + terms([[1, 'c' + sup(2)], [p, 'c'], [q, null]]) + ')', 'A·(' + fnum(c * c + p * c + q) + ') = ' + fnum(k)) + '</span> ⇒ <span class="m">' + eq('A', fnum(A)) + '</span>',
+        '⇒ <span class="m">' + ypS + '</span>'
+      ];
+      rootChecks.push(numCheck('A in y<sub>p</sub> = A·' + ex(c), A, 0.005));
+      sig = 'lin2-re-' + l1 + '-' + l2 + '-' + c + '-' + A;
+    } else { // real-exp-res: c = l1 (einfache Resonanz)
+      const c = l1, A = pickNZ(-2, 2);
+      const k = A * (l1 - l2); // = A(2c+p)
+      rhsS = terms([[k, ex(c)]]);
+      rFun = (t) => k * Math.exp(c * t);
+      ypFun = (t) => A * t * Math.exp(c * t);
+      yp0 = 0; yp0d = A;
+      ypS = eq('y<sub>p</sub>(t)', terms([[A, 't·' + ex(c)]]));
+      ypSteps = [
+        '<b>Resonanz!</b> c = ' + fnum(c) + ' = λ<sub>1</sub> ⇒ Ansatz <span class="m">y<sub>p</sub> = A·t·' + ex(c) + '</span>',
+        'Einsetzen (Terme mit t·e<sup>ct</sup> heben sich wegen der Nullstelle weg): <span class="m">' + eq('A·(2c + p)', 'A·(' + fnum(2 * c + p) + ') = ' + fnum(k)) + '</span> ⇒ <span class="m">' + eq('A', fnum(A)) + '</span>',
+        '⇒ <span class="m">' + ypS + '</span>'
+      ];
+      rootChecks.push(numCheck('A in y<sub>p</sub> = A·t·' + ex(c), A, 0.005));
+      sig = 'lin2-rr-' + l1 + '-' + l2 + '-' + A;
+    }
+    // AWP
+    const y0 = yhD0 + yp0, y1 = yhD1 + yp0d;
+    const R0 = y0 - yp0, R1 = y1 - yp0d;
+    const checks = rootChecks.concat([numCheck('C<sub>1</sub> (AWP)', C1, 0.005), numCheck('C<sub>2</sub> (AWP)', C2, 0.005)]);
+    const steps = [
+      '<b>Homogene Lösung:</b> ' + pqSteps(p, q, rootsDescr),
+      '<span class="m">' + yhS + '</span>',
+      '<b>Partikuläre Lösung:</b>'
+    ].concat(ypSteps).concat([
+      '<b>Allgemeine Lösung:</b> <span class="m">' + eq('y(t)', 'y<sub>h</sub>(t) + y<sub>p</sub>(t)') + '</span>',
+      '<b>AWP:</b> y(0) = ' + fnum(y0) + ', ẏ(0) = ' + fnum(y1) + ':'
+    ]).concat(yhAWPeqs(R0, R1));
+    return {
+      topic: 'lin2', title: 'Lineare DGL 2. Ordnung',
+      statement: eq(lhsStr(p, q), rhsS),
+      given: 'Anfangswerte: ' + eq('y(0)', fnum(y0)) + ', ' + eq(YD + '(0)', fnum(y1)),
+      checks, steps, sig,
+      val: { kind: 'order2', p, q, r: rFun, y0, y1, t1: 0.7, expect: yhFun(0.7) + ypFun(0.7) }
+    };
+  }
+
+  if (kind === 'double-exp-res') {
+    const l = pick([-2, -1, 1, 2]);
+    p = -2 * l; q = l * l;
+    const A = pick([-2, -1, 1, 2, 3]);
+    const k = 2 * A;
+    rFun = (t) => k * Math.exp(l * t);
+    ypFun = (t) => A * t * t * Math.exp(l * t);
+    yp0 = 0; yp0d = 0;
+    const y0 = C1 + 0, y1 = l * C1 + C2 + 0;
+    const steps = [
+      '<b>Homogene Lösung:</b> ' + pqSteps(p, q, '<span class="m">' + eq('λ<sub>1,2</sub>', fnum(l)) + '</span> (doppelte Nullstelle)'),
+      '<span class="m">' + eq('y<sub>h</sub>(t)', '(C<sub>1</sub> + C<sub>2</sub>·t)·' + ex(l)) + '</span>',
+      '<b>Partikuläre Lösung:</b> <b>doppelte Resonanz!</b> c = ' + fnum(l) + ' = λ<sub>1</sub> = λ<sub>2</sub> ⇒ Ansatz <span class="m">y<sub>p</sub> = A·t²·' + ex(l) + '</span>',
+      'Einsetzen liefert <span class="m">' + eq('2A·' + ex(l), fnum(k) + '·' + ex(l)) + '</span> ⇒ <span class="m">' + eq('A', fnum(A)) + '</span>',
+      '<b>Allgemeine Lösung:</b> <span class="m">' + eq('y(t)', '(C<sub>1</sub> + C<sub>2</sub>·t)·' + ex(l) + (A > 0 ? ' + ' : ' ' + MIN + ' ') + (Math.abs(A) === 1 ? '' : fnum(Math.abs(A))) + 't²·' + ex(l)) + '</span>',
+      '<b>AWP:</b> <span class="m">' + eq('y(0)', 'C<sub>1</sub> = ' + fnum(y0)) + '</span> ⇒ C<sub>1</sub> = ' + fnum(C1),
+      '<span class="m">' + eq(YD + '(0)', terms([[l, 'C<sub>1</sub>']]) + ' + C<sub>2</sub> = ' + fnum(y1)) + '</span> ⇒ <span class="m">' + eq('C<sub>2</sub>', fnum(C2)) + '</span>'
+    ];
+    return {
+      topic: 'lin2', title: 'Lineare DGL 2. Ordnung (doppelte Resonanz)',
+      statement: eq(lhsStr(p, q), terms([[k, ex(l)]])),
+      given: 'Anfangswerte: ' + eq('y(0)', fnum(y0)) + ', ' + eq(YD + '(0)', fnum(y1)),
+      checks: [
+        numCheck('doppelte Nullstelle λ', l, 0.005),
+        numCheck('A in y<sub>p</sub> = A·t²·' + ex(l), A, 0.005),
+        numCheck('C<sub>1</sub> (AWP)', C1, 0.005),
+        numCheck('C<sub>2</sub> (AWP)', C2, 0.005)
+      ],
+      steps,
+      sig: 'lin2-dr-' + l + '-' + A + '-' + C1 + '-' + C2,
+      val: { kind: 'order2', p, q, r: rFun, y0, y1, t1: 0.7, expect: (C1 + C2 * 0.7) * Math.exp(l * 0.7) + ypFun(0.7) }
+    };
+  }
+
+  if (kind === 'pure-res') {
+    // ÿ + ω²y = Ms·sin(ωt)  →  yp = −Ms/(2ω)·t·cos(ωt)
+    const w = pick([1, 2, 3]);
+    const A = pickNZ(-2, 2);           // yp = A·t·cos(ωt)
+    const Ms = -2 * w * A;
+    p = 0; q = w * w;
+    const y0 = C1, y1 = w * C2 + (-A) * 0 + 0; // yp'(0) = A·cos(0) = A? -> genau rechnen:
+    // yp = A t cos(wt): yp' = A cos(wt) − A w t sin(wt) ⇒ yp'(0) = A
+    const y1r = w * C2 + A;
+    const steps = [
+      '<b>Homogene Lösung:</b> ' + pqSteps(0, q, '<span class="m">' + eq('λ<sub>1,2</sub>', '±' + fnum(w) + 'i') + '</span>'),
+      '<span class="m">' + eq('y<sub>h</sub>(t)', 'C<sub>1</sub>·' + trg('cos', w) + ' + C<sub>2</sub>·' + trg('sin', w)) + '</span>',
+      '<b>Partikuläre Lösung:</b> <b>Resonanzfall!</b> ω = ' + fnum(w) + ' entspricht λ = ±' + fnum(w) + 'i ⇒ Ansatz <span class="m">y<sub>p</sub> = t·(A·' + trg('cos', w) + ' + B·' + trg('sin', w) + ')</span>',
+      'Einsetzen: <span class="m">' + eq(MIN + '2Aω·' + trg('sin', w) + ' + 2Bω·' + trg('cos', w), fnum(Ms) + '·' + trg('sin', w)) + '</span>',
+      '⇒ <span class="m">' + eq('B', '0') + '</span>, <span class="m">' + eq(MIN + '2Aω', fnum(Ms)) + '</span> ⇒ <span class="m">' + eq('A', fnum(A)) + '</span>',
+      '<b>Allgemeine Lösung:</b> <span class="m">' + eq('y(t)', 'C<sub>1</sub>·' + trg('cos', w) + ' + C<sub>2</sub>·' + trg('sin', w) + (A > 0 ? ' + ' : ' ' + MIN + ' ') + (Math.abs(A) === 1 ? '' : fnum(Math.abs(A))) + 't·' + trg('cos', w)) + '</span>',
+      'Die Amplitude wächst linear mit t – für t → ∞ wird die Schwingung unbeschränkt (Resonanzkatastrophe).',
+      '<b>AWP:</b> <span class="m">' + eq('y(0)', 'C<sub>1</sub> = ' + fnum(y0)) + '</span>; &nbsp; <span class="m">' + eq(YD + '(0)', terms([[w, 'C<sub>2</sub>']]) + ' + ' + fnum(A) + ' = ' + fnum(y1r)) + '</span> ⇒ <span class="m">' + eq('C<sub>2</sub>', fnum(C2)) + '</span>'
+    ];
+    return {
+      topic: 'lin2', title: 'Lineare DGL 2. Ordnung (Resonanzfall, Schwingung)',
+      statement: eq(YDD + '(t) + ' + terms([[q, 'y(t)']]), terms([[Ms, trg('sin', w)]])),
+      given: 'Anfangswerte: ' + eq('y(0)', fnum(y0)) + ', ' + eq(YD + '(0)', fnum(y1r)),
+      checks: [
+        numCheck('ω (aus λ = ±ωi)', w, 0.005),
+        numCheck('A in y<sub>p</sub> = A·t·cos(ωt)', A, 0.005),
+        numCheck('C<sub>1</sub> (AWP)', C1, 0.005),
+        numCheck('C<sub>2</sub> (AWP)', C2, 0.005)
+      ],
+      steps,
+      sig: 'lin2-pr-' + w + '-' + A + '-' + C1 + '-' + C2,
+      val: {
+        kind: 'order2', p: 0, q, r: (t) => Ms * Math.sin(w * t), y0, y1: y1r, t1: 0.7,
+        expect: C1 * Math.cos(w * 0.7) + C2 * Math.sin(w * 0.7) + A * 0.7 * Math.cos(w * 0.7)
+      }
+    };
+  }
+
+  // complex-trig / complex-poly
+  const al = pick([-2, -1, 0, 1]);
+  const be = pick([1, 2]);
+  p = -2 * al; q = al * al + be * be;
+  const yhF = (t, c1, c2) => Math.exp(al * t) * (c1 * Math.cos(be * t) + c2 * Math.sin(be * t));
+  const yhStr = eq('y<sub>h</sub>(t)', (al === 0 ? '' : ex(al) + '·(') + 'C<sub>1</sub>·' + trg('cos', be) + ' + C<sub>2</sub>·' + trg('sin', be) + (al === 0 ? '' : ')'));
+  rootsDescr = '<span class="m">' + eq('λ<sub>1,2</sub>', fnum(al) + ' ± ' + (be === 1 ? '' : fnum(be)) + 'i') + '</span>';
+
+  if (kind === 'complex-trig') {
+    let w = pick([1, 2, 3]), g3 = 0;
+    while (al === 0 && w === be && g3++ < 50) w = pick([1, 2, 3]);
+    const A = ri(-2, 2), B = ri(-2, 2);
+    if (A === 0 && B === 0) return genLin2();
+    const Mc = (q - w * w) * A + p * w * B;
+    const Ms = (q - w * w) * B - p * w * A;
+    if (Mc === 0 && Ms === 0) return genLin2();
+    if (Math.abs(Mc) > 40 || Math.abs(Ms) > 40) return genLin2();
+    rFun = (t) => Mc * Math.cos(w * t) + Ms * Math.sin(w * t);
+    ypFun = (t) => A * Math.cos(w * t) + B * Math.sin(w * t);
+    yp0 = A; yp0d = w * B;
+    const y0 = C1 + yp0, y1 = al * C1 + be * C2 + yp0d;
+    const steps = [
+      '<b>Homogene Lösung:</b> ' + pqSteps(p, q, rootsDescr),
+      '<span class="m">' + yhStr + '</span>',
+      '<b>Partikuläre Lösung:</b> Ansatz <span class="m">y<sub>p</sub> = A·' + trg('cos', w) + ' + B·' + trg('sin', w) + '</span> (keine Resonanz)',
+      'Einsetzen und Koeffizientenvergleich:',
+      '<span class="m">cos: ' + eq(terms([[q - w * w, 'A'], [p * w, 'B']]), fnum(Mc)) + '</span>',
+      '<span class="m">sin: ' + eq(terms([[-p * w, 'A'], [q - w * w, 'B']]), fnum(Ms)) + '</span>',
+      '⇒ <span class="m">' + eq('A', fnum(A)) + '</span>, <span class="m">' + eq('B', fnum(B)) + '</span>',
+      '<b>Allgemeine Lösung:</b> <span class="m">' + eq('y(t)', 'y<sub>h</sub>(t) + ' + terms([[A, trg('cos', w)], [B, trg('sin', w)]])) + '</span>',
+      '<b>AWP:</b> <span class="m">' + eq('y(0)', 'C<sub>1</sub> + ' + fnum(yp0) + ' = ' + fnum(y0)) + '</span> ⇒ C<sub>1</sub> = ' + fnum(C1),
+      '<span class="m">' + eq(YD + '(0)', terms([[al, 'C<sub>1</sub>'], [be, 'C<sub>2</sub>']]) + ' + ' + fnum(yp0d) + ' = ' + fnum(y1)) + '</span> ⇒ <span class="m">' + eq('C<sub>2</sub>', fnum(C2)) + '</span>'
+    ];
+    return {
+      topic: 'lin2', title: 'Lineare DGL 2. Ordnung (komplexe Nullstellen)',
+      statement: eq(lhsStr(p, q), terms([[Mc, trg('cos', w)], [Ms, trg('sin', w)]])),
+      given: 'Anfangswerte: ' + eq('y(0)', fnum(y0)) + ', ' + eq(YD + '(0)', fnum(y1)),
+      checks: [
+        numCheck('α (Realteil der Nullstellen)', al, 0.005),
+        numCheck('β (Imaginärteil, β &gt; 0)', be, 0.005),
+        numCheck('A in y<sub>p</sub> = A·cos(' + (w === 1 ? '' : w) + 't) + B·sin(' + (w === 1 ? '' : w) + 't)', A, 0.005),
+        numCheck('B in y<sub>p</sub>', B, 0.005),
+        numCheck('C<sub>1</sub> (AWP)', C1, 0.005),
+        numCheck('C<sub>2</sub> (AWP)', C2, 0.005)
+      ],
+      steps,
+      sig: 'lin2-ct-' + al + '-' + be + '-' + w + '-' + A + '-' + B,
+      val: { kind: 'order2', p, q, r: rFun, y0, y1, t1: 0.7, expect: yhF(0.7, C1, C2) + ypFun(0.7) }
+    };
+  }
+  // complex-poly (Grad 1)
+  const B = pickNZ(-2, 2), Cc = ri(-2, 2);
+  const r1 = q * B, r0 = p * B + q * Cc;
+  rFun = (t) => r1 * t + r0;
+  ypFun = (t) => B * t + Cc;
+  yp0 = Cc; yp0d = B;
+  const y0 = C1 + yp0, y1 = al * C1 + be * C2 + yp0d;
+  const steps = [
+    '<b>Homogene Lösung:</b> ' + pqSteps(p, q, rootsDescr),
+    '<span class="m">' + yhStr + '</span>',
+    '<b>Partikuläre Lösung:</b> Ansatz <span class="m">y<sub>p</sub> = B·t + C</span>',
+    'Einsetzen und Koeffizientenvergleich:',
+    '<span class="m">t¹: ' + eq(terms([[q, 'B']]), fnum(r1)) + '</span> ⇒ <span class="m">' + eq('B', fnum(B)) + '</span>',
+    '<span class="m">t⁰: ' + eq(terms([[p, 'B'], [q, 'C']]), fnum(r0)) + '</span> ⇒ <span class="m">' + eq('C', fnum(Cc)) + '</span>',
+    '<b>Allgemeine Lösung:</b> <span class="m">' + eq('y(t)', 'y<sub>h</sub>(t) + ' + terms([[B, 't'], [Cc, null]])) + '</span>',
+    '<b>AWP:</b> <span class="m">' + eq('y(0)', 'C<sub>1</sub> + ' + fnum(yp0) + ' = ' + fnum(y0)) + '</span> ⇒ C<sub>1</sub> = ' + fnum(C1),
+    '<span class="m">' + eq(YD + '(0)', terms([[al, 'C<sub>1</sub>'], [be, 'C<sub>2</sub>']]) + ' + ' + fnum(yp0d) + ' = ' + fnum(y1)) + '</span> ⇒ <span class="m">' + eq('C<sub>2</sub>', fnum(C2)) + '</span>'
+  ];
+  return {
+    topic: 'lin2', title: 'Lineare DGL 2. Ordnung (komplexe Nullstellen)',
+    statement: eq(lhsStr(p, q), terms([[r1, 't'], [r0, null]])),
+    given: 'Anfangswerte: ' + eq('y(0)', fnum(y0)) + ', ' + eq(YD + '(0)', fnum(y1)),
+    checks: [
+      numCheck('α (Realteil der Nullstellen)', al, 0.005),
+      numCheck('β (Imaginärteil, β &gt; 0)', be, 0.005),
+      numCheck('B in y<sub>p</sub> = B·t + C', B, 0.005),
+      numCheck('C in y<sub>p</sub>', Cc, 0.005),
+      numCheck('C<sub>1</sub> (AWP)', C1, 0.005),
+      numCheck('C<sub>2</sub> (AWP)', C2, 0.005)
+    ],
+    steps,
+    sig: 'lin2-cp-' + al + '-' + be + '-' + B + '-' + Cc,
+    val: { kind: 'order2', p, q, r: rFun, y0, y1, t1: 0.7, expect: yhF(0.7, C1, C2) + ypFun(0.7) }
+  };
+}
+
+// ============================================================
+// 5) SYSTEME LINEARER DGL (2x2)
+// ============================================================
+function smallFactorPair(D) {
+  // ganzzahliges Paar (qq, rr) mit qq*rr = D, |qq|,|rr| <= 9, qq != 0
+  const cands = [];
+  for (let d = 1; d <= 9; d++) {
+    if (D % d === 0 && Math.abs(D / d) <= 9) {
+      cands.push([d, D / d]); cands.push([-d, -D / d]);
+    }
+  }
+  return cands.length ? pick(cands) : null;
+}
+function sysStatement(A) {
+  const row = (i) => eq(YD + '<sub>' + (i + 1) + '</sub>(t)', terms([[A[i][0], 'y<sub>1</sub>(t)'], [A[i][1], 'y<sub>2</sub>(t)']]));
+  return row(0) + '<br>' + row(1);
+}
+function charSteps(A, rootsDescr) {
+  const tr = A[0][0] + A[1][1], det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+  return 'det(A ' + MIN + ' λE) = (' + fnum(A[0][0]) + ' ' + MIN + ' λ)(' + fnum(A[1][1]) + ' ' + MIN + ' λ) ' + MIN + ' (' + fnum(A[0][1]) + ')·(' + fnum(A[1][0]) + ') = <span class="m">' + eq('λ² ' + (tr ? ((-tr) > 0 ? '+ ' : MIN + ' ') + (Math.abs(tr) === 1 ? '' : fnum(Math.abs(tr))) + 'λ ' : '') + (det >= 0 ? '+ ' : MIN + ' ') + fnum(Math.abs(det)), '0') + '</span> ⇒ ' + rootsDescr;
+}
+function redVec(v) { const g = gcd(v[0], v[1]); return [v[0] / g, v[1] / g]; }
+function genSystem() {
+  const kind = pick(['real', 'real', 'complex', 'double']);
+  if (kind === 'real') {
+    let l1 = ri(-3, 3), l2 = ri(-3, 3), g = 0;
+    while ((l2 === l1 || (l1 === 0 && l2 === 0)) && g++ < 60) { l1 = ri(-3, 3); l2 = ri(-3, 3); }
+    if (l1 < l2) { const t = l1; l1 = l2; l2 = t; }
+    let pp = ri(-3, 3), g2 = 0;
+    while ((pp === l1 || pp === l2) && g2++ < 60) pp = ri(-3, 3);
+    const ss = l1 + l2 - pp;
+    const D = pp * ss - l1 * l2;
+    if (D === 0) return genSystem();
+    const pair = smallFactorPair(D);
+    if (!pair) return genSystem();
+    const qq = pair[0], rr = pair[1];
+    const A = [[pp, qq], [rr, ss]];
+    const v1 = redVec([qq, l1 - pp]), v2 = redVec([qq, l2 - pp]);
+    // AWP
+    const c1 = pickNZ(-2, 2), c2 = pickNZ(-2, 2);
+    const y10 = c1 * v1[0] + c2 * v2[0], y20 = c1 * v1[1] + c2 * v2[1];
+    const yF = (t) => [
+      c1 * Math.exp(l1 * t) * v1[0] + c2 * Math.exp(l2 * t) * v2[0],
+      c1 * Math.exp(l1 * t) * v1[1] + c2 * Math.exp(l2 * t) * v2[1]
+    ];
+    const vecS = (v) => '<span class="vec"><span>' + fnum(v[0]) + '</span><span>' + fnum(v[1]) + '</span></span>';
+    return {
+      topic: 'sys', title: 'DGL-System (reelle Eigenwerte)',
+      statement: sysStatement(A),
+      given: 'Anfangswerte: ' + eq('y<sub>1</sub>(0)', fnum(y10)) + ', ' + eq('y<sub>2</sub>(0)', fnum(y20)),
+      checks: [
+        numCheck('λ<sub>1</sub> (größerer Eigenwert)', l1, 0.005),
+        numCheck('λ<sub>2</sub> (kleinerer Eigenwert)', l2, 0.005),
+        numCheck('Eigenvektor zu λ<sub>1</sub>: bei v<sub>2</sub> = ' + fnum(v1[1]) + ' ist v<sub>1</sub> = ?', v1[0], 0.005),
+        numCheck('Eigenvektor zu λ<sub>2</sub>: bei v<sub>2</sub> = ' + fnum(v2[1]) + ' ist v<sub>1</sub> = ?', v2[0], 0.005),
+        numCheck('C<sub>1</sub> (AWP)', c1, 0.005),
+        numCheck('C<sub>2</sub> (AWP)', c2, 0.005)
+      ],
+      steps: [
+        '<b>Eigenwerte:</b> ' + charSteps(A, '<span class="m">' + eq('λ<sub>1</sub>', fnum(l1)) + '</span>, <span class="m">' + eq('λ<sub>2</sub>', fnum(l2)) + '</span>'),
+        '<b>Eigenvektoren:</b> (A ' + MIN + ' λ<sub>1</sub>E)·v = 0: Zeile 1: <span class="m">' + eq(terms([[pp - l1, 'v<sub>1</sub>'], [qq, 'v<sub>2</sub>']]), '0') + '</span> ⇒ <span class="m">' + eq('v⃗<sub>1</sub>', vecS(v1)) + '</span>',
+        'Analog für λ<sub>2</sub>: <span class="m">' + eq(terms([[pp - l2, 'v<sub>1</sub>'], [qq, 'v<sub>2</sub>']]), '0') + '</span> ⇒ <span class="m">' + eq('v⃗<sub>2</sub>', vecS(v2)) + '</span>',
+        '<b>Allgemeine Lösung:</b> <span class="m">' + eq('y⃗(t)', 'C<sub>1</sub>·' + ex(l1) + '·' + vecS(v1) + ' + C<sub>2</sub>·' + ex(l2) + '·' + vecS(v2)) + '</span>',
+        '<b>AWP:</b> <span class="m">' + eq(terms([[v1[0], 'C<sub>1</sub>'], [v2[0], 'C<sub>2</sub>']]), fnum(y10)) + '</span> und <span class="m">' + eq(terms([[v1[1], 'C<sub>1</sub>'], [v2[1], 'C<sub>2</sub>']]), fnum(y20)) + '</span>',
+        '⇒ <span class="m">' + eq('C<sub>1</sub>', fnum(c1)) + '</span>, <span class="m">' + eq('C<sub>2</sub>', fnum(c2)) + '</span>'
+      ],
+      sig: 'sys-r-' + l1 + '-' + l2 + '-' + pp + '-' + qq + '-' + c1 + '-' + c2,
+      val: { kind: 'system', A, y0: [y10, y20], t1: 0.5, expect: yF(0.5) }
+    };
+  }
+  if (kind === 'complex') {
+    const al = pick([-1, 0, 1]);
+    const be = pick([1, 2]);
+    const d = pick([1, 2]);
+    const N = d * d + be * be; // qq*rr = -N
+    const pair = smallFactorPair(-N);
+    if (!pair) return genSystem();
+    const qq = pair[0], rr = pair[1];
+    const A = [[al + d, qq], [rr, al - d]];
+    // Eigenvektor zu λ = α+βi: v = (qq, -d + βi) => a=(qq,-d), b=(0,β)
+    const aV = [qq, -d], bV = [0, be];
+    const vecS = (v) => '<span class="vec"><span>' + fnum(v[0]) + '</span><span>' + fnum(v[1]) + '</span></span>';
+    const yF = (t) => { // C1=1, C2=1 (nur Validierung)
+      const c = Math.cos(be * t), s = Math.sin(be * t), E = Math.exp(al * t);
+      return [
+        E * ((aV[0] * c - bV[0] * s) + (aV[0] * s + bV[0] * c)),
+        E * ((aV[1] * c - bV[1] * s) + (aV[1] * s + bV[1] * c))
+      ];
+    };
+    return {
+      topic: 'sys', title: 'DGL-System (komplexe Eigenwerte)',
+      statement: sysStatement(A),
+      given: 'Gesucht: allgemeine reelle Lösung',
+      checks: [
+        numCheck('α (Realteil der Eigenwerte)', al, 0.005),
+        numCheck('β (Imaginärteil, β &gt; 0)', be, 0.005),
+        numCheck('Eigenvektor v⃗ = a⃗ + i·b⃗ zu λ = α+βi mit a<sub>1</sub> = ' + fnum(qq) + ': a<sub>2</sub> = ?', -d, 0.005)
+      ],
+      steps: [
+        '<b>Eigenwerte:</b> ' + charSteps(A, '<span class="m">' + eq('λ<sub>1,2</sub>', fnum(al) + ' ± ' + (be === 1 ? '' : fnum(be)) + 'i') + '</span>'),
+        '<b>Eigenvektor</b> zu λ = ' + fnum(al) + ' + ' + (be === 1 ? '' : fnum(be)) + 'i: Zeile 1: <span class="m">' + eq('(' + fnum(d) + ' ' + MIN + ' ' + (be === 1 ? '' : fnum(be)) + 'i)·v<sub>1</sub> + ' + terms([[qq, 'v<sub>2</sub>']]), '0') + '</span> ⇒ <span class="m">v⃗ = ' + vecS(aV) + ' + i·' + vecS(bV) + '</span>',
+        '<b>Reelle Lösung</b> (Real-/Imaginärteil von e<sup>λt</sup>v⃗):',
+        '<span class="m">' + eq('y⃗(t)', 'C<sub>1</sub>·' + (al === 0 ? '' : ex(al) + '·') + '(a⃗·' + trg('cos', be) + ' ' + MIN + ' b⃗·' + trg('sin', be) + ') + C<sub>2</sub>·' + (al === 0 ? '' : ex(al) + '·') + '(a⃗·' + trg('sin', be) + ' + b⃗·' + trg('cos', be) + ')') + '</span>',
+        'mit <span class="m">a⃗ = ' + vecS(aV) + '</span>, <span class="m">b⃗ = ' + vecS(bV) + '</span>'
+      ],
+      sig: 'sys-c-' + al + '-' + be + '-' + d + '-' + qq,
+      val: { kind: 'system', A, y0: [aV[0] + bV[0], aV[1] + bV[1]], t1: 0.5, expect: yF(0.5) }
+    };
+  }
+  // double
+  const l = pick([-2, -1, 1, 2]);
+  const d = pick([1, 2, 3]);
+  const pair = smallFactorPair(-d * d);
+  if (!pair) return genSystem();
+  const qq = pair[0], rr = pair[1];
+  const A = [[l + d, qq], [rr, l - d]];
+  const v = [qq, -d]; // Eigenvektor
+  const w = [0, 1];   // Hauptvektor mit w1 = 0 (d·w1 + qq·w2 = qq ⇒ w2 = 1)
+  const vecS = (vv) => '<span class="vec"><span>' + fnum(vv[0]) + '</span><span>' + fnum(vv[1]) + '</span></span>';
+  const yF = (t) => { // C1=1, C2=1
+    const E = Math.exp(l * t);
+    return [E * (v[0] + (v[0] * t + w[0])), E * (v[1] + (v[1] * t + w[1]))];
+  };
+  return {
+    topic: 'sys', title: 'DGL-System (doppelter Eigenwert, Hauptvektor)',
+    statement: sysStatement(A),
+    given: 'Gesucht: allgemeine Lösung',
+    checks: [
+      numCheck('doppelter Eigenwert λ', l, 0.005),
+      numCheck('Eigenvektor: bei v<sub>2</sub> = ' + fnum(-d) + ' ist v<sub>1</sub> = ?', qq, 0.005),
+      numCheck('Hauptvektor w⃗ mit (A ' + MIN + ' λE)·w⃗ = v⃗ und w<sub>1</sub> = 0: w<sub>2</sub> = ?', 1, 0.005)
+    ],
+    steps: [
+      '<b>Eigenwerte:</b> ' + charSteps(A, '<span class="m">' + eq('λ<sub>1,2</sub>', fnum(l)) + '</span> (doppelt)'),
+      'Nur <i>ein</i> linear unabhängiger Eigenvektor ⇒ Hauptvektor nötig.',
+      '<b>Eigenvektor:</b> Zeile 1: <span class="m">' + eq(terms([[d, 'v<sub>1</sub>'], [qq, 'v<sub>2</sub>']]), '0') + '</span> ⇒ <span class="m">v⃗ = ' + vecS(v) + '</span>',
+      '<b>Hauptvektor:</b> (A ' + MIN + ' λE)·w⃗ = v⃗: <span class="m">' + eq(terms([[d, 'w<sub>1</sub>'], [qq, 'w<sub>2</sub>']]), fnum(v[0])) + '</span>; mit w<sub>1</sub> = 0 ⇒ <span class="m">w⃗ = ' + vecS(w) + '</span>',
+      '<b>Allgemeine Lösung:</b> <span class="m">' + eq('y⃗(t)', 'C<sub>1</sub>·' + ex(l) + '·' + vecS(v) + ' + C<sub>2</sub>·' + ex(l) + '·(' + vecS(v) + '·t + ' + vecS(w) + ')') + '</span>'
+    ],
+    sig: 'sys-d-' + l + '-' + d + '-' + qq,
+    val: { kind: 'system', A, y0: [v[0] + w[0], v[1] + w[1]], t1: 0.5, expect: yF(0.5) }
+  };
+}
+
+// ============================================================
+// 6) EXAKTE DGL
+// ============================================================
+function genExact() {
+  const a = pickNZ(-3, 3), b = pickNZ(-3, 3);
+  let cX = ri(-3, 3), dY = ri(-3, 3);
+  if (cX === 0 && dY === 0) cX = pickNZ(-3, 3);
+  const isExact = Math.random() > 0.3;
+  const b2 = isExact ? 2 * b : 2 * b + pickNZ(-2, 2);
+  // P = 2a·xy + b·y² + c ;  Q = a·x² + b2·xy + d
+  const F = (x, y) => a * x * x * y + b * x * y * y + cX * x + dY * y;
+  const Pf = (x, y) => 2 * a * x * y + b * y * y + cX;
+  const Qf = (x, y) => a * x * x + b2 * x * y + dY;
+  const PS = terms([[2 * a, 'xy'], [b, 'y' + sup(2)], [cX, null]]);
+  const QS = terms([[a, 'x' + sup(2)], [b2, 'xy'], [dY, null]]);
+  const PyS = terms([[2 * a, 'x'], [2 * b, 'y']]);
+  const QxS = terms([[2 * a, 'x'], [b2, 'y']]);
+  const checks = [
+    mcCheck('Ist die Integrabilitätsbedingung ∂P/∂y = ∂Q/∂x erfüllt?', ['Ja, exakt', 'Nein, nicht exakt'], isExact ? 0 : 1),
+    numCheck('∂P/∂y an der Stelle (1, 2)', 2 * a * 1 + 2 * b * 2, 0.005)
+  ];
+  const steps = [
+    '<span class="m">' + eq('P(x,y)', PS) + '</span>, &nbsp; <span class="m">' + eq('Q(x,y)', QS) + '</span>',
+    'Integrabilitätsbedingung prüfen: <span class="m">' + eq('∂P/∂y', PyS) + '</span>, &nbsp; <span class="m">' + eq('∂Q/∂x', QxS) + '</span>'
+  ];
+  let x0 = 0, y0v = 0, Cval = 0;
+  if (isExact) {
+    x0 = pickNZ(-2, 2); y0v = pickNZ(-2, 2);
+    Cval = F(x0, y0v);
+    checks.push(numCheck('C in der impliziten Lösung F(x,y) = C (Konvention F(0,0) = 0), AWP y(' + fnum(x0) + ') = ' + fnum(y0v), Cval, 0.005));
+    steps.push('∂P/∂y = ∂Q/∂x ✓ ⇒ <b>exakte DGL</b>, es existiert F mit dF = P dx + Q dy');
+    steps.push('<span class="m">' + eq('F(x,y)', '∫P dx = ' + terms([[a, 'x' + sup(2) + 'y'], [b, 'xy' + sup(2)], [cX, 'x']]) + ' + C(y)') + '</span>');
+    steps.push('<span class="m">' + eq('∂F/∂y', terms([[a, 'x' + sup(2)], [2 * b, 'xy']]) + ' + C′(y)') + '</span> gleichsetzen mit Q ⇒ <span class="m">' + eq('C′(y)', fnum(dY)) + '</span> ⇒ <span class="m">' + eq('C(y)', terms([[dY, 'y']])) + '</span>');
+    steps.push('<span class="m">' + eq('F(x,y)', terms([[a, 'x' + sup(2) + 'y'], [b, 'xy' + sup(2)], [cX, 'x'], [dY, 'y']])) + '</span>');
+    steps.push('<b>AWP:</b> <span class="m">' + eq('C', 'F(' + fnum(x0) + ', ' + fnum(y0v) + ') = ' + fnum(Cval)) + '</span> ⇒ implizite Lösung <span class="m">F(x,y) = ' + fnum(Cval) + '</span>');
+  } else {
+    steps.push('∂P/∂y ≠ ∂Q/∂x (die xy-Koeffizienten unterscheiden sich) ⇒ <b>kein totales Differential</b>, die DGL ist nicht exakt.');
+  }
+  return {
+    topic: 'exact', title: 'Exakte DGL',
+    statement: '(' + PS + ')\u2009dx + (' + QS + ')\u2009dy = 0',
+    given: isExact ? 'Anfangswert: ' + eq('y(' + fnum(x0) + ')', fnum(y0v)) : 'Prüfen Sie zunächst die Exaktheit.',
+    checks, steps,
+    sig: 'ex-' + a + '-' + b + '-' + b2 + '-' + cX + '-' + dY + '-' + x0 + '-' + y0v,
+    val: { kind: 'exact', P: Pf, Q: Qf, F: F, exact: isExact }
+  };
+}
+
+// ============================================================
+// API
+// ============================================================
+const GENERATORS = { sep: genSep, subst: genSubst, lin1: genLin1, lin2: genLin2, sys: genSystem, exact: genExact };
+const TOPICS = [
+  { id: 'sep', name: 'Separierbar' },
+  { id: 'subst', name: 'Substitution' },
+  { id: 'lin1', name: 'Linear 1. Ordnung' },
+  { id: 'lin2', name: 'Linear 2. Ordnung' },
+  { id: 'sys', name: 'DGL-Systeme' },
+  { id: 'exact', name: 'Exakte DGL' }
+];
+function generate(topicId, seenSigs) {
+  const gen = topicId === 'mix' ? GENERATORS[pick(Object.keys(GENERATORS))] : GENERATORS[topicId];
+  for (let i = 0; i < 25; i++) {
+    const prob = gen();
+    if (!seenSigs || !seenSigs.has(prob.sig)) return prob;
+  }
+  return gen(); // Notfall: Wiederholung zulassen
+}
+
+const API = { TOPICS, generate, _fnum: fnum };
+if (typeof module !== 'undefined' && module.exports) module.exports = API;
+else root.DGLCore = API;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function(){
+'use strict';
+const Core = window.DGLCore;
+const seen = new Set(); const seenOrder = [];
+let currentTopic = 'mix';
+let prob = null;
+let solvedThis = false, revealed = false, counted = false;
+let stats = { solved:0, tried:0, streak:0 };
+
+const $ = id => document.getElementById(id);
+
+// ---- Chips ----
+const chipDefs = [{id:'mix', name:'🎲 Mix'}].concat(Core.TOPICS);
+const chipsEl = $('chips');
+for(const t of chipDefs){
+  const b = document.createElement('button');
+  b.className = 'chip' + (t.id==='mix'?' active':'');
+  b.textContent = t.name;
+  b.onclick = () => {
+    currentTopic = t.id;
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    b.classList.add('active');
+    newProblem();
+  };
+  chipsEl.appendChild(b);
+}
+
+// ---- Antwort-Parsing ----
+function parseAns(s){
+  if(!s) return NaN;
+  s = s.trim().replace(/\u2212/g,'-').replace(',', '.').replace(/\s+/g,'');
+  const m = s.match(/^([+-]?\d+(?:\.\d+)?)\/([+-]?\d+(?:\.\d+)?)$/);
+  if(m){ const d = parseFloat(m[2]); return d===0?NaN:parseFloat(m[1])/d; }
+  const v = parseFloat(s);
+  return /^[+-]?(\d+(\.\d+)?|\.\d+)$/.test(s) ? v : NaN;
+}
+
+// ---- Aufgabe rendern ----
+function newProblem(){
+  prob = Core.generate(currentTopic, seen);
+  seen.add(prob.sig); seenOrder.push(prob.sig);
+  if(seenOrder.length > 80) seen.delete(seenOrder.shift());
+  solvedThis = false; revealed = false; counted = false;
+
+  $('taskTitle').textContent = prob.title;
+  $('statement').innerHTML = prob.statement;
+  $('given').innerHTML = prob.given || '';
+  $('feedback').textContent = ''; $('feedback').className = 'feedback';
+  $('steps').classList.remove('open');
+  $('btnSteps').textContent = 'Lösungsweg anzeigen';
+  const list = $('stepsList'); list.innerHTML = '';
+  for(const s of prob.steps){ const li = document.createElement('li'); li.innerHTML = s; list.appendChild(li); }
+
+  const box = $('checks'); box.innerHTML = '';
+  prob.checks.forEach((c, i) => {
+    const row = document.createElement('div');
+    row.className = 'check'; row.dataset.idx = i;
+    const lab = document.createElement('label');
+    lab.innerHTML = c.label;
+    row.appendChild(lab);
+    if(c.type === 'num'){
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.inputMode = 'text'; inp.autocomplete = 'off';
+      inp.placeholder = 'Antwort';
+      inp.addEventListener('keydown', e => { if(e.key === 'Enter') checkAll(); });
+      row.appendChild(inp);
+    } else {
+      const opts = document.createElement('div'); opts.className = 'mcopts';
+      c.options.forEach((o, oi) => {
+        const ob = document.createElement('button');
+        ob.className = 'mcbtn'; ob.textContent = o; ob.dataset.oi = oi;
+        ob.onclick = () => {
+          opts.querySelectorAll('.mcbtn').forEach(x=>x.classList.remove('sel'));
+          ob.classList.add('sel');
+        };
+        opts.appendChild(ob);
+      });
+      row.appendChild(opts);
+    }
+    const mark = document.createElement('span'); mark.className = 'mark';
+    row.appendChild(mark);
+    box.appendChild(row);
+  });
+  $('stTopic').textContent = 'Thema: ' + (currentTopic === 'mix' ? 'Mix' : Core.TOPICS.find(t=>t.id===currentTopic).name);
+}
+
+// ---- Prüfen ----
+function checkAll(){
+  if(!prob) return;
+  let all = true, answered = 0;
+  document.querySelectorAll('.check').forEach(row => {
+    const c = prob.checks[+row.dataset.idx];
+    const mark = row.querySelector('.mark');
+    row.classList.remove('correct','wrong');
+    let ok = false, has = false;
+    if(c.type === 'num'){
+      const v = parseAns(row.querySelector('input').value);
+      has = !isNaN(v);
+      ok = has && Math.abs(v - c.value) <= c.tol;
+    } else {
+      const sel = row.querySelector('.mcbtn.sel');
+      has = !!sel;
+      ok = has && +sel.dataset.oi === c.correct;
+      row.querySelectorAll('.mcbtn').forEach(b=>b.classList.remove('okmark','nomark'));
+      if(has) sel.classList.add(ok?'okmark':'nomark');
+    }
+    if(has) answered++;
+    if(ok){ row.classList.add('correct'); mark.textContent = '✓'; mark.className = 'mark ok'; }
+    else { if(has){ row.classList.add('wrong'); mark.textContent = '✗'; mark.className = 'mark no'; } else { mark.textContent = ''; } all = false; }
+  });
+  const fb = $('feedback');
+  if(answered === 0){ fb.textContent = 'Bitte zuerst Antworten eingeben.'; fb.className = 'feedback hint'; return; }
+  if(!counted){ stats.tried++; counted = true; }
+  if(all){
+    fb.textContent = revealed ? 'Richtig – aber der Lösungsweg war schon offen, zählt nicht für die Serie. 😉'
+                              : 'Alles richtig! Aufgabe gelöst. ✔';
+    fb.className = 'feedback good';
+    if(!solvedThis && !revealed){ stats.solved++; stats.streak++; solvedThis = true; }
+  } else {
+    fb.textContent = 'Noch nicht alles korrekt – rot markierte Felder prüfen.';
+    fb.className = 'feedback bad';
+    if(!solvedThis) stats.streak = 0;
+  }
+  renderStats();
+}
+
+function renderStats(){
+  $('stSolved').textContent = stats.solved;
+  $('stTried').textContent = stats.tried;
+  $('stStreak').textContent = stats.streak;
+}
+
+$('btnCheck').onclick = checkAll;
+$('btnNew').onclick = newProblem;
+$('btnSteps').onclick = () => {
+  const st = $('steps');
+  const open = st.classList.toggle('open');
+  $('btnSteps').textContent = open ? 'Lösungsweg verbergen' : 'Lösungsweg anzeigen';
+  if(open) revealed = true;
+};
+
+newProblem();
+renderStats();
+})();
+</script>
+</body>
+</html>
