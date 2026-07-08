@@ -24,6 +24,11 @@
    "datei": "trainer/GIT_Pruefungstrainer.html",
    "titel": "GIT Prüfungstrainer",
    "beschreibung": "Vorbereitung auf die Klausur (Pointer, Register, Interrupts, Datentypen)"
+  },
+  {
+   "datei": "trainer/dgl-klausurtrainer.html",
+   "titel": "Mathe Trainer DGL (Prüfungs Level)",
+   "beschreibung": ""
   }
  ]
 }
