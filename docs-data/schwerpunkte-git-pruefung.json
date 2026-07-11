@@ -2,12 +2,152 @@
  "id": "schwerpunkte-git-pruefung",
  "titel": "Schwerpunkte GIT Prüfung",
  "untertitel": "",
- "stand": "2026-07-06",
+ "stand": "2026-07-11",
  "bloecke": [
   {
    "typ": "box",
    "html": "Noch nicht Finalisiert",
    "variante": "achtung"
+  },
+  {
+   "typ": "h2",
+   "html": "Grundlagen: IT &amp; Mikrocontroller"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Informationstechnologie (IT)</strong> umfasst alle technischen Ressourcen zur Generierung,\nSpeicherung, Archivierung, Verwendung und Analyse digitaler Informationen. Sie ist das\nBindeglied zwischen klassischer Elektrotechnik und Informatik."
+  },
+  {
+   "typ": "h3",
+   "html": "<strong>Komponenten eines Mikrocontrollers</strong> (alles auf einem einzigen Baustein):"
+  },
+  {
+   "typ": "liste",
+   "html": "<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"18:1-18:42;675-716\"><strong>CPU</strong> – zentrale Verarbeitungseinheit</li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"19:1-19:84;717-800\"><strong>Speicher</strong> – RAM (flüchtig, Daten), Flash (Programm), EEPROM (dauerhafte Daten)</li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"20:1-20:61;801-861\"><strong>Peripheriemodule</strong> – A/D-Wandler, Timer, UART, I/O-Ports</li>"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Aufgaben:</strong> Überwachungs-, Steuerungs- und Regelungsaufgaben in einem technischen Kontext\n(z. B. Waschmaschine, Motorsteuerung, Sensor auslesen)."
+  },
+  {
+   "typ": "h3",
+   "html": "Das Besondere an Mikrocontrollern:"
+  },
+  {
+   "typ": "liste",
+   "html": "<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"27:1-27:93;1052-1144\">Für eine <strong>spezielle Aufgabe optimiert</strong> (Embedded System) – im Gegensatz zum Universal-PC</li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"28:1-28:87;1145-1231\"><strong>Limitierte Ressourcen</strong>: wenig RAM, keine FPU (Gleitkommaberechnungen sind teuer!)</li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"29:1-29:50;1232-1281\">Alles integriert → günstig, klein, stromsparend</li>"
+  },
+  {
+   "typ": "box",
+   "html": "Mikrocontroller = kompletter Kleinstrechner auf einem Chip, optimiert auf EINE Aufgabe.&nbsp;<div>PC = Universalrechner mit getrennten Komponenten, optimiert auf Flexibilität.</div>",
+   "variante": "merke"
+  },
+  {
+   "typ": "h2",
+   "html": "Zahlensysteme: Binär &amp; Hexadezimal"
+  },
+  {
+   "typ": "absatz",
+   "html": "Ein Port hat 8 Leitungen → 1 Byte → <span class=\"katex\" role=\"math\"><span class=\"katex-mathml\"><math xmlns=\"http://www.w3.org/1998/Math/MathML\"><semantics><mrow><msup><mn>2</mn><mn>8</mn></msup><mo>=</mo><mn>256</mn></mrow><annotation encoding=\"application/x-tex\">2^8 = 256\n</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height: 0.8141em;\"></span><span class=\"mord\"><span class=\"mord\">2</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.8141em;\"><span style=\"top: -3.063em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">8</span></span></span></span></span></span></span></span><span class=\"mspace\" style=\"margin-right: 0.2778em;\"></span><span class=\"mrel\">=</span><span class=\"mspace\" style=\"margin-right: 0.2778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height: 0.6444em;\"></span><span class=\"mord\">256</span></span></span></span> Kombinationen (0 bis 255)."
+  },
+  {
+   "typ": "absatz",
+   "html": "<table class=\"min-w-full border-collapse text-sm leading-[1.7] whitespace-normal\"><thead class=\"text-left\"><tr><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Bit</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">7</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">6</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">5</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">4</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">3</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">2</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">1</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">0</th></tr></thead><tbody><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Wertigkeit</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">128</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">64</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">32</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">16</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">8</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">4</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">2</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1</td></tr></tbody></table>"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Hexadezimal</strong> (Basis 16, Ziffern 0–9 und A–F) ist die Kurzschreibweise für Binärmuster:\n<strong>Ein Hex-Zeichen = genau 4 Bit (ein Nibble).</strong>"
+  },
+  {
+   "typ": "absatz",
+   "html": "<table class=\"min-w-full border-collapse text-sm leading-[1.7] whitespace-normal\"><thead class=\"text-left\"><tr><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Hex</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Binär</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Dez</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\"></th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Hex</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Binär</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Dez</th></tr></thead><tbody><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x0</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0000</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x8</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1000</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">8</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x1</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0001</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x9</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1001</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">9</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x2</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0010</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">2</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0xA</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1010</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">10</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x3</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0011</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">3</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0xB</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1011</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">11</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x4</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0100</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">4</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0xC</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1100</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">12</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x5</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0101</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">5</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0xD</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1101</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">13</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x6</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0110</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">6</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0xE</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1110</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">14</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0x7</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0111</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">7</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0xF</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1111</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">15</td></tr></tbody></table>"
+  },
+  {
+   "typ": "box",
+   "html": "Hex nie als Ganzes umrechnen – immer <strong>Nibble für Nibble</strong> (4er-Blöcke). Das ist der\nganze Sinn von Hex: kompakte Darstellung binärer Muster.",
+   "variante": "merke"
+  },
+  {
+   "typ": "h2",
+   "html": "Vorzeichenlose &amp; vorzeichenbehaftete Zahlen"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Vorzeichenlos (unsigned):</strong> Alle 8 Bit tragen Wert → Bereich <strong>0 bis 255</strong>."
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Vorzeichenbehaftet (signed):</strong> Darstellung im <strong>Zweierkomplement</strong>. Das höchstwertige Bit\n(<strong>MSB</strong>, Bit 7) ist das Vorzeichen-Bit:"
+  },
+  {
+   "typ": "liste",
+   "html": "<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"95:1-95:33;3372-3404\">MSB = 0 → Zahl ist <strong>positiv</strong></li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"96:1-96:33;3405-3437\">MSB = 1 → Zahl ist <strong>negativ</strong></li>"
+  },
+  {
+   "typ": "absatz",
+   "html": "Bereich bei 8 Bit: <strong>−128 bis +127</strong>."
+  },
+  {
+   "typ": "box",
+   "html": "Dasselbe Bitmuster kann zwei Bedeutungen haben! <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">0b1011</code> ist als unsigned die 11,\nals signed die −5. Der Compiler entscheidet anhand des Datentyps (<code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">uint8_t</code> vs. <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">int8_t</code>),\nwie das Muster interpretiert wird – im Speicher steht exakt dasselbe.",
+   "variante": "merke"
+  },
+  {
+   "typ": "h2",
+   "html": "Aufbau &amp; Funktionsweise der CPU"
+  },
+  {
+   "typ": "absatz",
+   "html": "Die zentrale Verarbeitungseinheit besteht aus drei Kernkomponenten:"
+  },
+  {
+   "typ": "liste",
+   "html": "<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"198:1-199:43;6997-7131\"><strong>LU (Arithmetic Logic Unit)</strong> – das Rechenwerk: führt arithmetische (+, −) und logische\nOperationen (AND, OR, XOR, Schieben) aus</li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"200:1-201:57;7132-7279\"><strong>Steuerwerk (Control Unit)</strong> – holt Befehle aus dem Programmspeicher, <strong>dekodiert</strong> sie\nund steuert die Abarbeitung (Fetch → Decode → Execute)</li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"202:1-203:74;7280-7436\"><strong>Register</strong> – kleiner, extrem <strong>schneller interner Speicher</strong> direkt in der CPU\n(Arbeitsregister, Status-Register SREG, Stack Pointer, Program Counter)</li>"
+  },
+  {
+   "typ": "box",
+   "html": "Steuerwerk = „versteht\" die Befehle&nbsp;<div>ALU = „rechnet\"&nbsp;</div><div>Register = „Notizzettel\" der CPU.&nbsp;</div><div><br></div><div>Registerzugriff ist um ein Vielfaches schneller als RAM-Zugriff – deshalb existiert das\nSchlüsselwort <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">register</code>.</div>",
+   "variante": "merke"
+  },
+  {
+   "typ": "h2",
+   "html": "Architekturen: Harvard vs. Von-Neumann"
+  },
+  {
+   "typ": "absatz",
+   "html": "<table class=\"min-w-full border-collapse text-sm leading-[1.7] whitespace-normal\"><thead class=\"text-left\"><tr><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\"></th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\"><span style=\"font-weight: normal;\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Harvard</span></th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style=\"font-weight: normal;\">Von-Neumann</span></th></tr></thead><tbody><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Speicher</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"><strong>Getrennt</strong>: Programm &amp; Daten</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"><strong>Gemeinsam</strong> für Programm &amp; Daten</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Busse</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Zwei separate Bussysteme</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Ein Bussystem</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Zugriff</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Befehl und Daten <strong>gleichzeitig</strong> holbar</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Nacheinander (Flaschenhals!)</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Vorteil</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Hohe Geschwindigkeit</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Einfacher Aufbau, flexibel</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Nachteil</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Komplexerer Aufbau</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Langsamer (Von-Neumann-Flaschenhals)</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Beispiel</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">AVR/ATmega328 (Flash ≠ RAM)</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">klassischer PC (konzeptionell)</td></tr></tbody></table>"
+  },
+  {
+   "typ": "box",
+   "html": "Der ATmega328 ist ein Harvard-Rechner: Das Programm liegt im <strong>Flash</strong>, die Daten im\n<strong>SRAM</strong> – mit getrennten Bussen. Genau deshalb kann <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">const</code> platzsparend in den Flash\ngelegt werden.",
+   "variante": "info"
+  },
+  {
+   "typ": "h2",
+   "html": "Taster am Mikrocontrollerpin"
+  },
+  {
+   "typ": "absatz",
+   "html": "Ein Eingangspin <strong>ohne Beschaltung</strong> hat keinen definierten Pegel – er ist <strong>„schwebend\"</strong>\n(floating/undeterminiert): Schon elektrische Störfelder in der Umgebung lassen den gelesenen\nWert zufällig zwischen 0 und 1 springen."
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Lösung: Pull-Up-Widerstand</strong> – er zieht den Pin auf VCC (High), solange der Taster\n(gegen GND geschaltet) <strong>nicht</strong> gedrückt ist"
+  },
+  {
+   "typ": "absatz",
+   "html": "<table class=\"min-w-full border-collapse text-sm leading-[1.7] whitespace-normal\"><thead class=\"text-left\"><tr><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Zustand</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Stromfluss</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Pegel am Pin</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">PINx-Bit</th></tr></thead><tbody><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Taster <strong>offen</strong></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">kein Strom, Pin über R an VCC</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"><strong>High</strong></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">1</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Taster <strong>gedrückt</strong></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Pin direkt mit GND verbunden</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\"><strong>Low</strong></td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">0</td></tr></tbody></table>"
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "DDRB  &= ~(1 << PB0);        // PB0 als Eingang\nPORTB |=  (1 << PB0);        // internen Pull-Up aktivieren (kein externer R nötig!)\n\nif (!(PINB & (1 << PB0))) {  // ACHTUNG: gedrückt = 0 -> deshalb die Negation!\n  // Taster ist gedrückt\n}"
+  },
+  {
+   "typ": "box",
+   "html": "Mit Pull-Up ist die Logik <strong>invertiert</strong>: gedrückt = 0, losgelassen = 1.\nDer ATmega hat interne Pull-Ups – ein externer Widerstand ist meist unnötig.",
+   "variante": "merke"
   },
   {
    "typ": "h2",
@@ -147,6 +287,35 @@
    "abstand": "l"
   },
   {
+   "typ": "h3",
+   "html": "<strong>Spezialfall ATmega328</strong>"
+  },
+  {
+   "typ": "absatz",
+   "html": "<span style=\"font-weight: normal;\">Schreibt man eine 1 in ein PIN-Register-Bit eines als Ausgang\nkonfigurierten Pins, wird dessen Zustand getoggelt (umgeschaltet):</span>"
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "PINB |= (1 << PB5);   // Toggle: LED an PB5 wechselt bei jedem Aufruf An <-> Aus"
+  },
+  {
+   "typ": "absatz",
+   "html": "Klassische Alternative ohne den Hardware-Trick (XOR):"
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "PORTB ^= (1 << PB5);  // XOR mit 1 kippt genau dieses Bit, Rest bleibt unberührt"
+  },
+  {
+   "typ": "box",
+   "html": "Das PIN-Register ist eigentlich zum <strong>Lesen</strong> da – das Toggeln per Schreibzugriff ist eine\nHardware-Abkürzung der AVR-Familie und schneller als Lesen-Ändern-Zurückschreiben.",
+   "variante": "info"
+  },
+  {
    "typ": "h2",
    "html": "Interrupttechnik"
   },
@@ -174,6 +343,77 @@
   {
    "typ": "absatz",
    "html": "<ol><li><b>Hardware-Aktivierung:</b> Im PCICR (Pin Change Interrupt Control Register) die Port-Gruppe (z.B. Port B) aktivieren.</li><li><b>Maskierung:</b> Im PCMSKx festlegen, welche spezifischen Pins den Interrupt auslösen dürfen.</li><li><b>ISR-Definition:</b> Das Unterprogramm schreiben, das ausgeführt werden soll: ISR(PCINT0_vect) { ... }.</li><li><b>Globale Freigabe:</b> Das I-Bit im Status-Register (SREG) mit dem Befehl sei() setzen</li></ol><div><br></div><div><b>Priorität:</b> Wenn zwei Interrupts gleichzeitig auftreten, gewinnt der mit der niedrigeren Vektor-Adresse (ein RESET hat immer die höchste Priorität)</div>"
+  },
+  {
+   "typ": "h2",
+   "html": "Polling vs. Interrupts (direkter Vergleich)"
+  },
+  {
+   "typ": "absatz",
+   "html": "<table class=\"min-w-full border-collapse text-sm leading-[1.7] whitespace-normal\"><thead class=\"text-left\"><tr><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Kriterium</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Polling</th><th scope=\"col\" class=\"text-text-100 border-b-0.5 border-[hsl(var(--border-300)/0.6)] py-2 pr-4 align-top font-bold\" contenteditable=\"true\">Interrupt</th></tr></thead><tbody><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Prinzip</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">CPU fragt ständig aktiv ab</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Hardware meldet sich von selbst</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">CPU-Auslastung</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Dauerhaft hoch (Abfrageschleife)</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Nur bei tatsächlichem Ereignis</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Reaktionszeit</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Abhängig von Schleifendauer</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Sofort (CPU unterbricht aktuelle Arbeit)</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Stromverbrauch</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Hoch, kein Sleep möglich</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Niedrig – CPU kann in <strong>Sleep-Modus</strong> gehen</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Ereignis verpassen?</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Möglich, wenn CPU beschäftigt ist</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Nein, Hardware „merkt sich\" das Ereignis</td></tr><tr><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Komplexität</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Sehr einfach zu programmieren</td><td class=\"border-b-0.5 border-[hsl(var(--border-300)/0.3)] py-2 pr-4 align-top\" contenteditable=\"true\">Mehr Konfiguration (Register, ISR)</td></tr></tbody></table>"
+  },
+  {
+   "typ": "h3",
+   "html": "<strong>Gleiche Aufgabe, beide Varianten</strong> – LED bei Tastendruck an PB0 toggeln:"
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "// ── Variante 1: POLLING ────────────────────────────────\nvoid loop() {\n  // CPU prüft in JEDEM Schleifendurchlauf den Pin-Zustand.\n  if (!(PINB & (1 << PB0))) {   // gedrückt = 0 (Pull-Up!)\n    PINB |= (1 << PB5);         // LED toggeln\n    _delay_ms(200);             // primitive \"Entprellung\"\n  }\n  // Problem: Ist die CPU gerade beschäftigt, kann ein\n  // kurzer Tastendruck komplett verloren gehen.\n}"
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "// ── Variante 2: INTERRUPT ──────────────────────────────\nvoid setup() {\n  DDRB  &= ~(1 << PB0);      // PB0 als Eingang\n  PORTB |=  (1 << PB0);      // Pull-Up aktivieren\n  DDRB  |=  (1 << PB5);      // PB5 (LED) als Ausgang\n\n  PCICR  |= (1 << PCIE0);    // 1. Pin-Change-Interrupts für Port B aktivieren\n  PCMSK0 |= (1 << PCINT0);   // 2. Maskierung: nur PB0 darf auslösen\n  sei();                     // 4. Globale Freigabe (I-Bit im SREG)\n}\n\nISR(PCINT0_vect) {           // 3. ISR-Definition\n  PINB |= (1 << PB5);        // LED toggeln\n}\n\nvoid loop() {\n  // CPU kann hier andere Arbeit erledigen oder schlafen –\n  // der Tastendruck wird trotzdem garantiert registriert.\n}"
+  },
+  {
+   "typ": "box",
+   "html": "ISRs immer <strong>kurz halten</strong>! Kein <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">delay()</code>, keine langen Berechnungen – nur das Nötigste\n(z. B. ein Flag setzen). Eine ISR hat <strong>keinen Rückgabewert</strong> und akzeptiert nur den\nInterrupt-Vektor als Argument.",
+   "variante": "merke"
+  },
+  {
+   "typ": "h2",
+   "html": "Globale Interrupt-Freigabe: Wozu?"
+  },
+  {
+   "typ": "absatz",
+   "html": "Die globale Freigabe ist eine <strong>übergeordnete „Hauptsicherung\"</strong> über allen einzelnen\nInterrupt-Quellen. Sie erlaubt, <strong>alle Interrupts gleichzeitig</strong> zu sperren oder freizugeben,\nohne jede Quelle einzeln umkonfigurieren zu müssen."
+  },
+  {
+   "typ": "liste",
+   "html": "<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"444:1-444:61;15728-15788\"><strong>Wo?</strong> Im <strong>I-Bit (Bit 7)</strong> des Status-Registers <strong>SREG</strong></li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"445:1-445:89;15789-15877\"><strong>Wie?</strong> <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">sei()</code> = Set Global Interrupt Enable (freigeben) · <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">cli()</code> = Clear (sperren)</li>"
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "cli();                  // ALLE Interrupts kurz sperren ...\nwichtige_16bit_var = 0; // ... z. B. für einen atomaren Zugriff auf\nsei();                  // eine Variable, die auch eine ISR verändert"
+  },
+  {
+   "typ": "box",
+   "html": "Typischer Einsatz: Greifen Hauptprogramm <strong>und</strong> ISR auf dieselbe (mehr als 8 Bit große)\nVariable zu, sperrt man Interrupts kurz mit <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">cli()</code>, damit die ISR nicht mitten im\n2-Phasen-Zugriff „dazwischenfunkt\" – danach sofort wieder <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">sei()</code>. Solche geteilten\nVariablen müssen zudem <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">volatile</code> sein!",
+   "variante": "merke"
+  },
+  {
+   "typ": "h2",
+   "html": "Lesen von C-Code (Übungsbeispiel)"
+  },
+  {
+   "typ": "absatz",
+   "html": "Prüfungstypisch: Ein Codeausschnitt kombiniert Zeiger, Bitmanipulation und Speicherklassen –\ngefragt ist der Endwert einer Variablen oder der Zustand eines Registers."
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "c",
+   "text": "uint8_t zaehler(void) {\n  static uint8_t count = 0;  // static: Wert überlebt den Funktionsaufruf,\n  count++;                   // liegt im RAM, NICHT auf dem Stack\n  return count;\n}\n\nvoid setup() {\n  uint8_t a = 5;             // a liegt an z.B. Adresse 0x0110, Wert 5\n  uint8_t* p = &a;           // p speichert die Adresse 0x0110\n\n  *p = *p + 3;               // Wert AN der Adresse ändern: a ist jetzt 8\n\n  uint8_t x = zaehler();     // x = 1\n  x = zaehler();             // x = 2 (count hat sich den Wert 1 gemerkt!)\n\n  DDRB = 0x00;               // kompletten Port B als Eingang\n  DDRB |= (1 << PB3);        // nur PB3 als Ausgang  -> DDRB = 0b00001000\n  PORTB = 0xAA;              // 0b10101010: PB3 ist Ausgang -> High;\n                             // alle anderen Pins mit 1 sind Eingänge\n                             // -> dort wird der Pull-Up aktiviert!\n}\n// Endzustand: a = 8, x = 2, DDRB = 0x08, PORTB = 0xAA"
+  },
+  {
+   "typ": "box",
+   "html": "<p class=\"font-claude-response-body break-words whitespace-normal\" data-sourcepos=\"491:3-492:45;17549-17603\">Beim Code-Lesen immer drei Fragen stellen:</p>\n\n<ol class=\"[li_&amp;]:mb-0 [li_&amp;]:mt-1 [li_&amp;]:gap-1 [&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-decimal flex flex-col gap-1 pl-8 mb-3\" data-sourcepos=\"493:3-496:39;17606-17871\">\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"493:3-493:62;17606-17665\"><strong>Wo</strong> liegt die Variable (Stack, RAM, Flash, Register)?</li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"494:3-494:80;17668-17745\">Arbeite ich mit dem <strong>Wert</strong> (<code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">a</code>, <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">*p</code>) oder der <strong>Adresse</strong> (<code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">&amp;a</code>, <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">p</code>)?</li>\n<li class=\"font-claude-response-body whitespace-normal break-words pl-2\" data-sourcepos=\"495:3-496:39;17748-17871\">Ist der Pin <strong>Eingang oder Ausgang</strong>? Davon hängt ab, was eine 1 im PORT-Register\nbewirkt (High-Pegel vs. Pull-Up).</li></ol>",
+   "variante": "merke"
   }
  ],
  "abstand": "m"
