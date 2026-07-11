@@ -5,11 +5,6 @@
  "stand": "2026-07-11",
  "bloecke": [
   {
-   "typ": "box",
-   "html": "Noch nicht Finalisiert",
-   "variante": "achtung"
-  },
-  {
    "typ": "h2",
    "html": "Grundlagen: IT &amp; Mikrocontroller"
   },
@@ -40,7 +35,8 @@
   {
    "typ": "box",
    "html": "Mikrocontroller = kompletter Kleinstrechner auf einem Chip, optimiert auf EINE Aufgabe.&nbsp;<div>PC = Universalrechner mit getrennten Komponenten, optimiert auf Flexibilität.</div>",
-   "variante": "merke"
+   "variante": "merke",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -65,7 +61,8 @@
   {
    "typ": "box",
    "html": "Hex nie als Ganzes umrechnen – immer <strong>Nibble für Nibble</strong> (4er-Blöcke). Das ist der\nganze Sinn von Hex: kompakte Darstellung binärer Muster.",
-   "variante": "merke"
+   "variante": "merke",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -90,7 +87,8 @@
   {
    "typ": "box",
    "html": "Dasselbe Bitmuster kann zwei Bedeutungen haben! <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">0b1011</code> ist als unsigned die 11,\nals signed die −5. Der Compiler entscheidet anhand des Datentyps (<code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">uint8_t</code> vs. <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">int8_t</code>),\nwie das Muster interpretiert wird – im Speicher steht exakt dasselbe.",
-   "variante": "merke"
+   "variante": "merke",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -107,7 +105,8 @@
   {
    "typ": "box",
    "html": "Steuerwerk = „versteht\" die Befehle&nbsp;<div>ALU = „rechnet\"&nbsp;</div><div>Register = „Notizzettel\" der CPU.&nbsp;</div><div><br></div><div>Registerzugriff ist um ein Vielfaches schneller als RAM-Zugriff – deshalb existiert das\nSchlüsselwort <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">register</code>.</div>",
-   "variante": "merke"
+   "variante": "merke",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -120,7 +119,8 @@
   {
    "typ": "box",
    "html": "Der ATmega328 ist ein Harvard-Rechner: Das Programm liegt im <strong>Flash</strong>, die Daten im\n<strong>SRAM</strong> – mit getrennten Bussen. Genau deshalb kann <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">const</code> platzsparend in den Flash\ngelegt werden.",
-   "variante": "info"
+   "variante": "info",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -147,7 +147,8 @@
   {
    "typ": "box",
    "html": "Mit Pull-Up ist die Logik <strong>invertiert</strong>: gedrückt = 0, losgelassen = 1.\nDer ATmega hat interne Pull-Ups – ein externer Widerstand ist meist unnötig.",
-   "variante": "merke"
+   "variante": "merke",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -284,7 +285,7 @@
    "typ": "box",
    "html": "<ul><li><b>Nutze \"&amp;= ~\", wenn du ein Bit auf 0 setzen willst (z. B. für einen Eingang).</b></li><li><b>Nutze \"|=\", wenn du ein Bit auf 1 setzen willst (z. B. für einen Ausgang oder Pull-Up)</b></li></ul>",
    "variante": "merke",
-   "abstand": "l"
+   "abstand": "m"
   },
   {
    "typ": "h3",
@@ -313,7 +314,8 @@
   {
    "typ": "box",
    "html": "Das PIN-Register ist eigentlich zum <strong>Lesen</strong> da – das Toggeln per Schreibzugriff ist eine\nHardware-Abkürzung der AVR-Familie und schneller als Lesen-Ändern-Zurückschreiben.",
-   "variante": "info"
+   "variante": "info",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -342,7 +344,8 @@
   },
   {
    "typ": "absatz",
-   "html": "<ol><li><b>Hardware-Aktivierung:</b> Im PCICR (Pin Change Interrupt Control Register) die Port-Gruppe (z.B. Port B) aktivieren.</li><li><b>Maskierung:</b> Im PCMSKx festlegen, welche spezifischen Pins den Interrupt auslösen dürfen.</li><li><b>ISR-Definition:</b> Das Unterprogramm schreiben, das ausgeführt werden soll: ISR(PCINT0_vect) { ... }.</li><li><b>Globale Freigabe:</b> Das I-Bit im Status-Register (SREG) mit dem Befehl sei() setzen</li></ol><div><br></div><div><b>Priorität:</b> Wenn zwei Interrupts gleichzeitig auftreten, gewinnt der mit der niedrigeren Vektor-Adresse (ein RESET hat immer die höchste Priorität)</div>"
+   "html": "<ol><li><b>Hardware-Aktivierung:</b> Im PCICR (Pin Change Interrupt Control Register) die Port-Gruppe (z.B. Port B) aktivieren.</li><li><b>Maskierung:</b> Im PCMSKx festlegen, welche spezifischen Pins den Interrupt auslösen dürfen.</li><li><b>ISR-Definition:</b> Das Unterprogramm schreiben, das ausgeführt werden soll: ISR(PCINT0_vect) { ... }.</li><li><b>Globale Freigabe:</b> Das I-Bit im Status-Register (SREG) mit dem Befehl sei() setzen</li></ol><div><br></div><div><b>Priorität:</b> Wenn zwei Interrupts gleichzeitig auftreten, gewinnt der mit der niedrigeren Vektor-Adresse (ein RESET hat immer die höchste Priorität)</div>",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -371,7 +374,8 @@
   {
    "typ": "box",
    "html": "ISRs immer <strong>kurz halten</strong>! Kein <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">delay()</code>, keine langen Berechnungen – nur das Nötigste\n(z. B. ein Flag setzen). Eine ISR hat <strong>keinen Rückgabewert</strong> und akzeptiert nur den\nInterrupt-Vektor als Argument.",
-   "variante": "merke"
+   "variante": "merke",
+   "abstand": "l"
   },
   {
    "typ": "h2",
@@ -394,7 +398,8 @@
   {
    "typ": "box",
    "html": "Typischer Einsatz: Greifen Hauptprogramm <strong>und</strong> ISR auf dieselbe (mehr als 8 Bit große)\nVariable zu, sperrt man Interrupts kurz mit <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">cli()</code>, damit die ISR nicht mitten im\n2-Phasen-Zugriff „dazwischenfunkt\" – danach sofort wieder <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">sei()</code>. Solche geteilten\nVariablen müssen zudem <code class=\"bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]\">volatile</code> sein!",
-   "variante": "merke"
+   "variante": "merke",
+   "abstand": "l"
   },
   {
    "typ": "h2",
