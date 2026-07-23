@@ -34,6 +34,11 @@
    "datei": "trainer/bode-simpel.html",
    "titel": "Bodediagramme",
    "beschreibung": "Seminar (Gerber gönnt nicht)"
+  },
+  {
+   "datei": "trainer/bode-ortskurven.html",
+   "titel": "Bode-Ortskurve",
+   "beschreibung": ""
   }
  ]
 }
