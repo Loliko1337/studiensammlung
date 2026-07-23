@@ -29,6 +29,11 @@
    "datei": "trainer/dgl-klausurtrainer.html",
    "titel": "Mathe Trainer DGL (Prüfungs Level)",
    "beschreibung": ""
+  },
+  {
+   "datei": "trainer/bode-simpel.html",
+   "titel": "Bodediagramme",
+   "beschreibung": "Seminar (Gerber gönnt nicht)"
   }
  ]
 }
