@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GET2 — Lernzusammenfassung</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#0a0e14; --panel:#10161f; --panel2:#0c1119; --elev:#151d29;
+  --line:#232d3b; --line-soft:#182029;
+  --text:#d7dee7; --dim:#8c99a8; --faint:#5c6875;
+  --cyan:#34d3bd; --cyan-d:#1d7168; --cyan-glow:rgba(52,211,189,.14);
+  --amber:#f0b429; --amber-d:#7a5c12;
+  --red:#ff6b7d; --red-d:#7a2e38;
+  --blue:#5aa0ff; --green:#7bd88f; --violet:#b98ce8; --orange:#ff9d54;
+  --mono:ui-monospace,"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+  --sans:"Inter",ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:76px}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:var(--sans); font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--cyan-glow); color:#eafffb}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  background:rgba(10,14,20,.86); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{max-width:1180px; margin:0 auto; padding:11px 20px; display:flex; align-items:center; gap:16px}
+.brand{font-family:var(--mono); font-size:13px; letter-spacing:.14em; color:var(--cyan); white-space:nowrap; font-weight:600}
+.brand span{color:var(--faint)}
+.jump{margin-left:auto; position:relative}
+.jump select{
+  font-family:var(--mono); font-size:12.5px; background:var(--elev); color:var(--text);
+  border:1px solid var(--line); border-radius:7px; padding:7px 10px; cursor:pointer; max-width:60vw;
+}
+.progress{position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--cyan),var(--blue)); width:0; z-index:60; box-shadow:0 0 8px var(--cyan)}
+
+/* ---------- hero ---------- */
+.hero{max-width:1180px; margin:0 auto; padding:46px 20px 12px}
+.scope{
+  position:relative; border:1px solid var(--line); border-radius:16px; overflow:hidden;
+  background:
+    linear-gradient(180deg,#0c141b,#0a1016);
+  padding:38px 34px 34px;
+}
+.scope::before{
+  content:""; position:absolute; inset:0; opacity:.5;
+  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:34px 34px; -webkit-mask-image:radial-gradient(120% 130% at 15% 0%,#000 40%,transparent 85%);
+  mask-image:radial-gradient(120% 130% at 15% 0%,#000 40%,transparent 85%);
+}
+.scope::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:60%;
+  background:radial-gradient(80% 100% at 12% 0%,var(--cyan-glow),transparent 70%); pointer-events:none;
+}
+.scope-eyebrow{position:relative; font-family:var(--mono); font-size:12px; letter-spacing:.28em; color:var(--cyan); margin:0 0 14px}
+.scope h1{position:relative; margin:0; font-size:clamp(30px,5.4vw,52px); line-height:1.04; letter-spacing:-.02em; font-weight:800}
+.scope h1 em{font-style:normal; color:var(--cyan)}
+.scope p.lead{position:relative; margin:16px 0 0; max-width:60ch; color:var(--dim); font-size:16.5px}
+.scope .meta{position:relative; margin-top:22px; display:flex; flex-wrap:wrap; gap:8px}
+.chip{font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; padding:5px 11px; border:1px solid var(--line); border-radius:999px; color:var(--dim); background:#0b1219}
+.chip.k{border-color:var(--cyan-d); color:var(--cyan)}
+
+/* ---------- toc ---------- */
+.toc{max-width:1180px; margin:26px auto 0; padding:0 20px}
+.toc-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px}
+.toc a{
+  display:flex; gap:12px; align-items:baseline; text-decoration:none; color:var(--text);
+  border:1px solid var(--line); border-radius:10px; padding:12px 14px; background:var(--panel);
+  transition:border-color .15s,transform .15s,background .15s;
+}
+.toc a:hover{border-color:var(--cyan-d); transform:translateY(-2px); background:var(--elev)}
+.toc a .n{font-family:var(--mono); font-size:12px; color:var(--cyan); min-width:26px}
+.toc a .t{font-size:14.5px; line-height:1.3}
+.toc a .t small{display:block; color:var(--faint); font-size:11.5px; margin-top:2px; font-family:var(--mono)}
+.toc a.star{border-color:var(--amber-d)}
+.toc a.star .n{color:var(--amber)}
+
+/* ---------- sections ---------- */
+main{max-width:1180px; margin:0 auto; padding:20px 20px 90px}
+section{padding:52px 0 8px; border-top:1px solid var(--line-soft); margin-top:34px}
+section:first-of-type{border-top:none}
+.eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.2em; color:var(--cyan); display:flex; align-items:center; gap:12px}
+.eyebrow::after{content:""; height:1px; flex:1; background:linear-gradient(90deg,var(--cyan-d),transparent)}
+.eyebrow.amber{color:var(--amber)}
+.eyebrow.amber::after{background:linear-gradient(90deg,var(--amber-d),transparent)}
+h2{font-size:clamp(23px,3.4vw,32px); letter-spacing:-.015em; margin:14px 0 6px; font-weight:800}
+h3{font-size:19px; margin:30px 0 10px; letter-spacing:-.01em; font-weight:700; color:#eaf1f8}
+h4{font-size:15.5px; margin:20px 0 6px; color:var(--cyan); font-weight:700; font-family:var(--mono); letter-spacing:.02em}
+p{margin:10px 0}
+.sub{color:var(--dim)}
+strong{color:#f2f6fa}
+a.inl{color:var(--cyan); text-decoration:none; border-bottom:1px dotted var(--cyan-d)}
+
+/* cards & callouts */
+.panelbox{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:16px 0}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+.grid2>.panelbox{margin:0}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+.callout{border-radius:12px; padding:15px 18px 15px 20px; margin:18px 0; border:1px solid var(--line); position:relative}
+.callout .lbl{font-family:var(--mono); font-size:11px; letter-spacing:.16em; display:block; margin-bottom:6px; text-transform:uppercase}
+.merke{background:linear-gradient(180deg,rgba(255,107,125,.07),transparent); border-color:var(--red-d)}
+.merke .lbl{color:var(--red)}
+.herleitung{background:linear-gradient(180deg,rgba(240,180,41,.06),transparent); border-color:var(--amber-d)}
+.herleitung .lbl{color:var(--amber)}
+.beispiel{background:linear-gradient(180deg,rgba(90,160,255,.06),transparent); border-color:#2a4c7a}
+.beispiel .lbl{color:var(--blue)}
+.tipp{background:linear-gradient(180deg,rgba(123,216,143,.06),transparent); border-color:#2f6a3d}
+.tipp .lbl{color:var(--green)}
+
+.formel{background:var(--panel2); border:1px solid var(--line); border-left:3px solid var(--cyan); border-radius:8px; padding:6px 16px; margin:14px 0; overflow-x:auto}
+.formel.amber{border-left-color:var(--amber)}
+.formel.red{border-left-color:var(--red)}
+
+/* katex sizing */
+.katex{font-size:1.06em}
+.katex-display{margin:.5em 0; overflow-x:auto; overflow-y:hidden; padding:2px 0}
+
+/* tables */
+.tblwrap{overflow-x:auto; margin:16px 0; border:1px solid var(--line); border-radius:12px}
+table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:440px}
+th,td{padding:11px 14px; text-align:left; border-bottom:1px solid var(--line-soft)}
+thead th{background:var(--panel2); color:var(--cyan); font-family:var(--mono); font-size:12px; letter-spacing:.05em; text-transform:uppercase; border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(52,211,189,.03)}
+td.c{color:var(--dim)}
+
+/* figures */
+figure{margin:20px 0; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:18px; text-align:center}
+figure svg{max-width:100%; height:auto}
+figcaption{margin-top:12px; color:var(--dim); font-size:13px; font-family:var(--mono); letter-spacing:.02em}
+.svglabel{font-family:var(--mono); font-size:12px}
+
+ul.clean{list-style:none; padding-left:0; margin:12px 0}
+ul.clean li{padding:5px 0 5px 26px; position:relative}
+ul.clean li::before{content:"▸"; position:absolute; left:4px; color:var(--cyan); font-size:12px; top:7px}
+ol.steps{padding-left:20px}
+ol.steps li{margin:7px 0; padding-left:6px}
+
+.kbd{font-family:var(--mono); background:var(--elev); border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:.9em; color:var(--cyan)}
+
+footer{max-width:1180px; margin:0 auto; padding:30px 20px 60px; color:var(--faint); font-size:13px; border-top:1px solid var(--line-soft); text-align:center; font-family:var(--mono)}
+
+.back{position:fixed; right:18px; bottom:18px; z-index:40; background:var(--elev); border:1px solid var(--line); color:var(--cyan); font-family:var(--mono); font-size:12px; padding:9px 13px; border-radius:9px; cursor:pointer; opacity:0; pointer-events:none; transition:opacity .2s}
+.back.show{opacity:1; pointer-events:auto}
+.back:hover{border-color:var(--cyan-d)}
+
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important; transition:none!important}}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">GET<span>·</span>2 <span>//</span> LERNÜBERSICHT</div>
+    <div class="jump">
+      <select id="jump" aria-label="Zu Abschnitt springen">
+        <option value="">springe zu …</option>
+        <option value="s1">8.1 · Schaltverhalten R,C,L</option>
+        <option value="s2">8.2 · Wechselgrößen (Mittelwerte)</option>
+        <option value="s3">8.3 · Komplexe Zahlen</option>
+        <option value="s4">8.4 · Komplexer Widerstand ⚙</option>
+        <option value="s5">8.5 · Leistungsberechnung ★</option>
+        <option value="s6">8.6 · Ortskurven & Bode ★</option>
+        <option value="s7">8.7 · Schwingkreise</option>
+        <option value="s8">8.8 · Mehrphasensysteme ★</option>
+        <option value="s9">8.8.1 · Drehstromleistung ★</option>
+        <option value="s10">8.9 · Fourier-Reihen ★</option>
+        <option value="s11">8.10 · Inhomogene Felder</option>
+        <option value="s12">A · Netzwerkmethoden</option>
+        <option value="s13">A · Felder & Magnetik</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="scope">
+    <p class="scope-eyebrow">GRUNDLAGEN DER ELEKTROTECHNIK 2 · HTWK LEIPZIG</p>
+    <h1>Wechselstrom, Drehstrom &amp; Felder —<br><em>alles Prüfungsrelevante</em> auf einen Blick.</h1>
+    <p class="lead">Aufgebaut nach der Prof-Zusammenfassung (8.1–8.10), ergänzt um Herleitungen und Rechenbeispiele aus den Seminar-Rechenübungen und deinen Tutorien. Schwerpunkt: Fourier · Drehstrom · Leistung · Zeiger · Ortskurven · Bode.</p>
+    <div class="meta">
+      <span class="chip k">★ = Hauptaugenmerk</span>
+      <span class="chip">⚙ = Herleitung „können!"</span>
+      <span class="chip">komplexe Effektivwerte (RMS)</span>
+      <span class="chip">Verbraucher-Zählpfeilsystem</span>
+    </div>
+  </div>
+</div>
+
+<nav class="toc" aria-label="Inhalt">
+  <div class="toc-grid">
+    <a href="#s1"><span class="n">8.1</span><span class="t">Schaltverhalten von R, C, L<small>DGL · τ · Sprungfähigkeit</small></span></a>
+    <a href="#s2"><span class="n">8.2</span><span class="t">Beschreibung von Wechselgrößen<small>Mittelwert · Gleichrichtwert · RMS</small></span></a>
+    <a href="#s3"><span class="n">8.3</span><span class="t">Komplexe Zahlen<small>3 Formen · Rechenregeln</small></span></a>
+    <a href="#s4" class="star"><span class="n">8.4</span><span class="t">Komplexer Wechselstromwiderstand ⚙<small>Herleitung X_C, X_L</small></span></a>
+    <a href="#s5" class="star"><span class="n">8.5</span><span class="t">Leistungsberechnung ★<small>P·Q·S · Kompensation</small></span></a>
+    <a href="#s6" class="star"><span class="n">8.6</span><span class="t">Ortskurven & Bode ★<small>Frequenzgang · Inversion</small></span></a>
+    <a href="#s7"><span class="n">8.7</span><span class="t">Schwingkreise<small>Reihe/Parallel · Güte · Resonanz</small></span></a>
+    <a href="#s8" class="star"><span class="n">8.8</span><span class="t">Mehrphasensysteme ★<small>Stern ⇄ Dreieck · √3</small></span></a>
+    <a href="#s9" class="star"><span class="n">8.8.1</span><span class="t">Drehstromleistung ★<small>symmetrisch & unsymmetrisch</small></span></a>
+    <a href="#s10" class="star"><span class="n">8.9</span><span class="t">Fourier-Reihen ★<small>Koeffizienten · Klirrfaktor</small></span></a>
+    <a href="#s11"><span class="n">8.10</span><span class="t">Inhomogene Felder<small>Green · Spiegelung · Biot-Savart</small></span></a>
+    <a href="#s12"><span class="n">A1</span><span class="t">Netzwerkmethoden<small>Zweipol · Knotenspannung</small></span></a>
+    <a href="#s13"><span class="n">A2</span><span class="t">Felder & Magnetik<small>H-Feld · Energiedichte · L</small></span></a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ 8.1 ============ -->
+<section id="s1">
+  <div class="eyebrow">8.1 · ZEITBEREICH</div>
+  <h2>Schaltverhalten von R, C, L</h2>
+  <p class="sub">Bauteilgesetze, Ein-/Ausschaltvorgänge als DGL 1. Ordnung und die Phasenlage im stationären Sinusbetrieb.</p>
+
+  <h3>Bauelementgleichungen</h3>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Element</th><th>Definition</th><th>u–i-Beziehung</th><th>gespeichert</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Widerstand R</strong></td><td>$R=\dfrac{U}{I}$</td><td>$u(t)=R\,i(t)$</td><td class="c">—</td></tr>
+      <tr><td><strong>Kondensator C</strong></td><td>$C=\dfrac{Q}{U}$</td><td>$i(t)=C\dfrac{du(t)}{dt}$</td><td class="c">$W=\tfrac12 C U^2$</td></tr>
+      <tr><td><strong>Spule L</strong></td><td>$L=\dfrac{\Psi}{I}$</td><td>$u(t)=L\dfrac{di(t)}{dt}$</td><td class="c">$W=\tfrac12 L I^2$</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Lösen einer DGL 1. Ordnung — zwei Wege</h3>
+  <div class="grid2">
+    <div class="panelbox">
+      <h4>Variante 1 — Trennung der Variablen</h4>
+      <p class="sub">Für gewöhnliche, separierbare DGL 1. Ordnung.</p>
+      $$\frac{dy}{dx}=3y \;\Rightarrow\; \frac{dy}{y}=3\,dx$$
+      $$\int\frac1y\,dy=3\int dx \;\Rightarrow\; \ln|y|=3x+C$$
+      $$y=e^{3x}\cdot C$$
+    </div>
+    <div class="panelbox">
+      <h4>Variante 2 — $e^{\lambda t}$-Ansatz</h4>
+      <p class="sub">Für lineare DGL mit konstanten Koeffizienten.</p>
+      $$\ddot y-3\dot y+2y=0,\quad y=e^{\lambda t}$$
+      $$\lambda^2-3\lambda+2=0 \;\Rightarrow\; \lambda_{1}=2,\ \lambda_{2}=1$$
+      $$y(t)=C_1 e^{t}+C_2 e^{2t}$$
+    </div>
+  </div>
+
+  <h3>Einschaltvorgang am Kondensator (RC an $U_q$)</h3>
+  <div class="callout herleitung">
+    <span class="lbl">Herleitung (Maschensatz + Trennung der Variablen)</span>
+    $$U_q=u_C(t)+R\,i(t)=u_C+RC\frac{du_C}{dt}$$
+    $$\frac{dt}{RC}=\frac{du_C}{U_q-u_C}\ \Rightarrow\ \int\frac{1}{RC}dt=\int\frac{1}{U_q-u_C}du_C$$
+    $$-\frac{t}{RC}-C_0=\ln|U_q-u_C|\ \Rightarrow\ u_C=U_q-e^{-t/RC}\!\cdot C_0$$
+    <p style="margin:8px 0 0">Anfangsbedingung $u_C(0)=0 \Rightarrow C_0=U_q$:</p>
+  </div>
+  <div class="formel">$$\boxed{\,u_C(t)=U_q\!\left(1-e^{-t/\tau}\right)\,}\qquad i(t)=\frac{U_q}{R}\,e^{-t/\tau}\qquad \tau=RC$$</div>
+
+  <h3>Einschaltvorgang an der Induktivität (RL an $U_q$)</h3>
+  <div class="formel">$$\frac{L}{R}\frac{di}{dt}+i=\frac{U_q}{R}\ \Rightarrow\ \boxed{\,i(t)=\frac{U_q}{R}\!\left(1-e^{-t/\tau}\right)\,}\qquad \tau=\frac{L}{R}$$</div>
+  <p class="sub">Die Zeitkonstante $\tau$ gibt an, nach welcher Zeit ~63 % des Endwerts erreicht sind; nach $\approx 5\tau$ gilt der Vorgang als abgeschlossen.</p>
+
+  <div class="callout merke">
+    <span class="lbl">Merke — Sprungfähigkeit</span>
+    <ul class="clean" style="margin:4px 0">
+      <li><strong>Kondensator:</strong> $u_C$ ist <em>nicht</em> sprungfähig (stetig), $i_C$ dagegen sprungfähig.</li>
+      <li><strong>Spule:</strong> $i_L$ ist <em>nicht</em> sprungfähig (stetig), $u_L$ dagegen sprungfähig.</li>
+      <li>Bei <strong>Gleichspannungsquelle</strong>: beide Größen sind sprungfähig, im Endzustand ist C = Leerlauf, L = Kurzschluss.</li>
+    </ul>
+  </div>
+
+  <h3>Phasenverschiebung im Sinusbetrieb</h3>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Element</th><th>Rechnung</th><th>Phase</th></tr></thead>
+    <tbody>
+      <tr><td>R</td><td>$u=R\,i$</td><td>$u,i$ in Phase (0°)</td></tr>
+      <tr><td>C</td><td>$i=C\frac{d}{dt}\hat u\sin\omega t=\omega C\hat u\cos\omega t$</td><td><strong>Strom eilt vor</strong> (i 90° vor u)</td></tr>
+      <tr><td>L</td><td>$u=L\frac{d}{dt}\hat i\sin\omega t=\omega L\hat i\cos\omega t$</td><td><strong>Spannung eilt vor</strong> (u 90° vor i)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout tipp"><span class="lbl">Eselsbrücke</span> „<strong>ELI</strong> the <strong>ICE</strong> man": bei der Spule (L) eilt E (Spannung) dem Strom I voraus, beim Kondensator (C) eilt I der Spannung E voraus.</div>
+</section>
+
+<!-- ============ 8.2 ============ -->
+<section id="s2">
+  <div class="eyebrow">8.2 · KENNGRÖSSEN</div>
+  <h2>Mathematische Beschreibung von Wechselgrößen</h2>
+  <p class="sub">Eine periodische Größe $y(t)=y_0+\hat y_1\sin(\omega t+\varphi)$ wird über Integrale charakterisiert.</p>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Arithmetischer Mittelwert</h4><p class="sub">Gleichanteil über eine Periode.</p>$$\bar y=\frac1T\int_{t_0}^{t_0+T}y(t)\,dt$$</div>
+    <div class="panelbox"><h4>Gleichrichtwert</h4><p class="sub">Mittelwert des Betrags.</p>$$\overline{|y|}=\frac1T\int_{t_0}^{t_0+T}|y(t)|\,dt$$</div>
+  </div>
+  <div class="panelbox"><h4>Effektivwert (RMS)</h4><p class="sub">Erzeugt an ohmschem Verbraucher dieselbe Leistung wie eine gleich große Gleichgröße.</p>
+    $$Y_\text{eff}=\sqrt{\frac1T\int_{t_0}^{t_0+T}y(t)^2\,dt}$$
+  </div>
+
+  <div class="callout herleitung">
+    <span class="lbl">Herleitung — RMS des reinen Sinus</span>
+    $$U_\text{eff}^2=\frac{\hat u^2}{T}\int_0^T\sin^2(\omega t)\,dt=\frac{\hat u^2}{T}\Big[\frac{t}{2}-\frac{\sin 2\omega t}{4\omega}\Big]_0^T=\frac{\hat u^2}{T}\cdot\frac{T}{2}=\frac{\hat u^2}{2}$$
+    $$\Rightarrow\ \boxed{U_\text{eff}=\frac{\hat u}{\sqrt2}}$$
+  </div>
+
+  <div class="callout merke"><span class="lbl">Merke — nur für reinen Sinus!</span>
+    $\hat u/\sqrt2$ gilt <strong>ausschließlich</strong> für die reine Sinusform. Für Dreieck, Sägezahn, Trapez usw. immer über das Integral rechnen. Kennwerte: <span class="kbd">Formfaktor $=Y_\text{eff}/\overline{|y|}$</span> · <span class="kbd">Scheitelfaktor $=\hat y/Y_\text{eff}$</span>.
+  </div>
+
+  <div class="callout beispiel">
+    <span class="lbl">Beispiel — Überlagerung DC + AC (16. RÜ, A1)</span>
+    <p style="margin:4px 0">Gleichstrom $I_0=3\,\mathrm A$ und Wechselstrom $\hat I_1=3\,\mathrm A$. Gleich- und Wechselanteil sind orthogonal, daher quadratisch addieren:</p>
+    $$I_\text{eff}=\sqrt{I_0^2+\Big(\tfrac{\hat I_1}{\sqrt2}\Big)^2}=\sqrt{9+4{,}5}=\sqrt{13{,}5}\approx 3{,}67\,\mathrm A$$
+  </div>
+</section>
+
+<!-- ============ 8.3 ============ -->
+<section id="s3">
+  <div class="eyebrow">8.3 · RECHENWERKZEUG</div>
+  <h2>Komplexe Zahlen</h2>
+  <p class="sub">Die drei Darstellungsformen und wann welche am schnellsten ist.</p>
+
+  <div class="tblwrap"><table>
+    <thead><tr><th>Form</th><th>Darstellung</th><th>am besten für</th></tr></thead>
+    <tbody>
+      <tr><td>Arithmetisch (Normalform)</td><td>$\underline a=a_r+j\,a_i$</td><td>Addition / Subtraktion</td></tr>
+      <tr><td>Trigonometrisch</td><td>$\underline a=|\underline a|\big(\cos\varphi+j\sin\varphi\big)$</td><td>Verständnis / Zeiger</td></tr>
+      <tr><td>Exponential (Polar)</td><td>$\underline a=|\underline a|\,e^{j\varphi}$</td><td>Multiplikation / Division / Potenz</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Betrag &amp; Winkel</h4>
+      $$|\underline a|=\sqrt{a_r^2+a_i^2}\qquad \varphi=\arctan\!\frac{a_i}{a_r}$$
+      <p class="sub" style="margin-top:8px">⚠ Quadrant beachten! Bei $a_r<0$ ± 180° korrigieren.</p>
+    </div>
+    <div class="panelbox"><h4>Konjugiert komplex</h4>
+      $$\underline a^\ast=a_r-j\,a_i=|\underline a|\,e^{-j\varphi}$$
+      <p class="sub" style="margin-top:8px">Vorzeichenwechsel nur des Imaginärteils — zentral für die Leistung $\underline S=\underline U\,\underline I^\ast$.</p>
+    </div>
+  </div>
+
+  <div class="callout herleitung"><span class="lbl">Rechenregeln</span>
+    $$\underline a+\underline b=(a_r+b_r)+j(a_i+b_i)$$
+    $$\underline a\cdot\underline b=|\underline a||\underline b|\,e^{j(\varphi_a+\varphi_b)}\qquad \frac{\underline a}{\underline b}=\frac{|\underline a|}{|\underline b|}\,e^{j(\varphi_a-\varphi_b)}$$
+    <p style="margin:8px 0 0">In Normalform dividieren: mit dem <strong>konjugiert komplexen Nenner erweitern</strong>.</p>
+  </div>
+
+  <div class="tblwrap"><table>
+    <thead><tr><th>Arithmetisch</th><th>Trigonometrisch</th><th>Exponential</th></tr></thead>
+    <tbody>
+      <tr><td>$1+1j$</td><td>$\sqrt2(\cos45°+j\sin45°)$</td><td>$\sqrt2\,e^{j45°}$</td></tr>
+      <tr><td>$-3-3j$</td><td>$\sqrt{18}(\cos225°+j\sin225°)$</td><td>$\sqrt{18}\,e^{j225°}$</td></tr>
+      <tr><td>$\tfrac12-\tfrac12 j$</td><td>$\tfrac{1}{\sqrt2}(\cos315°+j\sin315°)$</td><td>$\tfrac{1}{\sqrt2}\,e^{-j45°}$</td></tr>
+      <tr><td>$-1$</td><td>$1(\cos180°+j\sin180°)$</td><td>$1\cdot e^{j\pi}$</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ 8.4 ============ -->
+<section id="s4">
+  <div class="eyebrow amber">8.4 · HERLEITUNG „KÖNNEN!"</div>
+  <h2>Komplexer Wechselstromwiderstand</h2>
+  <p class="sub">Impedanz &amp; Admittanz — plus die vom Prof ausdrücklich verlangte Herleitung von $X_C$ und $X_L$.</p>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Impedanz $\underline Z=\underline U/\underline I$</h4>
+      <ul class="clean">
+        <li>$|\underline Z|$ — Scheinwiderstand</li>
+        <li>$\varphi$ — Phasenverschiebung</li>
+        <li>$R=\mathrm{Re}\{\underline Z\}$ — Wirkwiderstand (Resistanz)</li>
+        <li>$X=\mathrm{Im}\{\underline Z\}$ — Blindwiderstand (Reaktanz)</li>
+      </ul>
+      $$\underline Z=R+jX$$
+    </div>
+    <div class="panelbox"><h4>Admittanz $\underline Y=\underline I/\underline U=1/\underline Z$</h4>
+      <ul class="clean">
+        <li>$|\underline Y|$ — Scheinleitwert</li>
+        <li>$\varphi$ — Phasenverschiebung</li>
+        <li>$G=\mathrm{Re}\{\underline Y\}$ — Wirkleitwert (Konduktanz)</li>
+        <li>$B=\mathrm{Im}\{\underline Y\}$ — Blindleitwert (Suszeptanz)</li>
+      </ul>
+      $$\underline Y=G+jB$$
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="callout herleitung"><span class="lbl">Herleitung $X_C=\dfrac{1}{\omega C}$</span>
+      $$\underline u(t)=\hat u\,e^{j\omega t}$$
+      $$\underline i=C\frac{d\underline u}{dt}=C\cdot j\omega\,\hat u e^{j\omega t}=j\omega C\,\underline u$$
+      $$\Rightarrow\ \underline Z_C=\frac{\underline u}{\underline i}=\frac{1}{j\omega C}=-j\frac{1}{\omega C}$$
+      $$\boxed{\underline Z_C=\frac{1}{j\omega C}=-jX_C}$$
+    </div>
+    <div class="callout herleitung"><span class="lbl">Herleitung $X_L=\omega L$</span>
+      $$\underline i(t)=\hat i\,e^{j\omega t}$$
+      $$\underline u=L\frac{d\underline i}{dt}=L\cdot j\omega\,\hat i e^{j\omega t}=j\omega L\,\underline i$$
+      $$\Rightarrow\ \underline Z_L=\frac{\underline u}{\underline i}=j\omega L$$
+      $$\boxed{\underline Z_L=j\omega L=+jX_L}$$
+    </div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 720 220" role="img" aria-label="Zeigerbilder für R, C und L">
+      <!-- R -->
+      <g transform="translate(30,20)">
+        <text x="90" y="0" fill="#34d3bd" class="svglabel" text-anchor="middle">ohmsch: R = U/I</text>
+        <line x1="0" y1="120" x2="180" y2="120" stroke="#3a4655" stroke-width="1"/>
+        <line x1="20" y1="30" x2="20" y2="200" stroke="#3a4655" stroke-width="1"/>
+        <line x1="20" y1="120" x2="150" y2="120" stroke="#f0b429" stroke-width="3" marker-end="url(#ah)"/>
+        <line x1="20" y1="120" x2="120" y2="120" stroke="#5aa0ff" stroke-width="3" marker-end="url(#ab)" transform="translate(0,6)"/>
+        <text x="150" y="112" fill="#f0b429" class="svglabel">I</text>
+        <text x="120" y="146" fill="#5aa0ff" class="svglabel">U</text>
+      </g>
+      <!-- C -->
+      <g transform="translate(260,20)">
+        <text x="90" y="0" fill="#34d3bd" class="svglabel" text-anchor="middle">Kapazität: Z_C = −jX_C</text>
+        <line x1="0" y1="120" x2="180" y2="120" stroke="#3a4655" stroke-width="1"/>
+        <line x1="70" y1="30" x2="70" y2="200" stroke="#3a4655" stroke-width="1"/>
+        <line x1="70" y1="120" x2="150" y2="120" stroke="#f0b429" stroke-width="3" marker-end="url(#ah)"/>
+        <line x1="70" y1="120" x2="70" y2="190" stroke="#5aa0ff" stroke-width="3" marker-end="url(#ab)"/>
+        <text x="150" y="112" fill="#f0b429" class="svglabel">I</text>
+        <text x="76" y="188" fill="#5aa0ff" class="svglabel">U</text>
+        <text x="10" y="205" fill="#8c99a8" class="svglabel" font-size="10">I eilt 90° vor</text>
+      </g>
+      <!-- L -->
+      <g transform="translate(490,20)">
+        <text x="90" y="0" fill="#34d3bd" class="svglabel" text-anchor="middle">Induktivität: Z_L = +jX_L</text>
+        <line x1="0" y1="120" x2="180" y2="120" stroke="#3a4655" stroke-width="1"/>
+        <line x1="70" y1="30" x2="70" y2="200" stroke="#3a4655" stroke-width="1"/>
+        <line x1="70" y1="120" x2="150" y2="120" stroke="#f0b429" stroke-width="3" marker-end="url(#ah)"/>
+        <line x1="70" y1="120" x2="70" y2="50" stroke="#5aa0ff" stroke-width="3" marker-end="url(#ab)"/>
+        <text x="150" y="112" fill="#f0b429" class="svglabel">I</text>
+        <text x="76" y="52" fill="#5aa0ff" class="svglabel">U</text>
+        <text x="10" y="205" fill="#8c99a8" class="svglabel" font-size="10">U eilt 90° vor</text>
+      </g>
+      <defs>
+        <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#f0b429"/></marker>
+        <marker id="ab" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#5aa0ff"/></marker>
+      </defs>
+    </svg>
+    <figcaption>Zeigerbilder — <span style="color:#f0b429">Strom I</span> und <span style="color:#5aa0ff">Spannung U</span> je Element</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 8.5 ============ -->
+<section id="s5">
+  <div class="eyebrow amber">8.5 · HAUPTAUGENMERK ★</div>
+  <h2>Leistungsberechnung</h2>
+  <p class="sub">Momentan-, Wirk-, Blind- und Scheinleistung sowie die komplexe Leistung und Blindleistungskompensation.</p>
+
+  <div class="callout herleitung"><span class="lbl">Momentanleistung</span>
+    $$p(t)=UI\cos\varphi\big[1-\cos(2(\omega t+\varphi_u))\big]-UI\sin\varphi\,\sin(2(\omega t+\varphi_u))$$
+    <p style="margin:8px 0 0">Der erste Term pendelt um den Mittelwert $P=UI\cos\varphi$ (Wirkleistung), der zweite Term mittelt sich zu Null und beschreibt die pendelnde Blindleistung.</p>
+  </div>
+
+  <div class="tblwrap"><table>
+    <thead><tr><th>Größe</th><th>Formel</th><th>Einheit</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Wirkleistung P</strong></td><td>$P=UI\cos\varphi=\mathrm{Re}\{\underline U\,\underline I^\ast\}$</td><td>W</td></tr>
+      <tr><td><strong>Blindleistung Q</strong></td><td>$Q=UI\sin\varphi=\mathrm{Im}\{\underline U\,\underline I^\ast\}$</td><td>var</td></tr>
+      <tr><td><strong>Scheinleistung S</strong></td><td>$\underline S=\underline U\,\underline I^\ast=P+jQ,\quad |\underline S|=UI$</td><td>VA</td></tr>
+      <tr><td><strong>Leistungsfaktor λ</strong></td><td>$\lambda=\dfrac{P}{S}=\cos\varphi$</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub"><strong>Wichtig:</strong> $U,I$ sind hier stets <em>Effektivwerte</em>. Das Leistungsdreieck $S^2=P^2+Q^2$ ist ein rechtwinkliges Dreieck.</p>
+
+  <div class="grid2">
+    <div>
+      <figure>
+        <svg viewBox="0 0 300 200" role="img" aria-label="Leistungsdreieck">
+          <line x1="30" y1="170" x2="280" y2="170" stroke="#3a4655"/>
+          <line x1="30" y1="30" x2="30" y2="170" stroke="#3a4655"/>
+          <line x1="30" y1="170" x2="210" y2="170" stroke="#5aa0ff" stroke-width="4" marker-end="url(#p1)"/>
+          <line x1="210" y1="170" x2="210" y2="70" stroke="#f0b429" stroke-width="4" marker-end="url(#p2)"/>
+          <line x1="30" y1="170" x2="210" y2="70" stroke="#ff6b7d" stroke-width="4" marker-end="url(#p3)"/>
+          <text x="120" y="188" fill="#5aa0ff" class="svglabel">P (W)</text>
+          <text x="216" y="125" fill="#f0b429" class="svglabel">Q (var)</text>
+          <text x="95" y="112" fill="#ff6b7d" class="svglabel">S (VA)</text>
+          <path d="M 60 170 A 30 30 0 0 0 55 150" fill="none" stroke="#8c99a8"/>
+          <text x="63" y="158" fill="#8c99a8" class="svglabel" font-size="11">φ</text>
+          <defs>
+            <marker id="p1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#5aa0ff"/></marker>
+            <marker id="p2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#f0b429"/></marker>
+            <marker id="p3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#ff6b7d"/></marker>
+          </defs>
+        </svg>
+        <figcaption>Leistungsdreieck in der komplexen Ebene</figcaption>
+      </figure>
+    </div>
+    <div class="callout merke"><span class="lbl">Vorzeichen (Verbraucherzählpfeilsystem)</span>
+      <ul class="clean" style="margin:4px 0">
+        <li>$P>0$: Verbraucher · $P<0$: Erzeuger</li>
+        <li>$Q>0$: induktiv (Spule) · $Q<0$: kapazitiv (Kondensator)</li>
+        <li>Quadranten der $\underline S$-Ebene: <strong>1,4 = Verbraucherseite</strong>, <strong>2,3 = Erzeugerseite</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout beispiel"><span class="lbl">Beispiel — komplexe Leistung (Tut 6/7)</span>
+    $$\underline U=(5+10j)\,\mathrm V,\quad \underline I=(1-2j)\,\mathrm A,\quad \underline I^\ast=(1+2j)\,\mathrm A$$
+    $$\underline S=\underline U\,\underline I^\ast=(5+10j)(1+2j)=5+10j+10j-20=(-15+20j)\,\mathrm{VA}$$
+    $$\Rightarrow\ P=-15\,\mathrm W\ (\text{Erzeuger}),\quad Q=+20\,\mathrm{var}\ (\text{induktiv})$$
+  </div>
+
+  <h3>Blindleistungskompensation</h3>
+  <p class="sub">Ein parallelgeschalteter Kondensator liefert Blindleistung und entlastet so Leitungen, Trafos &amp; Schaltanlagen; er verbessert $\cos\varphi$ und senkt die Netzverluste.</p>
+  <div class="formel amber">
+    $$Q_C=P\left(\tan\varphi_1-\tan\varphi_2\right)\qquad\Rightarrow\qquad C=\frac{P\left(\tan\varphi_1-\tan\varphi_2\right)}{\omega\,U^2}$$
+  </div>
+  <p class="sub">$\varphi_1$ = Phasenwinkel <em>vor</em>, $\varphi_2$ = <em>nach</em> der Kompensation. Vollkompensation auf $\cos\varphi=1$ heißt $\varphi_2=0 \Rightarrow \tan\varphi_2=0$.</p>
+</section>
+
+<!-- ============ 8.6 ============ -->
+<section id="s6">
+  <div class="eyebrow amber">8.6 · HAUPTAUGENMERK ★</div>
+  <h2>Ortskurven, Amplituden- &amp; Phasengang</h2>
+  <p class="sub">Der <strong>Frequenzgang</strong> beschreibt, wie ein System auf verschiedene Frequenzen reagiert — dargestellt über Amplituden- und Phasenänderung in Abhängigkeit von $\omega$.</p>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Ortskurve</h4>
+      <p class="sub">Bahn der Zeigerspitze von z.&nbsp;B. $\underline Z(\omega)$ in der komplexen Ebene, wenn $\omega$ von $0\to\infty$ läuft.</p>
+      $$\underline Z(\omega)=R+j\!\left(\omega L-\frac{1}{\omega C}\right)$$
+    </div>
+    <div class="panelbox"><h4>Amplituden- &amp; Phasengang</h4>
+      <p class="sub">Getrennte Auftragung über der Frequenz.</p>
+      $$|\underline Z(\omega)|=\sqrt{R^2+\!\left(\omega L-\frac{1}{\omega C}\right)^{\!2}}$$
+      $$\varphi(\omega)=\arctan\!\frac{\omega L-\frac{1}{\omega C}}{R}$$
+    </div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 720 260" role="img" aria-label="Ortskurve und Bode-Diagramm">
+      <!-- Ortskurve: vertical line at Re=R -->
+      <g transform="translate(20,15)">
+        <text x="150" y="0" fill="#34d3bd" class="svglabel" text-anchor="middle">Ortskurve Z (Reihe)</text>
+        <line x1="20" y1="120" x2="300" y2="120" stroke="#3a4655"/>
+        <line x1="20" y1="20" x2="20" y2="230" stroke="#3a4655"/>
+        <text x="298" y="112" fill="#8c99a8" class="svglabel">Re</text>
+        <text x="26" y="28" fill="#8c99a8" class="svglabel">Im</text>
+        <line x1="150" y1="30" x2="150" y2="220" stroke="#34d3bd" stroke-width="3"/>
+        <line x1="20" y1="120" x2="150" y2="120" stroke="#7bd88f" stroke-width="2" marker-end="url(#o1)"/>
+        <text x="120" y="138" fill="#7bd88f" class="svglabel">R</text>
+        <circle cx="150" cy="120" r="4" fill="#f0b429"/>
+        <text x="158" y="118" fill="#f0b429" class="svglabel" font-size="11">ω₀</text>
+        <text x="156" y="46" fill="#8c99a8" class="svglabel" font-size="10">ω→∞ (ind.)</text>
+        <text x="156" y="212" fill="#8c99a8" class="svglabel" font-size="10">ω→0 (kap.)</text>
+      </g>
+      <!-- Bode magnitude -->
+      <g transform="translate(400,15)">
+        <text x="150" y="0" fill="#34d3bd" class="svglabel" text-anchor="middle">Bode |Z| &amp; φ (log ω)</text>
+        <line x1="20" y1="120" x2="300" y2="120" stroke="#3a4655"/>
+        <line x1="20" y1="20" x2="20" y2="120" stroke="#3a4655"/>
+        <path d="M20,40 Q120,110 160,112 Q200,110 300,40" fill="none" stroke="#5aa0ff" stroke-width="3"/>
+        <text x="26" y="34" fill="#5aa0ff" class="svglabel" font-size="11">|Z|dB</text>
+        <circle cx="160" cy="112" r="3.5" fill="#f0b429"/>
+        <!-- phase -->
+        <line x1="20" y1="230" x2="300" y2="230" stroke="#3a4655"/>
+        <line x1="20" y1="145" x2="20" y2="230" stroke="#3a4655"/>
+        <path d="M20,152 Q120,155 160,187 Q200,220 300,222" fill="none" stroke="#ff9d54" stroke-width="3"/>
+        <text x="26" y="158" fill="#ff9d54" class="svglabel" font-size="11">φ(ω)</text>
+        <line x1="20" y1="187" x2="300" y2="187" stroke="#3a4655" stroke-dasharray="3 3"/>
+        <text x="250" y="182" fill="#8c99a8" class="svglabel" font-size="9">0°</text>
+      </g>
+      <defs><marker id="o1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#7bd88f"/></marker></defs>
+    </svg>
+    <figcaption>Reihenschwingkreis: Ortskurve = <span style="color:#34d3bd">Senkrechte bei Re = R</span>; Bode = <span style="color:#5aa0ff">Betrag</span> mit Minimum &amp; <span style="color:#ff9d54">Phasennulldurchgang</span> bei $\omega_0$</figcaption>
+  </figure>
+
+  <div class="callout tipp"><span class="lbl">Bode-Diagramm — Konventionen</span>
+    Logarithmische Frequenzachse. Betrag in Dezibel: $|H|_\text{dB}=20\log_{10}|H|$. Phase in Grad. Minimum von $|\underline Z|$ und Phasennulldurchgang liegen beim Reihenschwingkreis genau bei der Resonanzfrequenz $\omega_0$.
+  </div>
+
+  <h3>Graphisches Invertieren einer Ortskurve (Tut 6)</h3>
+  <p class="sub">Aus $\underline Z(\omega)$ die Ortskurve $\underline Y=1/\underline Z$ konstruieren — eine Gerade wird zum Kreis (und umgekehrt).</p>
+  <ol class="steps">
+    <li>Einheitskreis mit $r=1$ zeichnen.</li>
+    <li>Tangenten von der Zeigerspitze an den Einheitskreis legen.</li>
+    <li>Berührungspunkte verbinden.</li>
+    <li>Am Schnittpunkt die konjugiert komplexe Admittanz $\underline Y^\ast$ eintragen.</li>
+    <li>An der reellen Achse spiegeln → ergibt $\underline Y$.</li>
+  </ol>
+  <div class="callout beispiel"><span class="lbl">Beispiel — Invertieren (arithmetisch &amp; polar)</span>
+    $$\underline Z=(3+j2)\,\Omega=\sqrt{13}\,e^{\,j\arctan(2/3)}\,\Omega$$
+    $$\underline Y=\frac{1}{\underline Z}=\frac{3-j2}{(3+j2)(3-j2)}=\frac{3-j2}{13}=\Big(\tfrac{3}{13}-j\tfrac{2}{13}\Big)\mathrm S=\frac{1}{\sqrt{13}}\,e^{-j\arctan(2/3)}\,\mathrm S$$
+  </div>
+</section>
+
+<!-- ============ 8.7 ============ -->
+<section id="s7">
+  <div class="eyebrow">8.7 · RESONANZ</div>
+  <h2>Schwingkreise</h2>
+  <p class="sub">Bauteile L, C, R; Energie pendelt zwischen den Speichern. Der ideale Kreis (ohne R) ist real nicht möglich.</p>
+
+  <div class="tblwrap"><table>
+    <thead><tr><th></th><th>Reihenschwingkreis (R, L, C in Reihe)</th><th>Parallelschwingkreis (R, L, C parallel)</th></tr></thead>
+    <tbody>
+      <tr><td>komplex</td><td>$\underline Z=R+j\!\left(\omega L-\frac{1}{\omega C}\right)$</td><td>$\underline Y=G+j\!\left(\omega C-\frac{1}{\omega L}\right)$</td></tr>
+      <tr><td>Betrag</td><td>$|\underline Z|=\sqrt{R^2+\left(\omega L-\frac{1}{\omega C}\right)^2}$</td><td>$|\underline Y|=\sqrt{G^2+\left(\omega C-\frac{1}{\omega L}\right)^2}$</td></tr>
+      <tr><td>Phase</td><td>$\varphi_Z=\arctan\frac{\omega L-\frac{1}{\omega C}}{R}$</td><td>$\varphi_Y=\arctan\frac{\omega C-\frac{1}{\omega L}}{G}$</td></tr>
+      <tr><td>Resonanz</td><td>$\mathrm{Im}\{\underline Z\}=0$: $|\underline Z|$ minimal, Strom max.</td><td>$\mathrm{Im}\{\underline Y\}=0$: $|\underline Z|$ maximal, Strom min.</td></tr>
+      <tr><td>Verhalten</td><td>ohmsch bei $\omega_0$ (Ortskurve: Senkrechte)</td><td>ohmsch bei $\omega_0$ (Ortskurve: Kreis)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub" style="text-align:center">Dualität: $\displaystyle |\underline Z|=\frac{1}{|\underline Y|}\qquad \varphi_Z=-\varphi_Y$</p>
+
+  <div class="callout herleitung"><span class="lbl">Herleitung — Resonanzfrequenz (Thomson)</span>
+    Resonanzbedingung: Imaginärteil = 0.
+    $$\omega_0 L=\frac{1}{\omega_0 C}\ \Rightarrow\ \omega_0^2 LC=1\ \Rightarrow\ \boxed{\omega_0=\frac{1}{\sqrt{LC}}}\qquad f_0=\frac{1}{2\pi\sqrt{LC}}$$
+    <p style="margin:8px 0 0">Gilt für Reihen- <em>und</em> Parallelkreis (idealisiert).</p>
+  </div>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Güte Q — Reihenkreis</h4>
+      $$Q=\frac{\omega_0 L}{R}=\frac{1}{\omega_0 R C}=\frac1R\sqrt{\frac{L}{C}}$$
+      <p class="sub">Resonanzüberhöhung: $U_C=U_L=Q\cdot U_q$.</p>
+    </div>
+    <div class="panelbox"><h4>Güte Q — Parallelkreis</h4>
+      $$Q=\frac{R_p}{\omega_0 L}=\omega_0 R_p C=R_p\sqrt{\frac{C}{L}}$$
+      <p class="sub">Bandbreite: $B=\dfrac{f_0}{Q}$ (zwischen den −3-dB-Punkten).</p>
+    </div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 620 210" role="img" aria-label="Ortskurven Reihen- und Parallelkreis">
+      <g transform="translate(20,15)">
+        <text x="140" y="0" fill="#34d3bd" class="svglabel" text-anchor="middle">Reihenkreis: Z</text>
+        <line x1="20" y1="100" x2="270" y2="100" stroke="#3a4655"/><line x1="20" y1="15" x2="20" y2="185" stroke="#3a4655"/>
+        <line x1="140" y1="20" x2="140" y2="180" stroke="#34d3bd" stroke-width="3"/>
+        <circle cx="140" cy="100" r="4" fill="#f0b429"/><text x="147" y="96" fill="#f0b429" class="svglabel" font-size="11">ω₀</text>
+        <text x="266" y="93" fill="#8c99a8" class="svglabel">Re</text>
+      </g>
+      <g transform="translate(330,15)">
+        <text x="140" y="0" fill="#34d3bd" class="svglabel" text-anchor="middle">Parallelkreis: Y</text>
+        <line x1="20" y1="100" x2="270" y2="100" stroke="#3a4655"/><line x1="20" y1="15" x2="20" y2="185" stroke="#3a4655"/>
+        <circle cx="130" cy="100" r="70" fill="none" stroke="#34d3bd" stroke-width="3"/>
+        <circle cx="200" cy="100" r="4" fill="#f0b429"/><text x="205" y="94" fill="#f0b429" class="svglabel" font-size="11">ω₀ (G)</text>
+        <text x="266" y="93" fill="#8c99a8" class="svglabel">Re</text>
+      </g>
+    </svg>
+    <figcaption>Ortskurven bei Resonanz — Gerade ⇄ Kreis (Inversion)</figcaption>
+  </figure>
+
+  <div class="callout beispiel"><span class="lbl">Beispiel — Reihenresonanz (20. RÜ, A3)</span>
+    <p style="margin:4px 0">$U_q=230\,\mathrm V$, $f_r=60\,\mathrm{Hz}$, $U_{Cr}=3{,}5\,\mathrm{kV}$, $L=80\,\mathrm H$.</p>
+    $$Q=\frac{U_{Cr}}{U_q}=\frac{3500}{230}\approx 15{,}2\qquad C=\frac{1}{\omega_0^2 L}=\frac{1}{(2\pi\cdot60)^2\cdot80}\approx 87{,}9\,\mathrm{nF}$$
+    $$I_r=U_{Cr}\,\omega_0 C\approx 0{,}116\,\mathrm A$$
+  </div>
+</section>
+
+<!-- ============ 8.8 ============ -->
+<section id="s8">
+  <div class="eyebrow amber">8.8 · HAUPTAUGENMERK ★</div>
+  <h2>Mehrphasensysteme — Stern ⇄ Dreieck</h2>
+  <p class="sub">Der Kern: Zusammenhang zwischen Leiter- und Stranggrößen und die Transformation zwischen beiden Schaltungen.</p>
+
+  <div class="tblwrap"><table>
+    <thead><tr><th></th><th>Sternschaltung (Y)</th><th>Dreieckschaltung (Δ)</th></tr></thead>
+    <tbody>
+      <tr><td>Spannungen</td><td><strong>unterschiedlich:</strong> $U_{LL}=\sqrt3\,U_{St}$</td><td><strong>gleich groß:</strong> $U_{LL}=U_{St}$</td></tr>
+      <tr><td>Ströme</td><td><strong>gleich groß:</strong> $I_L=I_{St}$</td><td><strong>unterschiedlich:</strong> $I_L=\sqrt3\,I_{St}$</td></tr>
+      <tr><td>Merksatz</td><td class="c">Strangspannung „klein", Strom = Leiterstrom</td><td class="c">Strangspannung = Leiterspannung, Strom „aufgeteilt"</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div class="callout herleitung"><span class="lbl">Herleitung √3 — Stern (Spannungen)</span>
+      <p style="margin:4px 0">Aus dem gleichseitigen Spannungsdreieck (30°-Winkel):</p>
+      $$\cos 30°=\frac{\sqrt3}{2}=\frac{\tfrac12\,U_{LL}}{U_{St}}\ \Rightarrow\ \boxed{U_{LL}=\sqrt3\,U_{St}}$$
+    </div>
+    <div class="callout herleitung"><span class="lbl">Herleitung √3 — Dreieck (Ströme)</span>
+      <p style="margin:4px 0">Analog aus dem Stromdreieck:</p>
+      $$\cos 30°=\frac{\sqrt3}{2}=\frac{\tfrac12\,I_{L}}{I_{St}}\ \Rightarrow\ \boxed{I_{L}=\sqrt3\,I_{St}}$$
+    </div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 680 260" role="img" aria-label="Stern- und Dreieckschaltung mit Zeigerdiagrammen">
+      <!-- Stern schematic -->
+      <g transform="translate(20,20)" stroke-width="2" fill="none">
+        <text x="90" y="-4" fill="#34d3bd" class="svglabel" text-anchor="middle" stroke="none">Stern (Y)</text>
+        <circle cx="90" cy="120" r="4" fill="#8c99a8" stroke="none"/>
+        <line x1="90" y1="120" x2="90" y2="60" stroke="#5aa0ff"/><rect x="82" y="40" width="16" height="22" stroke="#5aa0ff"/><line x1="90" y1="40" x2="90" y2="20" stroke="#5aa0ff"/><text x="70" y="16" fill="#5aa0ff" class="svglabel" stroke="none">L1</text>
+        <line x1="90" y1="120" x2="40" y2="170" stroke="#5aa0ff"/><rect x="20" y="168" width="22" height="16" stroke="#5aa0ff" transform="rotate(45 31 176)"/><text x="8" y="196" fill="#5aa0ff" class="svglabel" stroke="none">L2</text>
+        <line x1="90" y1="120" x2="140" y2="170" stroke="#5aa0ff"/><rect x="138" y="168" width="22" height="16" stroke="#5aa0ff" transform="rotate(-45 149 176)"/><text x="150" y="196" fill="#5aa0ff" class="svglabel" stroke="none">L3</text>
+        <text x="96" y="90" fill="#7bd88f" class="svglabel" stroke="none">N</text>
+      </g>
+      <!-- Stern phasor -->
+      <g transform="translate(230,20)" stroke-width="2.5" fill="none">
+        <text x="70" y="-4" fill="#f0b429" class="svglabel" text-anchor="middle" stroke="none">U_LL = √3·U_St</text>
+        <line x1="70" y1="120" x2="70" y2="50" stroke="#f0b429" marker-end="url(#m1)"/>
+        <line x1="70" y1="120" x2="10" y2="165" stroke="#f0b429" marker-end="url(#m1)"/>
+        <line x1="70" y1="120" x2="130" y2="165" stroke="#f0b429" marker-end="url(#m1)"/>
+        <line x1="10" y1="165" x2="130" y2="165" stroke="#34d3bd" stroke-dasharray="4 3"/>
+        <text x="60" y="185" fill="#34d3bd" class="svglabel" stroke="none">U₁₂</text>
+      </g>
+      <!-- Dreieck schematic -->
+      <g transform="translate(390,20)" stroke-width="2" fill="none">
+        <text x="90" y="-4" fill="#34d3bd" class="svglabel" text-anchor="middle" stroke="none">Dreieck (Δ)</text>
+        <polygon points="90,40 40,150 140,150" stroke="#5aa0ff"/>
+        <text x="86" y="34" fill="#5aa0ff" class="svglabel" stroke="none">1</text>
+        <text x="24" y="158" fill="#5aa0ff" class="svglabel" stroke="none">2</text>
+        <text x="146" y="158" fill="#5aa0ff" class="svglabel" stroke="none">3</text>
+        <text x="55" y="95" fill="#f0b429" class="svglabel" stroke="none">Z₁₂</text>
+      </g>
+      <!-- Dreieck phasor (currents) -->
+      <g transform="translate(560,20)" stroke-width="2.5" fill="none">
+        <text x="55" y="-4" fill="#ff6b7d" class="svglabel" text-anchor="middle" stroke="none">I_L = √3·I_St</text>
+        <line x1="10" y1="150" x2="60" y2="60" stroke="#ff6b7d" marker-end="url(#m2)"/>
+        <line x1="60" y1="60" x2="110" y2="150" stroke="#ff6b7d" marker-end="url(#m2)"/>
+        <line x1="10" y1="150" x2="110" y2="150" stroke="#f0b429" stroke-width="3" marker-end="url(#m1)"/>
+        <text x="45" y="168" fill="#f0b429" class="svglabel" stroke="none">I₁</text>
+      </g>
+      <defs>
+        <marker id="m1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f0b429"/></marker>
+        <marker id="m2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ff6b7d"/></marker>
+      </defs>
+    </svg>
+    <figcaption>Stern: <span style="color:#f0b429">Strangspannungen</span> bilden über 30° die <span style="color:#34d3bd">Leiterspannung</span>. Dreieck: <span style="color:#ff6b7d">Strangströme</span> bilden den <span style="color:#f0b429">Leiterstrom</span>.</figcaption>
+  </figure>
+
+  <h3>Stern-Dreieck-Transformation der Impedanzen</h3>
+  <div class="callout merke"><span class="lbl">Symmetrischer Fall (wichtigste Formel)</span>
+    $$\boxed{\underline Z_\Delta=3\,\underline Z_Y}$$
+    Ein Dreieck zieht bei gleichen Bauteilen die dreifache Leistung eines Sterns — Grundlage der Stern-Dreieck-Anlaufschaltung.
+  </div>
+  <div class="grid2">
+    <div class="panelbox"><h4>Δ → Y (allgemein)</h4>
+      $$\underline Z_1=\frac{\underline Z_{12}\,\underline Z_{31}}{\underline Z_{12}+\underline Z_{23}+\underline Z_{31}}$$
+      <p class="sub">(zyklisch für $\underline Z_2,\underline Z_3$)</p>
+    </div>
+    <div class="panelbox"><h4>Y → Δ (allgemein)</h4>
+      $$\underline Z_{12}=\frac{\underline Z_1\underline Z_2+\underline Z_2\underline Z_3+\underline Z_3\underline Z_1}{\underline Z_3}$$
+      <p class="sub">(zyklisch für $\underline Z_{23},\underline Z_{31}$)</p>
+    </div>
+  </div>
+
+  <div class="callout beispiel"><span class="lbl">Beispiel — Heizwiderstände (23. RÜ, A1)</span>
+    <p style="margin:4px 0">$U_{LL}=400\,\mathrm V$, $R=20\,\Omega$ je Strang.</p>
+    <div class="tblwrap" style="margin:8px 0"><table>
+      <thead><tr><th></th><th>Stern (Y)</th><th>Dreieck (Δ)</th></tr></thead>
+      <tbody>
+        <tr><td>$U_{St}$</td><td>$400/\sqrt3=231\,\mathrm V$</td><td>$400\,\mathrm V$</td></tr>
+        <tr><td>$I_L$</td><td>$231/20=11{,}5\,\mathrm A$</td><td>$\sqrt3\cdot20=34{,}6\,\mathrm A$</td></tr>
+        <tr><td>$P$</td><td>$3\,\frac{231^2}{20}=8\,\mathrm{kW}$</td><td>$3\,\frac{400^2}{20}=24\,\mathrm{kW}$</td></tr>
+      </tbody>
+    </table></div>
+    <p style="margin:4px 0">$\Rightarrow P_\Delta=3\,P_Y$ ✓</p>
+  </div>
+</section>
+
+<!-- ============ 8.8.1 ============ -->
+<section id="s9">
+  <div class="eyebrow amber">8.8.1 · HAUPTAUGENMERK ★</div>
+  <h2>Leistung im Drehstromsystem</h2>
+
+  <div class="callout merke"><span class="lbl">Symmetrische Last — die Formeln zum Auswendigkönnen</span>
+    $$P=3\,U_{St}I_{St}\cos\varphi=\sqrt3\,U_{LL}I_{L}\cos\varphi$$
+    $$Q=3\,U_{St}I_{St}\sin\varphi=\sqrt3\,U_{LL}I_{L}\sin\varphi$$
+    $$S=3\,U_{St}I_{St}=\sqrt3\,U_{LL}I_{L}$$
+    <p style="margin:8px 0 0">Die $\sqrt3$-Form ist mit <em>Leitergrößen</em> gerechnet — praktisch, weil man Leiterspannung &amp; -strom direkt misst.</p>
+  </div>
+
+  <h3>Unsymmetrische Last — Summe über die Stränge</h3>
+  <div class="grid2">
+    <div class="panelbox"><h4>Sternschaltung</h4>
+      $$P_Y=\sum_{k=1}^{3}\mathrm{Re}\{\underline U_{kN}\underline I_k^\ast\}=\sum U_{kN}I_k\cos\varphi_k$$
+      $$Q_Y=\sum \mathrm{Im}\{\underline U_{kN}\underline I_k^\ast\}\qquad \underline S_Y=\sum \underline U_{kN}\underline I_k^\ast$$
+    </div>
+    <div class="panelbox"><h4>Dreieckschaltung</h4>
+      $$P_\Delta=\sum\mathrm{Re}\{\underline U_{12}\underline I_{12}^\ast+\dots\}=\sum U_{ik}I_{ik}\cos\varphi_{ik}$$
+      $$Q_\Delta=\sum\mathrm{Im}\{\dots\}\qquad \underline S_\Delta=\sum \underline U_{ik}\underline I_{ik}^\ast$$
+    </div>
+  </div>
+  <div class="callout tipp"><span class="lbl">Merke</span> Bei symmetrischer Last verschwindet der Neutralleiterstrom: $\underline I_N=\underline I_1+\underline I_2+\underline I_3=0$. Ein reiner Blindverbraucher (C oder L) nimmt nur Blindleistung auf ($P=0$), z.&nbsp;B. $Q_C=-U^2\omega C$, $Q_L=+U^2/(\omega L)$.</div>
+</section>
+
+<!-- ============ 8.9 ============ -->
+<section id="s10">
+  <div class="eyebrow amber">8.9 · HAUPTAUGENMERK ★</div>
+  <h2>Fourier-Reihen</h2>
+  <p class="sub">Jede periodische Funktion als Summe von Gleichanteil + Harmonischen — plus die Spektralkenngrößen.</p>
+
+  <div class="formel"><h4 style="margin-top:0">Reelle Fourier-Reihe</h4>
+    $$f(t)=a_0+\sum_{n=1}^{N}a_n\cos(n\omega t)+\sum_{n=1}^{N}b_n\sin(n\omega t)$$
+  </div>
+
+  <div class="tblwrap"><table>
+    <thead><tr><th>Koeffizient</th><th>Formel</th><th>Bedeutung</th></tr></thead>
+    <tbody>
+      <tr><td>$a_0$</td><td>$\dfrac1T\displaystyle\int_{t_0}^{t_0+T}f(t)\,dt$</td><td>Gleichanteil (Mittelwert)</td></tr>
+      <tr><td>$a_n$</td><td>$\dfrac2T\displaystyle\int_{t_0}^{t_0+T}f(t)\cos(n\omega t)\,dt$</td><td>Cosinus-Anteil</td></tr>
+      <tr><td>$b_n$</td><td>$\dfrac2T\displaystyle\int_{t_0}^{t_0+T}f(t)\sin(n\omega t)\,dt$</td><td>Sinus-Anteil</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div class="callout tipp"><span class="lbl">Symmetrien nutzen (spart Rechnung!)</span>
+      <ul class="clean" style="margin:4px 0">
+        <li><strong>Gerade</strong> (achsensymmetrisch): $b_n=0$ → nur Cosinus.</li>
+        <li><strong>Ungerade</strong> (punktsymmetrisch): $a_n=a_0=0$ → nur Sinus.</li>
+        <li><strong>Halbwellensymmetrie:</strong> nur ungerade Harmonische ($n=1,3,5,\dots$).</li>
+      </ul>
+    </div>
+    <div class="panelbox"><h4>Amplituden-Phasen-Form</h4>
+      $$f(t)=a_0+\sum_{n=1}^{N}c_n\sin(n\omega t+\varphi_n)$$
+      $$c_n=A_n=\sqrt{a_n^2+b_n^2}\qquad \varphi_n=\arctan\frac{a_n}{b_n}$$
+    </div>
+  </div>
+
+  <h3>Spektralkenngrößen</h3>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Kenngröße</th><th>Formel</th><th>= Verhältnis von …</th></tr></thead>
+    <tbody>
+      <tr><td>Effektivwert Wechselanteil</td><td>$F_\sim=\sqrt{\tfrac12\sum_{n=1}^{N}A_n^2}$</td><td class="c">RMS aller Harmonischen</td></tr>
+      <tr><td>Grundschwingungsgehalt</td><td>$g=\dfrac{A_1/\sqrt2}{F_\sim}$</td><td class="c">Eff. Grundschwingung / Eff. Wechselgröße</td></tr>
+      <tr><td>Klirrfaktor (Oberschw.-gehalt)</td><td>$k=\dfrac{\sqrt{\tfrac12\sum_{n=2}^{N}A_n^2}}{F_\sim}$</td><td class="c">Eff. aller Oberwellen / Eff. Wechselgröße</td></tr>
+      <tr><td>Klirrkoeffizient</td><td>$k_n=\dfrac{A_n/\sqrt2}{F_\sim}$</td><td class="c">Eff. n-te Harmonische / Eff. Wechselgröße</td></tr>
+      <tr><td>Welligkeit</td><td>$w=\dfrac{F_\sim}{a_0}$</td><td class="c">Eff. Wechselgröße / Gleichanteil</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub" style="text-align:center">Es gilt stets $g^2+k^2=1$.</p>
+
+  <div class="callout herleitung"><span class="lbl">Herleitung — Rechteck (ungerade Funktion, ±A)</span>
+    <p style="margin:4px 0">$f(t)=A$ für $0<t<\tfrac T2$, $-A$ für $\tfrac T2<t<T$. Ungerade $\Rightarrow a_n=a_0=0$.</p>
+    $$b_n=\frac{4A}{T}\int_0^{T/2}\!\sin\!\Big(n\tfrac{2\pi}{T}t\Big)dt=\frac{2A}{\pi n}\big(1-\cos n\pi\big)=\frac{2A}{\pi n}\big(1-(-1)^n\big)$$
+    $$\Rightarrow b_n=\frac{4A}{\pi n}\ (n\ \text{ungerade}),\quad 0\ (n\ \text{gerade})$$
+    $$f(t)=\frac{4A}{\pi}\Big[\sin\omega t+\tfrac13\sin3\omega t+\tfrac15\sin5\omega t+\dots\Big]$$
+  </div>
+
+  <div class="callout beispiel"><span class="lbl">Beispiel — Spektralkenngrößen (Tut 8)</span>
+    <p style="margin:4px 0">$f(t)=6\sin\omega t+3\sin2\omega t+2\sin3\omega t+\sin4\omega t$, $a_0=0$, also $A_1{=}6,A_2{=}3,A_3{=}2,A_4{=}1$.</p>
+    $$F_\sim=\sqrt{\tfrac12(6^2+3^2+2^2+1^2)}=\sqrt{\tfrac{50}{2}}=5$$
+    $$k=\frac{\sqrt{\tfrac12(3^2+2^2+1^2)}}{5}=\frac{\sqrt7}{5}\approx0{,}53\qquad w=\frac{5}{0}=\infty\ (\text{kein DC})$$
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 620 200" role="img" aria-label="Amplitudenspektrum">
+      <g transform="translate(30,15)">
+        <text x="130" y="0" fill="#34d3bd" class="svglabel">Amplitudenspektrum |Aₙ|</text>
+        <line x1="10" y1="150" x2="290" y2="150" stroke="#3a4655"/>
+        <line x1="10" y1="20" x2="10" y2="150" stroke="#3a4655"/>
+        <line x1="60" y1="150" x2="60" y2="42" stroke="#f0b429" stroke-width="6"/><text x="52" y="168" fill="#8c99a8" class="svglabel">1</text>
+        <line x1="120" y1="150" x2="120" y2="96" stroke="#f0b429" stroke-width="6"/><text x="112" y="168" fill="#8c99a8" class="svglabel">2</text>
+        <line x1="180" y1="150" x2="180" y2="114" stroke="#f0b429" stroke-width="6"/><text x="172" y="168" fill="#8c99a8" class="svglabel">3</text>
+        <line x1="240" y1="150" x2="240" y2="132" stroke="#f0b429" stroke-width="6"/><text x="232" y="168" fill="#8c99a8" class="svglabel">4</text>
+        <text x="284" y="168" fill="#8c99a8" class="svglabel">n</text>
+      </g>
+      <g transform="translate(340,15)">
+        <text x="90" y="0" fill="#34d3bd" class="svglabel">Phasenspektrum φ(fₙ)</text>
+        <line x1="10" y1="150" x2="270" y2="150" stroke="#3a4655"/>
+        <line x1="10" y1="20" x2="10" y2="150" stroke="#3a4655"/>
+        <line x1="10" y1="60" x2="270" y2="60" stroke="#3a4655" stroke-dasharray="3 3"/><text x="220" y="55" fill="#8c99a8" class="svglabel" font-size="10">180°</text>
+        <line x1="120" y1="150" x2="120" y2="60" stroke="#ff9d54" stroke-width="6"/>
+        <line x1="240" y1="150" x2="240" y2="60" stroke="#ff9d54" stroke-width="6"/>
+        <text x="264" y="168" fill="#8c99a8" class="svglabel">n</text>
+      </g>
+    </svg>
+    <figcaption>Diskretes <span style="color:#f0b429">Betragsspektrum</span> und <span style="color:#ff9d54">Phasenspektrum</span> — jede Harmonische ein Balken</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 8.10 ============ -->
+<section id="s11">
+  <div class="eyebrow">8.10 · FELDER (ANWENDEN, NICHT AUSWENDIG)</div>
+  <h2>Berechnung inhomogener Felder</h2>
+  <p class="sub">Der Prof-Hinweis: <em>anwenden, nicht auswendig lernen</em> — die Ansätze verstehen, im Aufgabenkontext einsetzen.</p>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Greensche Funktionen</h4>
+      <p class="sub">Potential (skalar):</p>
+      $$G_\varphi(\vec r,\vec r')=\frac{1}{4\pi\varepsilon|\vec r-\vec r'|}\ \Rightarrow\ \varphi(\vec r)=\int_{V'}\rho(\vec r')\,G_\varphi\,dV'$$
+      <p class="sub">Feldstärke (vektoriell):</p>
+      $$\vec G_E=\frac{\vec r-\vec r'}{4\pi\varepsilon|\vec r-\vec r'|^3}\ \Rightarrow\ \vec E(\vec r)=\int_{V'}\rho(\vec r')\,\vec G_E\,dV'$$
+    </div>
+    <div class="panelbox"><h4>Spiegelungsmethode</h4>
+      <p class="sub">Leitende Ebene durch eine Spiegelladung ersetzen — die Randbedingung (Äquipotentialfläche) bleibt erfüllt, das Feld im Halbraum ist identisch. Standardtrick für Ladung vor Metallplatte.</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="callout herleitung"><span class="lbl">Durchflutungsgesetz (Ampère)</span>
+      $$\nabla\times\vec H=\vec J\ \xrightarrow{\text{Stokes}}\ \oint_{\partial A}\vec H\cdot d\vec s=I_\text{umschl.}$$
+      <p style="margin:6px 0 0" class="sub">Für Symmetrien (Leiter, Koaxialkabel) direkt $H$ bestimmen.</p>
+    </div>
+    <div class="callout herleitung"><span class="lbl">Biot-Savart</span>
+      $$\vec H(\vec r)=\frac{I}{4\pi}\int\frac{d\vec s\times\vec r}{|\vec r|^3}\qquad \vec B=\mu_0\vec H$$
+      <p style="margin:6px 0 0" class="sub">Feldbeitrag jedes Leiterelements — für beliebige Leitergeometrien.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Appendix Netzwerk ============ -->
+<section id="s12">
+  <div class="eyebrow">ANHANG A1 · METHODEN</div>
+  <h2>Netzwerkmethoden (aus den Rechenübungen)</h2>
+  <p class="sub">Erscheinen in vielen RÜ (Zweipoltheorie, Knotenspannung). Hinweis Prof: Aufgabe 1 „keine Netzwerkanalyse" — aber die übrigen Aufgaben können sie verlangen.</p>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Zweipoltheorie (Thévenin / Norton)</h4>
+      <ul class="clean">
+        <li>$\underline U_{q,\text{ers}}$ — Leerlaufspannung an den Klemmen</li>
+        <li>$\underline I_{q,\text{ers}}$ — Kurzschlussstrom</li>
+        <li>$\underline Z_{i,\text{ers}}=\dfrac{\underline U_{q,\text{ers}}}{\underline I_{q,\text{ers}}}$ — Innenimpedanz (Quellen deaktiviert)</li>
+      </ul>
+      <p class="sub">Spannungsquelle kurzschließen, Stromquelle auftrennen, dann $\underline Z_i$ von den Klemmen aus berechnen.</p>
+    </div>
+    <div class="panelbox"><h4>Knotenspannungsanalyse</h4>
+      <p class="sub">Bezugsknoten wählen, Knotengleichungen mit Admittanzen aufstellen:</p>
+      $$\sum \underline Y_k\,\underline U_{\text{Knoten}}=\sum \underline I_{q}$$
+      <p class="sub">Danach Zweigströme aus den Knotenspannungen: $\underline I=\underline Y(\underline U_a-\underline U_b)$.</p>
+    </div>
+  </div>
+  <div class="callout tipp"><span class="lbl">Reihen/Parallel-Impedanzen</span>
+    Reihe: $\underline Z=\underline Z_1+\underline Z_2$. Parallel: $\dfrac{1}{\underline Z}=\dfrac{1}{\underline Z_1}+\dfrac{1}{\underline Z_2}$ bzw. $\underline Z=\dfrac{\underline Z_1\underline Z_2}{\underline Z_1+\underline Z_2}$. Mit Admittanzen wird Parallelschaltung zur einfachen Summe: $\underline Y=\underline Y_1+\underline Y_2$.
+  </div>
+</section>
+
+<!-- ============ Appendix Felder ============ -->
+<section id="s13">
+  <div class="eyebrow">ANHANG A2 · FELDER &amp; MAGNETIK</div>
+  <h2>Feld-, Energie- &amp; Induktivitätsformeln</h2>
+  <p class="sub">Kompakte Referenz zu den RÜ 14–26 (Magnetkreise, Leiterfelder, Kondensator, gekoppelte Spulen).</p>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Magnetfeld langer Leiter (Radius R)</h4>
+      $$H_\text{außen}(r)=\frac{I}{2\pi r}\ (r\ge R)\qquad H_\text{innen}(r)=\frac{I\,r}{2\pi R^2}\ (r<R)$$
+      <p class="sub">$B=\mu_0\mu_r H$. Bei Koaxial/Rohren: eingeschlossenen Strom über Querschnitt bestimmen.</p>
+    </div>
+    <div class="panelbox"><h4>Energiedichten</h4>
+      $$w_\text{mag}=\tfrac12 BH=\frac{B^2}{2\mu}\qquad w_\text{el}=\tfrac12 DE=\tfrac12\varepsilon E^2$$
+      <p class="sub">Gesamtenergie = Energiedichte × Volumen.</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panelbox"><h4>Induktivitäten kombinieren</h4>
+      <p class="sub">Wie Widerstände (ohne Kopplung):</p>
+      $$L_\text{Reihe}=L_1+L_2\qquad \frac{1}{L_\text{parallel}}=\frac{1}{L_1}+\frac{1}{L_2}$$
+    </div>
+    <div class="panelbox"><h4>Gekoppelte Spulen (Gegeninduktivität M)</h4>
+      $$u_1=R_1 i_1+L_1\frac{di_1}{dt}\pm M\frac{di_2}{dt}$$
+      $$u_2=R_2 i_2+L_2\frac{di_2}{dt}\pm M\frac{di_1}{dt}$$
+      <p class="sub">Vorzeichen von M je nach Wickelsinn (Punktkonvention).</p>
+    </div>
+  </div>
+
+  <div class="callout tipp"><span class="lbl">Strömungsfeld / Widerstand von Geometrien</span>
+    $\vec J=\sigma\vec E$. Widerstand über $R=\displaystyle\int\frac{dr}{\sigma\,A(r)}$ — z.&nbsp;B. Zylinder: $R=\frac{\ln(r_a/r_i)}{2\pi\sigma h}$; Halbkugelanordnung: $R=\frac{1}{2\pi\sigma}\big(\frac{1}{r_i}-\frac{1}{r_a}\big)$. Leistung $P=U_q^2/R$.
+  </div>
+</section>
+
+</main>
+
+<button class="back" id="back" aria-label="nach oben">↑ TOP</button>
+
+<footer>
+  GET2 · Lernzusammenfassung nach Prof-Skript 8.1–8.10 + Rechenübungen + Tutorien · nur zum Lernen (nicht als Prüfungsmitnahme)
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{
+      delimiters:[
+        {left:"$$",right:"$$",display:true},
+        {left:"$",right:"$",display:false},
+        {left:"\\[",right:"\\]",display:true},
+        {left:"\\(",right:"\\)",display:false}
+      ],
+      throwOnError:false
+    });
+  }
+  // jump menu
+  var jump=document.getElementById("jump");
+  jump.addEventListener("change",function(){
+    if(this.value){ document.getElementById(this.value).scrollIntoView(); this.value=""; }
+  });
+  // progress + back-to-top
+  var prog=document.getElementById("prog"), back=document.getElementById("back");
+  function onScroll(){
+    var h=document.documentElement, sc=h.scrollTop, max=h.scrollHeight-h.clientHeight;
+    prog.style.width=(max>0?(sc/max*100):0)+"%";
+    back.classList.toggle("show", sc>600);
+  }
+  window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+  back.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
+});
+</script>
+</body>
+</html>
