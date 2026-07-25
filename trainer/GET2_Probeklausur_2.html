@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probeklausur GET II — Satz 2</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --paper:#ffffff; --desk:#e7e5df; --ink:#161616; --soft:#3f3f3f; --rule:#b9b6ad; --rule-soft:#dedbd3;
+  --serif:"Latin Modern Roman","Nimbus Roman","Times New Roman",Times,Georgia,serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0; background:var(--desk); color:var(--ink); font-family:var(--serif); font-size:17px; line-height:1.5}
+.katex{font-size:1.02em}
+.katex-display{margin:.5em 0; overflow-x:auto; overflow-y:hidden}
+
+.bar{position:sticky; top:0; z-index:20; background:#f2f0ea; border-bottom:1px solid var(--rule)}
+.bar-in{max-width:820px; margin:0 auto; padding:8px 22px; display:flex; align-items:center; gap:12px}
+.bar-in .t{font-size:13.5px; color:var(--soft); font-variant:small-caps; letter-spacing:.04em}
+.bar-in button{margin-left:auto; font-family:var(--serif); font-size:14px; background:#fff; color:var(--ink); border:1px solid var(--rule); border-radius:3px; padding:5px 12px; cursor:pointer}
+.bar-in button:hover{background:#faf9f6}
+
+.sheet{max-width:820px; margin:24px auto; background:var(--paper); border:1px solid var(--rule); box-shadow:0 1px 4px rgba(0,0,0,.08); padding:46px 60px 60px}
+
+.head{text-align:center; margin-bottom:6px}
+.head .uni{font-weight:700; font-size:19px; line-height:1.3}
+.head .fak{font-size:16px; margin-top:2px}
+.head .fach{font-size:16px; margin-top:14px}
+.head .klausur{font-size:17px; font-weight:700; margin-top:2px}
+hr.rule{border:none; border-top:1.5px solid var(--ink); margin:16px 0}
+hr.thin{border:none; border-top:1px solid var(--rule-soft); margin:26px 0}
+
+.info{display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 24px; font-size:15px; margin:12px 0 2px}
+.info div span{color:var(--soft)}
+.fields{margin:14px 0 4px; font-size:15.5px}
+.fields .row{display:flex; gap:8px; align-items:baseline; margin:8px 0}
+.fields .row label{white-space:nowrap; color:var(--soft)}
+.fields .line{flex:1; border-bottom:1px solid var(--ink); height:1.1em}
+
+table.grade{border-collapse:collapse; width:100%; font-size:14px; margin:16px 0 4px}
+table.grade th,table.grade td{border:1px solid var(--ink); padding:5px 8px; text-align:center}
+table.grade th:first-child,table.grade td:first-child{text-align:left; color:var(--soft)}
+
+.formelblatt{border:1px solid var(--rule); background:#f7f6f2; padding:12px 18px; margin:16px 0; font-size:15px}
+.formelblatt .cap{font-weight:700; font-size:14px; margin-bottom:4px}
+
+.task{margin:30px 0}
+.task > h2{font-size:17.5px; font-weight:700; margin:0 0 8px; border-bottom:1px solid var(--rule-soft); padding-bottom:4px; display:flex; justify-content:space-between; align-items:baseline; gap:12px}
+.task > h2 .pt{font-weight:400; font-size:15px; color:var(--soft); white-space:nowrap}
+.task p{margin:9px 0}
+.soft{color:var(--soft)}
+ol.abc{margin:8px 0; padding-left:26px; list-style:lower-alpha}
+ol.abc li{margin:5px 0}
+.given{border:1px solid var(--rule); background:#fbfaf7; padding:7px 14px; margin:11px 0; font-size:15.5px; text-align:center}
+.eq{margin:10px 0; overflow-x:auto}
+
+details.sol{margin-top:14px; border-top:1px dashed var(--rule)}
+details.sol > summary{cursor:pointer; list-style:none; padding:9px 0 4px; font-style:italic; color:#5a5a5a; font-size:15px}
+details.sol > summary::-webkit-details-marker{display:none}
+details.sol > summary::before{content:"[ + ]  "; font-style:normal}
+details.sol[open] > summary::before{content:"[ \2212 ]  "}
+details.sol > summary:hover{color:var(--ink)}
+.sol-body{padding:6px 0 6px 18px; border-left:2px solid var(--rule-soft); margin-top:8px; font-size:16px}
+.sol-body h4{font-size:15px; margin:14px 0 4px; font-weight:700}
+.sol-body h4:first-child{margin-top:4px}
+
+.tblwrap{overflow-x:auto; margin:12px 0}
+table.res{border-collapse:collapse; font-size:15px; min-width:280px}
+table.res th,table.res td{border:1px solid var(--rule); padding:5px 12px; text-align:left}
+table.res th{background:#f6f5f1; font-weight:700}
+
+figure{margin:14px 0; text-align:center}
+figure svg{max-width:100%; height:auto}
+figcaption{font-size:13.5px; color:var(--soft); margin-top:6px; font-style:italic}
+.svglabel{font-family:var(--serif); font-size:13px; fill:#161616}
+
+.foot{max-width:820px; margin:0 auto 50px; padding:0 22px; font-size:13px; color:#6a6a6a; text-align:center; font-style:italic}
+
+@media (max-width:640px){ .sheet{padding:30px 22px 44px} }
+@media print{ body{background:#fff} .bar{display:none} .sheet{box-shadow:none; border:none; margin:0; max-width:none; padding:0 12mm} details.sol{page-break-inside:avoid} }
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="bar-in">
+  <span class="t">Probeklausur GET II · Satz 2</span>
+  <button id="toggleAll">Lösungen einblenden</button>
+</div></div>
+
+<div class="sheet">
+
+  <div class="head">
+    <div class="uni">Hochschule für Technik, Wirtschaft und Kultur Leipzig</div>
+    <div class="fak">Fakultät Elektrotechnik und Informationstechnik</div>
+    <div class="fach">Lehrfach Grundlagen der Elektrotechnik</div>
+    <div class="klausur">Probeklausur GET II &nbsp;·&nbsp; Satz 2</div>
+  </div>
+
+  <hr class="rule">
+
+  <div class="info">
+    <div><span>Hilfsmittel:</span> keine (kein Taschenrechner)</div>
+    <div><span>Bearbeitungszeit:</span> 90 min</div>
+    <div><span>Punkte:</span> 40 &nbsp;·&nbsp; <span>Bestehensgrenze:</span> 16 (40 %)</div>
+  </div>
+
+  <div class="fields">
+    <div class="row"><label>Name, Vorname:</label><span class="line"></span></div>
+    <div class="row"><label>Matrikel-Nr.:</label><span class="line"></span><label style="margin-left:18px">Sitzplatz:</label><span class="line" style="max-width:120px"></span></div>
+  </div>
+
+  <table class="grade">
+    <thead><tr><th>Aufgabe</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>&Sigma;</th></tr></thead>
+    <tbody>
+      <tr><td>mögliche Punkte</td><td>12</td><td>4</td><td>5</td><td>6</td><td>4</td><td>6</td><td>3</td><td>40</td></tr>
+      <tr><td>erreichte Punkte</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <div class="formelblatt">
+    <div class="cap">Formelblatt (in der Klausur gegeben)</div>
+    <div class="eq">$$a_0=\frac1T\!\int_{t_0}^{t_0+T}\!\!f(t)\,dt,\quad a_n=\frac2T\!\int_{t_0}^{t_0+T}\!\!f(t)\cos(n\omega t)\,dt,\quad b_n=\frac2T\!\int_{t_0}^{t_0+T}\!\!f(t)\sin(n\omega t)\,dt$$</div>
+    <p class="soft" style="margin:2px 0 0; font-size:13.5px">Die Kenngrößen (Effektivwert, Grundschwingungsgehalt, Klirrfaktor, Welligkeit) sind <em>nicht</em> gegeben und selbst anzuwenden.</p>
+  </div>
+
+  <p class="soft" style="font-size:14px">Alle Rechenwege nachvollziehbar angeben. Keine Netzwerkanalyse erforderlich; alle Ergebnisse sind ohne Taschenrechner erreichbar. Konstanten: $\varepsilon_0=8{,}854\cdot10^{-12}\ \mathrm{F/m}$, $\mu_0=4\pi\cdot10^{-7}\ \mathrm{Vs/(Am)}$.</p>
+
+  <hr class="thin">
+
+  <!-- A1 -->
+  <div class="task" id="a1">
+    <h2><span>Aufgabe 1 — Koaxialer Zylinder (Strömungsfeld &amp; Kondensator)</span><span class="pt">12 Punkte</span></h2>
+    <p>Zwei koaxiale Zylinderelektroden sehr guter Leitfähigkeit haben den Innenradius $r_i$, den Außenradius $r_a$ und die Länge $\ell$. Das Radienverhältnis beträgt $\dfrac{r_a}{r_i}=e$ (Eulersche Zahl), die Länge $\ell=1\ \mathrm m$.</p>
+    <p>Zunächst befindet sich zwischen den Elektroden ein <strong>Elektrolyt</strong> mit der Leitfähigkeit $\sigma$; angelegt ist die Spannung $U_q$, es fließt der radiale Strom $I$.</p>
+    <ol class="abc">
+      <li>Geben Sie $\vec J=f(r)$ und daraus $\vec E=f(r)$ an.</li>
+      <li>Leiten Sie über $U=\displaystyle\int_{r_i}^{r_a}E\,dr$ den <strong>ohmschen Widerstand $R$</strong> der Anordnung her.</li>
+      <li>Der Elektrolyt wird durch ein Dielektrikum $\varepsilon$ ersetzt. Leiten Sie die <strong>Kapazität $C$</strong> her.</li>
+      <li>Geben Sie den Potentialverlauf $\varphi(r)$ an ($\varphi(r_a)=0$).</li>
+    </ol>
+    <details class="sol"><summary>Lösungsvorschlag</summary><div class="sol-body">
+      <h4>a) Strom- und Feldverlauf</h4>
+      <p>Der Strom $I$ verteilt sich auf die Mantelfläche $A(r)=2\pi r\ell$:</p>
+      <div class="eq">$$J(r)=\frac{I}{2\pi r\ell},\qquad E(r)=\frac{J}{\sigma}=\frac{I}{2\pi\sigma\ell\,r}\ \propto\frac1r$$</div>
+      <h4>b) Widerstand</h4>
+      <div class="eq">$$U=\int_{r_i}^{r_a}\!\frac{I}{2\pi\sigma\ell\,r}\,dr=\frac{I}{2\pi\sigma\ell}\ln\frac{r_a}{r_i}\ \Rightarrow\ R=\frac{U}{I}=\frac{\ln(r_a/r_i)}{2\pi\sigma\ell}$$</div>
+      <p>Mit $r_a/r_i=e$ ist $\ln(r_a/r_i)=1$:&nbsp; $\boxed{R=\dfrac{1}{2\pi\sigma\ell}}$.</p>
+      <h4>c) Kapazität (Dielektrikum)</h4>
+      <p>Aus $E(r)=\dfrac{Q}{2\pi\varepsilon\ell\,r}$ folgt $U=\dfrac{Q}{2\pi\varepsilon\ell}\ln\dfrac{r_a}{r_i}$, also</p>
+      <div class="eq">$$C=\frac{Q}{U}=\frac{2\pi\varepsilon\ell}{\ln(r_a/r_i)}\overset{r_a/r_i=e}{=}2\pi\varepsilon\ell$$</div>
+      <p>Mit $\varepsilon=\varepsilon_0$, $\ell=1\,\mathrm m$: $\ C=2\pi\varepsilon_0\cdot1\,\mathrm m\approx 55{,}6\,\mathrm{pF}$.</p>
+      <p class="soft">Kontrolle: gleiche Geometrie ⇒ $R\,C=\varepsilon/\sigma$.</p>
+      <h4>d) Potentialverlauf</h4>
+      <div class="eq">$$\varphi(r)=\int_r^{r_a}\!E\,dr'=\frac{Q}{2\pi\varepsilon\ell}\ln\frac{r_a}{r}\ \propto\ \ln\frac{r_a}{r}$$</div>
+      <p>logarithmischer Abfall von $\varphi(r_i)=U$ auf $\varphi(r_a)=0$.</p>
+    </div></details>
+  </div>
+
+  <!-- A2 -->
+  <div class="task" id="a2">
+    <h2><span>Aufgabe 2 — Komplexe Rechnung &amp; Impedanz</span><span class="pt">4 Punkte</span></h2>
+    <p>Ein Verbraucher hat bei der Kreisfrequenz $\omega=1000\ \mathrm{s^{-1}}$ die Impedanz</p>
+    <div class="given">$\underline Z=(6+j\,8)\ \Omega$</div>
+    <ol class="abc">
+      <li>Geben Sie $\underline Z$ in Exponentialform an (Betrag und Phase).</li>
+      <li>Berechnen Sie die Admittanz $\underline Y=1/\underline Z$ in arithmetischer Form.</li>
+      <li>Realisieren Sie $\underline Z$ als Reihenschaltung zweier Bauelemente. Welche Elemente, welche Werte?</li>
+      <li>Welches Bauelement mit welchem Wert müsste in Reihe ergänzt werden, um den Blindanteil zu kompensieren ($\varphi=0$)?</li>
+    </ol>
+    <details class="sol"><summary>Lösungsvorschlag</summary><div class="sol-body">
+      <h4>a) Exponentialform</h4>
+      <p>$|\underline Z|=\sqrt{6^2+8^2}=10\,\Omega$, $\ \varphi=\arctan\tfrac{8}{6}\approx53^\circ$ &nbsp;→&nbsp; $\underline Z=10\,e^{j53^\circ}\,\Omega$.</p>
+      <h4>b) Admittanz</h4>
+      <div class="eq">$$\underline Y=\frac{1}{6+j8}=\frac{6-j8}{6^2+8^2}=\frac{6-j8}{100}=(0{,}06-j\,0{,}08)\,\mathrm S$$</div>
+      <h4>c) Reihen-Realisierung</h4>
+      <p>Realteil → Widerstand $R=6\,\Omega$. Positiver Imaginärteil → Induktivität mit $X_L=8\,\Omega$:</p>
+      <div class="eq">$$L=\frac{X_L}{\omega}=\frac{8}{1000}=8\,\mathrm{mH}$$</div>
+      <h4>d) Kompensation</h4>
+      <p>Ein Kondensator in Reihe mit $X_C=8\,\Omega$ hebt die Reaktanz auf:</p>
+      <div class="eq">$$C=\frac{1}{\omega X_C}=\frac{1}{1000\cdot8}=125\,\mu\mathrm F$$</div>
+    </div></details>
+  </div>
+
+  <!-- A3 -->
+  <div class="task" id="a3">
+    <h2><span>Aufgabe 3 — Parallelschwingkreis</span><span class="pt">5 Punkte</span></h2>
+    <p>Ein Parallelschwingkreis besteht aus $R$, $L$ und $C$ in Parallelschaltung.</p>
+    <div class="given">$R=1\ \mathrm{k\Omega}$, &nbsp; $L=1\ \mathrm{mH}$, &nbsp; $C=100\ \mathrm{nF}$</div>
+    <ol class="abc">
+      <li>Geben Sie die Admittanz $\underline Y(\omega)$ an und leiten Sie die Resonanzfrequenz $\omega_0$ her.</li>
+      <li>Welches Verhalten zeigt der Kreis bei Resonanz (Betrag von $\underline Z$, Phase, Strom)?</li>
+      <li>Berechnen Sie die Güte $Q$.</li>
+      <li>Skizzieren Sie die Ortskurve von $\underline Y(\omega)$.</li>
+    </ol>
+    <details class="sol"><summary>Lösungsvorschlag</summary><div class="sol-body">
+      <h4>a) Admittanz &amp; Resonanz</h4>
+      <div class="eq">$$\underline Y=\frac1R+j\!\left(\omega C-\frac{1}{\omega L}\right)$$</div>
+      <p>Resonanz: Imaginärteil $=0$ → $\omega_0 C=\dfrac{1}{\omega_0 L}$:</p>
+      <div class="eq">$$\omega_0=\frac{1}{\sqrt{LC}}=\frac{1}{\sqrt{10^{-3}\cdot10^{-7}}}=\frac{1}{10^{-5}}=10^{5}\ \mathrm{s^{-1}}$$</div>
+      <h4>b) Verhalten bei Resonanz</h4>
+      <p>$\underline Y=\dfrac1R$ (minimal) → $|\underline Z|=R=1\,\mathrm{k\Omega}$ ist <strong>maximal</strong>, $\varphi=0$ (rein ohmsch), der aufgenommene Strom ist <strong>minimal</strong>.</p>
+      <h4>c) Güte</h4>
+      <div class="eq">$$Q=\frac{R}{\omega_0 L}=\frac{1000}{10^{5}\cdot10^{-3}}=\frac{1000}{100}=10\quad\big(=\omega_0RC=R\sqrt{\tfrac{C}{L}}\big)$$</div>
+      <h4>d) Ortskurve</h4>
+      <figure>
+        <svg viewBox="0 0 260 180" role="img" aria-label="Ortskurve Y">
+          <g stroke="#161616" fill="none" stroke-width="1.3">
+            <line x1="20" y1="90" x2="240" y2="90"/><line x1="60" y1="14" x2="60" y2="170"/>
+            <circle cx="120" cy="90" r="60"/>
+          </g>
+          <text x="232" y="84" class="svglabel">Re</text><text x="66" y="22" class="svglabel">Im</text>
+          <circle cx="180" cy="90" r="3" fill="#161616"/><text x="176" y="82" class="svglabel" font-size="11">&#969;&#8320; (G)</text>
+          <text x="96" y="86" class="svglabel">G=1/R</text>
+        </svg>
+        <figcaption>Kreis; bei ω₀ liegt Y auf der reellen Achse bei G = 1/R</figcaption>
+      </figure>
+    </div></details>
+  </div>
+
+  <!-- A4 -->
+  <div class="task" id="a4">
+    <h2><span>Aufgabe 4 — Drehstrom (Dreieckschaltung)</span><span class="pt">6 Punkte</span></h2>
+    <p>Ein symmetrischer Verbraucher ist in <em>Dreieckschaltung</em> an ein Drehstromnetz mit der Außenleiterspannung $U_{LL}=400\ \mathrm V$ angeschlossen. Jeder Strang hat die Impedanz</p>
+    <div class="given">$\underline Z=(30+j\,40)\ \Omega$</div>
+    <ol class="abc">
+      <li>Bestimmen Sie $|\underline Z|$ und den Leistungsfaktor $\lambda$.</li>
+      <li>Berechnen Sie den Strangstrom $I_{St}$ und den Leiterstrom $I_L$.</li>
+      <li>Berechnen Sie $P$, $Q$ und $S$ des Verbrauchers.</li>
+      <li>Um welchen Faktor ändern sich Leistung und Leiterstrom, wenn derselbe Verbraucher in Stern geschaltet wird?</li>
+    </ol>
+    <details class="sol"><summary>Lösungsvorschlag</summary><div class="sol-body">
+      <h4>a) Betrag &amp; Leistungsfaktor</h4>
+      <p>$|\underline Z|=\sqrt{30^2+40^2}=50\,\Omega$, $\ \lambda=\cos\varphi=\dfrac{30}{50}=0{,}6$ (induktiv), $\ \sin\varphi=0{,}8$.</p>
+      <h4>b) Ströme (Dreieck: $U_{St}=U_{LL}$, $\ I_L=\sqrt3\,I_{St}$)</h4>
+      <div class="eq">$$I_{St}=\frac{U_{St}}{|\underline Z|}=\frac{400}{50}=8\,\mathrm A,\qquad I_L=\sqrt3\cdot8\approx13{,}9\,\mathrm A$$</div>
+      <h4>c) Leistungen</h4>
+      <div class="eq">$$P=3\,U_{St}I_{St}\cos\varphi=3\cdot400\cdot8\cdot0{,}6=5760\,\mathrm W$$</div>
+      <div class="eq">$$Q=3\cdot400\cdot8\cdot0{,}8=7680\,\mathrm{var},\qquad S=3\cdot400\cdot8=9600\,\mathrm{VA}$$</div>
+      <h4>d) Umschaltung auf Stern</h4>
+      <p>In Stern liegt an jedem Strang nur die $1/\sqrt3$-fache Spannung → Ströme und Leistung sinken auf <strong>ein Drittel</strong>:</p>
+      <div class="eq">$$P_Y=\tfrac13 P_\Delta=1920\,\mathrm W,\qquad I_{L,Y}=\tfrac13 I_{L,\Delta}\approx4{,}6\,\mathrm A$$</div>
+    </div></details>
+  </div>
+
+  <!-- A5 -->
+  <div class="task" id="a5">
+    <h2><span>Aufgabe 5 — Leistung &amp; Blindleistungskompensation</span><span class="pt">4 Punkte</span></h2>
+    <p>Ein induktiver Wechselstromverbraucher nimmt bei $U=100\ \mathrm V$ und $\omega=1000\ \mathrm{s^{-1}}$ die Wirkleistung $P=800\ \mathrm W$ bei einem Leistungsfaktor $\cos\varphi=0{,}8$ auf.</p>
+    <ol class="abc">
+      <li>Berechnen Sie Scheinleistung $S$ und Blindleistung $Q$.</li>
+      <li>Berechnen Sie den aufgenommenen Strom $I$.</li>
+      <li>Welche Kapazität $C$ muss ein parallelgeschalteter Kondensator haben, um vollständig auf $\cos\varphi=1$ zu kompensieren?</li>
+    </ol>
+    <details class="sol"><summary>Lösungsvorschlag</summary><div class="sol-body">
+      <h4>a) Schein- und Blindleistung</h4>
+      <p>$S=\dfrac{P}{\cos\varphi}=\dfrac{800}{0{,}8}=1000\,\mathrm{VA}$; &nbsp; mit $\sin\varphi=0{,}6$: &nbsp; $Q=S\sin\varphi=1000\cdot0{,}6=600\,\mathrm{var}$.</p>
+      <h4>b) Strom</h4>
+      <div class="eq">$$I=\frac{S}{U}=\frac{1000}{100}=10\,\mathrm A$$</div>
+      <h4>c) Kompensationskapazität</h4>
+      <p>Der Kondensator muss die gesamte Blindleistung liefern ($Q_C=Q=600\,\mathrm{var}$):</p>
+      <div class="eq">$$C=\frac{Q_C}{\omega\,U^2}=\frac{600}{1000\cdot100^2}=\frac{600}{10^{7}}=60\,\mu\mathrm F$$</div>
+    </div></details>
+  </div>
+
+  <!-- A6 -->
+  <div class="task" id="a6">
+    <h2><span>Aufgabe 6 — Fourier: Spektralkenngrößen</span><span class="pt">6 Punkte</span></h2>
+    <p>Von einer periodischen Spannung ist die Fourier-Reihe bereits bekannt:</p>
+    <div class="given">$u(t)=\big[\,5+6\sin(\omega t)+3\sin(2\omega t)+2\sin(3\omega t)+\sin(4\omega t)\,\big]\ \mathrm V$</div>
+    <ol class="abc">
+      <li>Ist die Funktion gerade, ungerade oder weder noch? Wie groß ist der Gleichanteil?</li>
+      <li>Berechnen Sie den Effektivwert des Wechselanteils $F_\sim$.</li>
+      <li>Berechnen Sie den Grundschwingungsgehalt $g$ und den Klirrfaktor $k$.</li>
+      <li>Berechnen Sie die Welligkeit $w$.</li>
+    </ol>
+    <details class="sol"><summary>Lösungsvorschlag</summary><div class="sol-body">
+      <h4>a) Symmetrie &amp; Gleichanteil</h4>
+      <p>Durch den Gleichanteil und die reinen Sinusglieder ist die Funktion <strong>weder gerade noch ungerade</strong>. Gleichanteil $a_0=5\,\mathrm V$. Amplituden: $A_1=6,\ A_2=3,\ A_3=2,\ A_4=1$.</p>
+      <h4>b) Effektivwert Wechselanteil</h4>
+      <div class="eq">$$F_\sim=\sqrt{\tfrac12\sum A_n^2}=\sqrt{\tfrac12(36+9+4+1)}=\sqrt{25}=5\,\mathrm V$$</div>
+      <h4>c) Grundschwingungsgehalt &amp; Klirrfaktor</h4>
+      <div class="eq">$$g=\frac{A_1/\sqrt2}{F_\sim}=\frac{6/\sqrt2}{5}=\frac{3\sqrt2}{5}\approx0{,}85$$</div>
+      <div class="eq">$$k=\frac{\sqrt{\tfrac12\sum_{n\ge2}A_n^2}}{F_\sim}=\frac{\sqrt{\tfrac12(9+4+1)}}{5}=\frac{\sqrt7}{5}\approx0{,}53$$</div>
+      <p class="soft">Kontrolle: $g^2+k^2=\tfrac{18}{25}+\tfrac{7}{25}=1$ ✓.</p>
+      <h4>d) Welligkeit</h4>
+      <div class="eq">$$w=\frac{F_\sim}{a_0}=\frac{5}{5}=1$$</div>
+    </div></details>
+  </div>
+
+  <!-- A7 -->
+  <div class="task" id="a7">
+    <h2><span>Aufgabe 7 — Zeigerdiagramm</span><span class="pt">3 Punkte</span></h2>
+    <p>Skizzieren Sie das qualitative Zeigerdiagramm aller Ströme und Spannungen für die <strong>Parallelschaltung</strong> aus einem Widerstand $R$ und einer Induktivität $L$ an einer gemeinsamen sinusförmigen Spannung $U$.</p>
+    <details class="sol"><summary>Lösungsvorschlag</summary><div class="sol-body">
+      <p>Gemeinsame Spannung $U$ als Bezugszeiger. $I_R$ liegt in Phase mit $U$; $I_L$ eilt $U$ um 90° nach (nach unten). Der Gesamtstrom $I_\text{ges}=I_R+I_L$ eilt $U$ nach → <strong>induktives</strong> Verhalten.</p>
+      <figure>
+        <svg viewBox="0 0 240 190" role="img" aria-label="Zeigerdiagramm R parallel L">
+          <g stroke="#161616" fill="none" stroke-width="1">
+            <line x1="20" y1="70" x2="220" y2="70"/><line x1="35" y1="14" x2="35" y2="185"/>
+          </g>
+          <g stroke="#161616" fill="none" stroke-width="1.6">
+            <line x1="35" y1="70" x2="185" y2="70" marker-end="url(#z)"/>
+            <line x1="35" y1="70" x2="135" y2="70" marker-end="url(#z)"/>
+            <line x1="35" y1="70" x2="35" y2="150" marker-end="url(#z)"/>
+            <line x1="35" y1="70" x2="135" y2="150" marker-end="url(#z)"/>
+          </g>
+          <text x="168" y="64" class="svglabel">U</text>
+          <text x="98" y="64" class="svglabel">I&#8341;</text>
+          <text x="41" y="140" class="svglabel">I&#8343;</text>
+          <text x="140" y="150" class="svglabel">I_ges</text>
+          <defs><marker id="z" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#161616"/></marker></defs>
+        </svg>
+        <figcaption>I_ges eilt U nach → induktiv</figcaption>
+      </figure>
+    </div></details>
+  </div>
+
+  <hr class="thin">
+  <p class="soft" style="font-size:13.5px; text-align:center; margin-top:8px">— Ende der Probeklausur —</p>
+
+</div>
+
+<p class="foot">Satz 2 · 40 Punkte, Bestehensgrenze 16 (40 %) · Aufgabe 1 als Feldaufgabe (C und R) · alle Ergebnisse ohne Taschenrechner erreichbar.</p>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{
+      delimiters:[
+        {left:"$$",right:"$$",display:true},
+        {left:"$",right:"$",display:false},
+        {left:"\\[",right:"\\]",display:true},
+        {left:"\\(",right:"\\)",display:false}
+      ], throwOnError:false
+    });
+  }
+  var btn=document.getElementById("toggleAll");
+  btn.addEventListener("click",function(){
+    var det=document.querySelectorAll("details.sol");
+    var anyClosed=[].some.call(det,function(d){return !d.open;});
+    [].forEach.call(det,function(d){d.open=anyClosed;});
+    btn.textContent=anyClosed?"Lösungen ausblenden":"Lösungen einblenden";
+  });
+});
+</script>
+</body>
+</html>
