@@ -39,6 +39,11 @@
    "datei": "trainer/bode-ortskurven.html",
    "titel": "Bode-Ortskurve",
    "beschreibung": ""
+  },
+  {
+   "datei": "trainer/GET2_Zusammenfassung.html",
+   "titel": "GET 2",
+   "beschreibung": ""
   }
  ]
 }
