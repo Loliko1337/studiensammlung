@@ -1,0 +1,180 @@
+{
+ "id": "uebersicht-v2-transistor-schalter",
+ "titel": "Übersicht V2: Transistor als Schalter",
+ "untertitel": "Formeln, Zusammenhänge und wann du was brauchst",
+ "stand": "2026-10-16",
+ "bloecke": [
+  {
+   "typ": "h2",
+   "html": "Welcher Fall liegt vor?"
+  },
+  {
+   "typ": "absatz",
+   "html": "Bevor du rechnest, entscheide <strong>welcher Zustand</strong> gefragt ist. Davon hängt ab, welches U<sub>CE</sub> du einsetzt."
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th></th><th>AUS (gesperrt)</th><th>EIN, m = 1</th><th>EIN, m &gt; 1</th></tr><tr><td>Erkennen</td><td>U<sub>E</sub> ≤ U<sub>BEF</sub> (z. B. 0 V oder −5 V)</td><td>„nicht übersteuert“, „Übersteuerungsgrenze“</td><td>„übersteuert“, „voll durchgesteuert“</td></tr><tr><td>I<sub>B</sub></td><td>0</td><td>= I<sub>Bü</sub> = I<sub>C</sub> / B</td><td>= m · I<sub>Bü</sub></td></tr><tr><td>I<sub>C</sub></td><td>0</td><td>(U<sub>B</sub> − 0,7 V) / R<sub>C</sub></td><td>(U<sub>B</sub> − U<sub>CES</sub>) / R<sub>C</sub></td></tr><tr><td>U<sub>BE</sub></td><td>= U<sub>E</sub></td><td>0,7 V</td><td>0,7 V</td></tr><tr><td>U<sub>CE</sub></td><td>= U<sub>B</sub></td><td>= U<sub>BE</sub> = 0,7 V</td><td>= U<sub>CES</sub> (0,1 … 0,3 V)</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Im AUS-Zustand fließt kein Strom. Deshalb fällt an R<sub>B</sub> und R<sub>C</sub> nichts ab: U<sub>BE</sub> ist einfach die Eingangsspannung, U<sub>CE</sub> die volle Betriebsspannung.<div>Bei m = 1 wird U<sub>CES</sub> <strong>nicht</strong> benutzt, auch wenn es angegeben ist.</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "Der Übersteuerungsfaktor m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>I<sub>Bü</sub></strong> ist der Basisstrom, der <em>gerade so</em> reicht, damit der Transistor voll durchschaltet. Das ist die Übersteuerungsgrenze. <strong>m</strong> sagt, wie viel Mal mehr Basisstrom tatsächlich hineinfließt."
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann brauchst du sie?</th></tr><tr><td><strong>I<sub>Bü</sub> = I<sub>C</sub> / B</strong></td><td>Basisstrom an der Grenze (m = 1)</td></tr><tr><td><strong>I<sub>B</sub> = m · I<sub>Bü</sub></strong></td><td>m gegeben → tatsächlicher I<sub>B</sub></td></tr><tr><td><strong>m = I<sub>B</sub> / I<sub>Bü</sub></strong></td><td>I<sub>B</sub> gegeben → m gesucht</td></tr><tr><td><strong>I<sub>C</sub> = I<sub>Bü</sub> · B</strong></td><td>B gilt nur bis zur Grenze</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>m</th><th>Bedeutung</th><th>U<sub>CE</sub></th></tr><tr><td>m &lt; 1</td><td>zu wenig Basisstrom, nicht voll durchgeschaltet (aktiver Bereich, I<sub>C</sub> = B · I<sub>B</sub>)</td><td>&gt; 0,7 V</td></tr><tr><td>m = 1</td><td>genau an der Übersteuerungsgrenze</td><td>= U<sub>BE</sub> = 0,7 V</td></tr><tr><td>m &gt; 1</td><td>übersteuert, sicher durchgeschaltet (Sättigung)</td><td>= U<sub>CES</sub></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Mehr Basisstrom macht I<sub>C</sub> <strong>nicht</strong> größer, denn I<sub>C</sub> wird von R<sub>C</sub> begrenzt. Zusätzlicher Basisstrom drückt den Transistor nur tiefer in die Sättigung, U<sub>CE</sub> sinkt von 0,7 V auf U<sub>CES</sub>.<div>Deshalb gilt bei m &gt; 1 <strong>nicht</strong> I<sub>C</sub> = B · I<sub>B</sub>, sondern nur I<sub>C</sub> = B · I<sub>Bü</sub>.</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Warum übersteuert man?</strong> Damit der Schalter auch bei streuendem B und bei Temperaturänderung sicher voll durchschaltet. Nachteil: Ladungsträger stauen sich in der Basis, das <strong>Ausschalten wird langsamer</strong>. Dagegen hilft die Schottky-Diode.",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "Rechenrezept: immer zuerst I<sub>C</sub>"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Standard-Kette</strong> zum Dimensionieren von R<sub>B</sub>:"
+  },
+  {
+   "typ": "absatz",
+   "html": "<ol><li><strong>U<sub>CE</sub> festlegen</strong> nach Fall: m = 1 → 0,7 V, m &gt; 1 → U<sub>CES</sub></li><li><strong>I<sub>C</sub> = (U<sub>B</sub> − U<sub>CE</sub>) / R<sub>C</sub></strong> aus dem Kollektorkreis</li><li><strong>I<sub>Bü</sub> = I<sub>C</sub> / B</strong> über die Stromverstärkung</li><li><strong>I<sub>B</sub> = m · I<sub>Bü</sub></strong></li><li><strong>R<sub>B</sub> = (U<sub>E</sub>,ein − U<sub>BE</sub>) / I<sub>B</sub></strong> aus dem Eingangskreis</li></ol>"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Aufgabe gibt …</th><th>gesucht</th><th>So geht's</th></tr><tr><td>U<sub>B</sub>, R<sub>C</sub>, B, U<sub>E</sub>, m</td><td>R<sub>B</sub>, I<sub>B</sub>, I<sub>C</sub></td><td>Kette 1 → 5</td></tr><tr><td>I<sub>C</sub>, m, B, U<sub>B</sub>, U<sub>I</sub></td><td>R<sub>C</sub>, R<sub>B</sub></td><td>R<sub>C</sub> = (U<sub>B</sub> − U<sub>CE</sub>) / I<sub>C</sub>, dann 3 → 5</td></tr><tr><td>R<sub>C</sub>, U<sub>B</sub>, B, I<sub>B</sub></td><td>m</td><td>I<sub>C</sub> → I<sub>Bü</sub> → m = I<sub>B</sub> / I<sub>Bü</sub></td></tr><tr><td>„Übersteuerungsgrenze“</td><td>I<sub>C</sub>, I<sub>Bü</sub>, m</td><td>U<sub>CE</sub> = 0,7 V, Schritte 2 + 3, m = 1</td></tr><tr><td>R<sub>B</sub> hängt direkt an U<sub>B</sub></td><td>R<sub>B</sub></td><td>R<sub>B</sub> = (U<sub>B</sub> − U<sub>BE</sub>) / I<sub>B</sub></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Einheiten: V / mA = kΩ und V / µA = MΩ. R<sub>B</sub> landet meistens im zweistelligen kΩ-Bereich.",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Schottky-Transistor"
+  },
+  {
+   "typ": "absatz",
+   "html": "Schottky-Diode zwischen Basis und Kollektor. Masche: U<sub>CE</sub> − U<sub>BE</sub> − U<sub>CB</sub> = 0, also <strong>U<sub>CE</sub> = U<sub>BE</sub> − U<sub>F</sub> = 0,7 V − 0,3 V = 0,4 V</strong>."
+  },
+  {
+   "typ": "box",
+   "html": "Die Diode verhindert, dass U<sub>CE</sub> bis U<sub>CES</sub> absinkt. Ohne tiefe Sättigung schaltet der Transistor schneller wieder aus.",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "Kennlinienfeld &amp; Arbeitsgerade"
+  },
+  {
+   "typ": "absatz",
+   "html": "Die <strong>Arbeitsgerade von R<sub>C</sub></strong> ergibt sich aus zwei Punkten:"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>Leerlauffall:</strong> I<sub>C</sub> = 0 → U<sub>CE</sub> = U<sub>B</sub>. Punkt auf der U<sub>CE</sub>-Achse = <strong>AUS</strong></li><li><strong>Kurzschlussfall:</strong> U<sub>CE</sub> = 0 → I<sub>C</sub> = U<sub>B</sub> / R<sub>C</sub>. Punkt auf der I<sub>C</sub>-Achse</li>"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>AUS-Punkt:</strong> immer rechts unten auf der U<sub>CE</sub>-Achse bei U<sub>B</sub></li><li><strong>EIN-Punkt:</strong> Schnittpunkt der Arbeitsgeraden mit der Kennlinie des gegebenen I<sub>B</sub>. Bei genug I<sub>B</sub> liegt er ganz links im steilen Bereich.</li><li><strong>Ohne R<sub>C</sub></strong> (nur I<sub>B</sub>, U<sub>B</sub> gegeben): nicht rechnen, sondern ablesen. Auf der I<sub>B</sub>-Kennlinie nach links bis zum Knick bei ≈ 0,7 V gehen. B steckt schon in den Kennlinien.</li>"
+  },
+  {
+   "typ": "h3",
+   "html": "Vierquadranten-Kennlinienfeld"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Quadrant</th><th>Kennlinie</th></tr><tr><td>I · rechts oben</td><td>Ausgangskennlinien I<sub>C</sub>(U<sub>CE</sub>)</td></tr><tr><td>II · links oben</td><td><strong>Stromübertragung</strong> I<sub>C</sub>(I<sub>B</sub>), Gerade mit Steigung B</td></tr><tr><td>III · links unten</td><td>Eingangskennlinie I<sub>B</sub>(U<sub>BE</sub>)</td></tr><tr><td>IV · rechts unten</td><td>Rückwirkung U<sub>BE</sub>(U<sub>CE</sub>)</td></tr></tbody>",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "EIN/AUS-Kriterien"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Sperrzustand (AUS)</th><th>Leitender Zustand (EIN)</th></tr><tr><td>I<sub>B</sub> = 0</td><td>I<sub>B</sub> ≠ 0</td></tr><tr><td>U<sub>BE</sub> &lt; U<sub>BEF</sub></td><td>U<sub>BE</sub> = 0,7 V</td></tr><tr><td>I<sub>C</sub> = 0</td><td>I<sub>C</sub> ≠ 0</td></tr><tr><td>U<sub>CE</sub> = U<sub>B</sub></td><td>U<sub>CE</sub> &lt; U<sub>BEF</sub></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>übersteuert:</strong> U<sub>BE</sub> &gt; U<sub>CE</sub> (z. B. 0,7 V &gt; 0,1 V)</li><li><strong>sperrt:</strong> U<sub>BE</sub> &lt; U<sub>CE</sub> (z. B. −5 V &lt; 10 V)</li>"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Transistor statt Relais:</strong> schaltet schneller, ist aber empfindlich gegenüber Spannungsspitzen und hat keine galvanische Trennung.<div><strong>Bipolar als Schalter geeignet:</strong> wegen des kleinen Steuerstroms <strong>und</strong> des geringen Sperrstroms.</div>"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Größe</th><th>Definition</th></tr><tr><td>I<sub>C</sub></td><td>= I<sub>Bü</sub> · B</td></tr><tr><td>I<sub>E</sub></td><td>= I<sub>C</sub> + I<sub>B</sub></td></tr><tr><td>I<sub>B</sub></td><td>= m · I<sub>Bü</sub></td></tr><tr><td>B</td><td>= I<sub>C</sub> / I<sub>B</sub>, die Stromverstärkung</td></tr><tr><td>m</td><td>der Übersteuerungsfaktor</td></tr><tr><td>I<sub>Bü</sub></td><td>Basisstrom an der Übersteuerungsgrenze (m = 1)</td></tr></tbody>",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "Feldeffekttransistor"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Größe</th><th>Formel</th></tr><tr><td>Steilheit g<sub>m</sub></td><td>dI<sub>D</sub> / dU<sub>GS</sub>: wie stark das Gate steuert</td></tr><tr><td>Ausgangsleitwert g<sub>d</sub></td><td>dI<sub>D</sub> / dU<sub>DS</sub>: Neigung der Ausgangskennlinie</td></tr><tr><td>Konstantstromquelle</td><td>R<sub>S</sub> = −U<sub>GS</sub> / I<sub>L</sub>, U<sub>GS</sub> bei I<sub>D</sub> = I<sub>L</sub> ablesen</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Typ</th><th>Symbol / Transferkennlinie</th></tr><tr><td>Verarmung (selbstleitend)</td><td>Linie S–D <strong>durchgezogen</strong>, bei U<sub>GS</sub> = 0 fließt schon Strom</td></tr><tr><td>Anreicherung (selbstsperrend)</td><td>Linie S–D <strong>gestrichelt</strong>, Strom erst ab U<sub>GS</sub> = U<sub>t</sub></td></tr><tr><td>n-Kanal</td><td>Kurve steigt nach rechts (n-Anreicherung: U<sub>t</sub> &gt; 0, n-Verarmung: U<sub>t</sub> &lt; 0)</td></tr><tr><td>p-Kanal</td><td>gespiegelt, steigt nach links (p-Anreicherung: U<sub>t</sub> &lt; 0, p-Verarmung: U<sub>t</sub> &gt; 0)</td></tr><tr><td>SFET (Sperrschicht)</td><td>wie Verarmung, aber endet bei U<sub>GS</sub> = 0</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>Bulk-Pfeil</strong> → n- oder p-Kanal (nichts mit Verarmung/Anreicherung)</li><li><strong>MOSFET:</strong> Gate durch <strong>Dielektrikum (Oxid)</strong> isoliert · <strong>SFET:</strong> durch <strong>gesperrten pn-Übergang</strong> isoliert. Bei beiden fließt praktisch kein Gate-Strom, beide gibt es als n- und p-Kanal.</li><li><strong>FET:</strong> spannungsgesteuert, sehr hoher Eingangswiderstand, nahezu leistungslos · <strong>Bipolar:</strong> stromgesteuert, B/E/C, Strom durch n- und p-Bereiche</li>"
+  },
+  {
+   "typ": "box",
+   "html": "Durchgezogen = Kanal ist schon da = Verarmung.<div>Gestrichelt = Kanal muss erst erzeugt werden = Anreicherung.</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "Typische Fallen"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>U<sub>CES</sub> bei m = 1:</strong> steht oft in der Aufgabe, wird aber nicht gebraucht</li><li><strong>Ablenker:</strong> U<sub>I,aus</sub>, U<sub>B</sub> bei der Konstantstromquelle, U<sub>I</sub> wenn nur I<sub>C</sub>/I<sub>Bü</sub> gefragt sind</li><li><strong>R<sub>B</sub> mit U<sub>E</sub>, nicht mit U<sub>B</sub></strong>, außer R<sub>B</sub> hängt direkt an U<sub>B</sub></li><li><strong>U<sub>BE</sub> im AUS-Zustand</strong> ist U<sub>E</sub> (z. B. −5 V), nicht 0</li><li><strong>„Welche Aussagen sind falsch?“</strong>: genau lesen und die falschen ankreuzen</li>"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>OPAL-Vorbereitungstest:</strong> Bei übersteuerten Schaltern (A7, A12, A14) rechnet OPAL intern mit U<sub>CE</sub> = 0,45 V, obwohl U<sub>CES</sub> = 0,2 V angegeben ist. In A14 werden innerhalb derselben Aufgabe beide Werte gemischt, das ist sehr wahrscheinlich ein Fehler im Test. Im Antestat mit U<sub>CES</sub> rechnen oder vorher beim Betreuer nachfragen.",
+   "variante": "info",
+   "abstand": "l"
+  }
+ ],
+ "abstand": "m"
+}
