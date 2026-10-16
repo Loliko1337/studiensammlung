@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antestat-Trainer · V2 Transistor als Schalter</title>
+<style>
+  :root{
+    --paper:#eef1f4;
+    --panel:#ffffff;
+    --ink:#1a2024;
+    --ink-soft:#55606a;
+    --line:#d4dbe2;
+    --grid:#e3e8ed;
+    --trace:#17a35b;
+    --trace-dk:#0f7c44;
+    --amber:#d98a1f;
+    --amber-bg:#fcf3e2;
+    --red:#d6453d;
+    --red-bg:#fbeae9;
+    --green-bg:#e6f6ee;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+    --sans:ui-sans-serif,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5;
+    -webkit-font-smoothing:antialiased;padding:0 16px 64px;
+  }
+  .wrap{max-width:780px;margin:0 auto}
+
+  header{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding:28px 0 18px;border-bottom:2px solid var(--ink);
+  }
+  .brand .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 4px}
+  .brand h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.01em;line-height:1.1}
+  .brand .sub{font-size:13px;color:var(--ink-soft);margin-top:4px}
+
+  .readout{font-family:var(--mono);background:var(--ink);color:var(--trace);border-radius:7px;padding:9px 13px;min-width:132px;box-shadow:inset 0 0 0 1px #2c343b}
+  .readout .rlabel{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#7c8b86;display:block}
+  .readout .rval{font-size:20px;font-weight:700;letter-spacing:.02em}
+  .readout .rval small{font-size:12px;color:#5d6b66;font-weight:400}
+
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px}
+  .cat{font-family:var(--mono);font-size:12px;letter-spacing:.02em;background:var(--panel);border:1px solid var(--line);color:var(--ink-soft);padding:8px 12px;border-radius:6px;cursor:pointer;transition:.12s}
+  .cat:hover{border-color:var(--ink-soft);color:var(--ink)}
+  .cat[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .cat.rng[aria-pressed="true"]{background:var(--trace-dk);border-color:var(--trace-dk)}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden}
+  .card .head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line)}
+  .card .head .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--trace-dk);font-weight:700}
+  .card .head .pts{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+  .card .body{
+    padding:18px;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;background-position:-1px -1px;
+  }
+  .prompt{font-size:15px;margin:0 0 14px}
+  .prompt b{font-weight:700}
+
+  .given{display:flex;flex-wrap:wrap;gap:6px 8px;margin:0 0 18px}
+  .chip{font-family:var(--mono);font-size:12.5px;background:#f3f6f8;border:1px solid var(--line);border-radius:5px;padding:4px 9px;white-space:nowrap}
+  .chip b{color:var(--trace-dk)}
+
+  .fields{display:flex;flex-direction:column;gap:11px;margin-bottom:8px}
+  .group{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin:6px 0 -2px;font-weight:700}
+  .field{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .field label{font-family:var(--mono);font-size:14px;min-width:58px;font-weight:600}
+  .field .eq{color:var(--ink-soft);font-family:var(--mono)}
+  .cell{font-family:var(--mono);font-size:15px;width:128px;text-align:right;padding:8px 10px;border:1.5px solid var(--line);border-radius:6px;background:#fcfdfe;color:var(--ink);transition:.12s}
+  .cell:focus{outline:none;border-color:var(--trace);box-shadow:0 0 0 3px rgba(23,163,91,.13)}
+  .cell.ok{border-color:var(--trace);background:var(--green-bg)}
+  .cell.bad{border-color:var(--red);background:var(--red-bg)}
+  .unit{font-family:var(--mono);font-size:13px;color:var(--ink-soft);min-width:30px}
+  .verdict{font-family:var(--mono);font-size:16px;width:20px;text-align:center}
+  .verdict.ok{color:var(--trace-dk)}
+  .verdict.bad{color:var(--red)}
+
+  .choices{display:flex;flex-direction:column;gap:9px}
+  .choice{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1.5px solid var(--line);border-radius:7px;background:#fcfdfe;cursor:pointer;transition:.12s;font-size:14.5px}
+  .choice:hover{border-color:var(--ink-soft)}
+  .choice[aria-pressed="true"]{border-color:var(--trace);background:var(--green-bg)}
+  .choice .box{font-family:var(--mono);font-weight:700;color:var(--ink-soft);flex:0 0 auto;width:20px;height:20px;border:1.5px solid var(--line);border-radius:4px;display:grid;place-items:center;font-size:12px;margin-top:1px}
+  .choice[aria-pressed="true"] .box{border-color:var(--trace-dk);color:var(--trace-dk)}
+  .choice.reveal-ok{border-color:var(--trace);background:var(--green-bg)}
+  .choice.reveal-bad{border-color:var(--red);background:var(--red-bg)}
+  .hint{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);margin:-6px 0 12px}
+
+  .canvas-wrap{display:flex;flex-direction:column;gap:12px;align-items:flex-start;margin-bottom:16px}
+  canvas{border:1px solid var(--line);border-radius:8px;background:#fff;touch-action:none;max-width:100%}
+  canvas.click{cursor:crosshair}
+  .placetoggle{display:flex;gap:8px}
+  .ptog{font-family:var(--mono);font-size:12px;padding:7px 11px;border-radius:6px;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft)}
+  .ptog[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:700}
+  .ptog .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .ptog.ap .dot{background:var(--trace)}
+  .ptog.sp .dot{background:var(--amber)}
+
+  .actions{display:flex;gap:9px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line);background:#fafbfc}
+  button.act{font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--ink);border-radius:7px;padding:9px 16px;transition:.12s}
+  .act.primary{background:var(--ink);color:#fff}
+  .act.primary:hover{background:#000}
+  .act.ghost{background:transparent;color:var(--ink)}
+  .act.ghost:hover{background:#eef1f4}
+  .act.amber{border-color:var(--amber);color:var(--amber)}
+  .act.amber:hover{background:var(--amber-bg)}
+  .act:disabled{opacity:.4;cursor:not-allowed}
+
+  .solution{display:none;border-top:1px solid var(--line);padding:18px;background:#fbfcfd}
+  .solution.show{display:block}
+  .solution h3{margin:0 0 12px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+  .steps{display:flex;flex-direction:column;gap:9px}
+  .step{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:baseline;font-family:var(--mono);font-size:13.5px;padding-bottom:9px;border-bottom:1px dashed var(--line)}
+  .step:last-child{border-bottom:none;padding-bottom:0}
+  .step .res{font-weight:700;color:var(--trace-dk);white-space:nowrap;text-align:right}
+  .note{margin-top:14px;font-size:13.5px;color:var(--ink-soft);font-family:var(--sans);border-left:3px solid var(--amber);padding:4px 0 4px 12px}
+  .foot{margin-top:22px;font-size:12px;color:var(--ink-soft);font-family:var(--mono);text-align:center}
+  sub{font-size:.72em}
+  @media(max-width:560px){
+    .brand h1{font-size:22px}
+    .cell{width:110px}
+    .step{grid-template-columns:1fr}
+    .step .res{text-align:left}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <p class="eyebrow">HTWK Leipzig · Elektronik Praktikum</p>
+      <h1>Antestat-Trainer V2</h1>
+      <p class="sub">Transistor als Schalter — Aufgaben mit frischen Zahlen, beliebig oft.</p>
+    </div>
+    <div class="readout">
+      <span class="rlabel">Richtig / Versuche</span>
+      <span class="rval" id="score">0<small> / 0</small></span>
+    </div>
+  </header>
+
+  <nav id="nav"></nav>
+
+  <div class="card">
+    <div class="head">
+      <span class="tag" id="cardTag">—</span>
+      <span class="pts" id="cardStreak">Serie: 0</span>
+    </div>
+    <div class="body" id="cardBody"></div>
+    <div class="actions">
+      <button class="act primary" id="btnCheck">Prüfen</button>
+      <button class="act amber" id="btnSolve">Lösung zeigen</button>
+      <button class="act ghost" id="btnNext">Neue Aufgabe</button>
+    </div>
+    <div class="solution" id="solution"></div>
+  </div>
+
+  <p class="foot">Eingabe mit Komma oder Punkt · Toleranz ±2,5 % · Rundung wie im Antestat</p>
+</div>
+
+<script>
+/* ============================================================
+   Hilfsfunktionen
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const el = (t,c,html)=>{const e=document.createElement(t); if(c)e.className=c; if(html!=null)e.innerHTML=html; return e;};
+const rint = (a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick = arr=>arr[Math.floor(Math.random()*arr.length)];
+const deci = (a,b)=>rint(a*10,b*10)/10;
+const fmtDE = (x,d=2)=>x.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const parseNum = s => parseFloat(String(s).trim().replace(/\s/g,'').replace(',','.'));
+function check(user,target,absFloor){
+  if(!isFinite(user)) return false;
+  if(Math.abs(user-target)<=absFloor) return true;
+  if(target===0) return false;
+  return Math.abs(user-target)/Math.abs(target)<=0.025;
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const UBEF = 0.7;
+
+/* ============================================================
+   Rechenaufgaben
+   ============================================================ */
+
+// 1) Schalter dimensionieren, EIN und AUS (m = 1)
+function genEinAus(){
+  const UB  = rint(9,15);
+  const RC  = rint(6,20)*100;          // 600..2000 Ω
+  const B   = rint(100,250);
+  const UCES= pick([0.1,0.2,0.3]);     // Distraktor bei m = 1
+  const UEon = 5;
+  const UEoff= pick([-5,-5,-3,0]);
+  const IC  = (UB-UBEF)/RC*1000;       // mA
+  const IB  = IC/B*1000;               // µA
+  const RB  = (UEon-UBEF)/IB*1000;     // kΩ
+  return {
+    tag:'Schalter · EIN & AUS', pts:'4,5 Punkte',
+    prompt:`Für den Transistorschalter ist der <b>Basisvorwiderstand R<sub>B</sub></b> zu dimensionieren. Berechne Ströme und Spannungen im Zustand <b>EIN</b> und <b>AUS</b>. Der Transistor wird nicht übersteuert (m = 1). U<sub>E</sub> beträgt eingeschaltet ${UEon} V und ausgeschaltet ${fmtDE(UEoff,0)} V. Tipp: Beginne mit I<sub>C</sub> im EIN-Zustand.`,
+    given:[['U_B',UB+' V'],['R_C',RC+' Ω'],['U_BEF',fmtDE(UBEF,1)+' V'],['U_CES',fmtDE(UCES,1)+' V'],['B',''+B],['m','1'],['U_E,ein',UEon+' V'],['U_E,aus',fmtDE(UEoff,0)+' V']],
+    fields:[
+      {group:'Dimensionierung'},
+      {key:'RB',  label:'R<sub>B</sub>',  unit:'kΩ', target:RB, abs:0.3,  dec:2},
+      {group:'EIN'},
+      {key:'IBe', label:'I<sub>B</sub>',  unit:'µA', target:IB, abs:0.3,  dec:2},
+      {key:'ICe', label:'I<sub>C</sub>',  unit:'mA', target:IC, abs:0.05, dec:2},
+      {key:'UBEe',label:'U<sub>BE</sub>', unit:'V',  target:UBEF,abs:0.02,dec:1},
+      {key:'UCEe',label:'U<sub>CE</sub>', unit:'V',  target:UBEF,abs:0.02,dec:1},
+      {group:'AUS'},
+      {key:'IBa', label:'I<sub>B</sub>',  unit:'µA', target:0,  abs:0.01, dec:0},
+      {key:'ICa', label:'I<sub>C</sub>',  unit:'mA', target:0,  abs:0.01, dec:0},
+      {key:'UBEa',label:'U<sub>BE</sub>', unit:'V',  target:UEoff,abs:0.02,dec:0},
+      {key:'UCEa',label:'U<sub>CE</sub>', unit:'V',  target:UB, abs:0.02, dec:0},
+    ],
+    solve:()=>[
+      {lhs:`m = 1 → Übersteuerungsgrenze: U_CE = U_BE = ${fmtDE(UBEF,1)} V (U_CES spielt keine Rolle)`, res:''},
+      {lhs:`I_C = (U_B − U_CE) / R_C = ${fmtDE(UB-UBEF,1)} V / ${RC} Ω`, res:fmtDE(IC,2)+' mA'},
+      {lhs:`I_B = m · I_C / B = ${fmtDE(IC,2)} mA / ${B}`,               res:fmtDE(IB,2)+' µA'},
+      {lhs:`R_B = (U_E,ein − U_BE) / I_B = ${fmtDE(UEon-UBEF,1)} V / ${fmtDE(IB,2)} µA`, res:fmtDE(RB,2)+' kΩ'},
+      {lhs:`AUS: U_E ≤ U_BEF → kein Basisstrom → kein Kollektorstrom`,   res:'I_B = I_C = 0'},
+      {lhs:`AUS: ohne I_B fällt an R_B nichts ab → U_BE = U_E`,           res:fmtDE(UEoff,0)+' V'},
+      {lhs:`AUS: ohne I_C fällt an R_C nichts ab → U_CE = U_B`,           res:UB+' V'},
+    ],
+    note:'Die Falle ist U_CES: Bei m = 1 sitzt der Transistor genau an der Übersteuerungsgrenze, also gilt U_CE = U_BE = 0,7 V. U_CES brauchst du erst, wenn m > 1 ist.'
+  };
+}
+
+// 2) Übersteuerter Schalter (m > 1)
+function genUebersteuert(){
+  const UB  = rint(9,15);
+  const RC  = rint(6,20)*100;
+  const B   = rint(100,250);
+  const UCES= pick([0.1,0.2,0.3]);
+  const m   = pick([1.5,2,2.5,3,4]);
+  const UE  = 5;
+  const IC  = (UB-UCES)/RC*1000;       // mA
+  const IBu = IC/B*1000;               // µA
+  const IB  = m*IBu;                   // µA
+  const RB  = (UE-UBEF)/IB*1000;       // kΩ
+  const ICo=(UB-0.45)/RC*1000, IBuo=ICo/B*1000, IBo=m*IBuo, RBo=(UE-UBEF)/IBo*1000;   // OPAL rechnet mit 0,45 V
+  return {
+    tag:'Schalter · übersteuert', pts:'2,5 Punkte',
+    prompt:`Der Transistorschalter soll im EIN-Zustand mit dem <b>Übersteuerungsfaktor m = ${fmtDE(m,1)}</b> betrieben werden. Berechne I<sub>C</sub>, I<sub>Bü</sub>, I<sub>B</sub>, R<sub>B</sub> und U<sub>CE</sub>. U<sub>E</sub> beträgt im eingeschalteten Zustand ${UE} V.`,
+    given:[['U_B',UB+' V'],['R_C',RC+' Ω'],['U_BEF',fmtDE(UBEF,1)+' V'],['U_CES',fmtDE(UCES,1)+' V'],['B',''+B],['m',fmtDE(m,1)]],
+    fields:[
+      {key:'IC', label:'I<sub>C</sub>',  unit:'mA', target:IC, alt:ICo, abs:0.05,dec:2},
+      {key:'IBu',label:'I<sub>Bü</sub>', unit:'µA', target:IBu,alt:IBuo,abs:0.3, dec:2},
+      {key:'IB', label:'I<sub>B</sub>',  unit:'µA', target:IB, alt:IBo, abs:0.5, dec:2},
+      {key:'RB', label:'R<sub>B</sub>',  unit:'kΩ', target:RB, alt:RBo, abs:0.2, dec:2},
+      {key:'UCE',label:'U<sub>CE</sub>', unit:'V',  target:UCES,abs:0.02,dec:1},
+    ],
+    solve:()=>[
+      {lhs:`m > 1 → Sättigung: U_CE = U_CES`,                              res:fmtDE(UCES,1)+' V'},
+      {lhs:`I_C = (U_B − U_CES) / R_C = ${fmtDE(UB-UCES,1)} V / ${RC} Ω`,  res:fmtDE(IC,2)+' mA'},
+      {lhs:`I_Bü = I_C / B = ${fmtDE(IC,2)} mA / ${B}`,                    res:fmtDE(IBu,2)+' µA'},
+      {lhs:`I_B = m · I_Bü = ${fmtDE(m,1)} · ${fmtDE(IBu,2)} µA`,          res:fmtDE(IB,2)+' µA'},
+      {lhs:`R_B = (U_E − U_BE) / I_B = ${fmtDE(UE-UBEF,1)} V / ${fmtDE(IB,2)} µA`, res:fmtDE(RB,2)+' kΩ'},
+    ],
+    note:'OPAL-Eigenheit: Der Vorbereitungstest rechnet hier intern mit U_CE = 0,45 V statt U_CES. Der Trainer akzeptiert beide Ergebnisse, im OPAL-Test gilt die 0,45-V-Variante. Übersteuern heißt: mehr Basisstrom als nötig. I_C wird dadurch nicht größer, er ist durch R_C begrenzt. Der Transistor geht nur tiefer in die Sättigung, U_CE sinkt auf U_CES.'
+  };
+}
+
+// 3) Übersteuerungsgrenze
+function genGrenze(){
+  const UB = rint(10,16);
+  const UI = pick([5,5,3.3]);
+  const B  = rint(100,250);
+  const RC = rint(8,25)*100;
+  const IC = (UB-UBEF)/RC*1000;
+  const IBu= IC/B*1000;
+  return {
+    tag:'Übersteuerungsgrenze', pts:'1,5 Punkte',
+    prompt:`Berechne für die Schaltung den Kollektorstrom I<sub>C</sub> und den Basisstrom I<sub>Bü</sub> an der <b>Übersteuerungsgrenze</b> (U<sub>CE</sub> = U<sub>BE</sub> = 0,7 V). Wie groß ist die Übersteuerung m an dieser Grenze?`,
+    given:[['U_B',UB+' V'],['U_I',fmtDE(UI,1)+' V'],['B',''+B],['R_C',RC+' Ω']],
+    fields:[
+      {key:'IC', label:'I<sub>C</sub>',  unit:'mA', target:IC, abs:0.05,dec:2},
+      {key:'IBu',label:'I<sub>Bü</sub>', unit:'µA', target:IBu,abs:0.3, dec:2},
+      {key:'m',  label:'m',              unit:'',   target:1,  abs:0.01,dec:0},
+    ],
+    solve:()=>[
+      {lhs:`I_C = (U_B − U_CE) / R_C = ${fmtDE(UB-UBEF,1)} V / ${RC} Ω`, res:fmtDE(IC,2)+' mA'},
+      {lhs:`I_Bü = I_C / B = ${fmtDE(IC,2)} mA / ${B}`,                  res:fmtDE(IBu,2)+' µA'},
+      {lhs:`An der Grenze gilt I_B = I_Bü`,                               res:'m = 1'},
+    ],
+    note:'U_I ist hier ein Ablenker. Für I_C und I_Bü brauchst du nur den Kollektorkreis und B. U_I bräuchtest du erst für R_B.'
+  };
+}
+
+// 4) FET-Konstantstromquelle (Kennlinie ablesen)
+function genKonstant(){
+  const IDSS = deci(4.0,6.0);
+  const Up   = -3;
+  const levels=[0,-0.5,-1,-1.5,-2,-2.5];
+  const plateau = u => IDSS*Math.pow(1-u/Up,2);
+  const lvl = pick([-0.5,-1,-1.5,-2]);
+  const IL  = Math.round(plateau(lvl)*10)/10;     // mA, so wie auf der Kennlinie
+  const RS  = Math.abs(lvl)/IL*1000;               // Ω
+  return {
+    tag:'Konstantstromquelle · JFET', pts:'1 Punkt',
+    prompt:`Berechne mit der Ausgangskennlinie den Widerstand <b>R<sub>S</sub></b> für die Konstantstromquelle so, dass sich ein Laststrom <b>I<sub>L</sub> = ${fmtDE(IL,1)} mA</b> ergibt. Die Betriebsspannung beträgt 12 V.`,
+    given:[['I_L',fmtDE(IL,1)+' mA'],['U_B','12 V']],
+    figure:cv=>drawFET(cv,{IDSS,Up,levels,plateau,mark:null}),
+    figureReveal:cv=>drawFET(cv,{IDSS,Up,levels,plateau,mark:lvl}),
+    fields:[{key:'RS',label:'R<sub>S</sub>',unit:'Ω',target:RS,abs:5,dec:1}],
+    solve:()=>[
+      {lhs:`Kennlinie bei I_D = I_L = ${fmtDE(IL,1)} mA ablesen`,               res:`U_GS = ${fmtDE(lvl,1)} V`},
+      {lhs:`U_RS = −U_GS`,                                                     res:fmtDE(-lvl,1)+' V'},
+      {lhs:`R_S = U_RS / I_D = ${fmtDE(-lvl,1)} V / ${fmtDE(IL,1)} mA`,         res:fmtDE(RS,1)+' Ω'},
+    ],
+    note:'Die 12 V Betriebsspannung sind ein Ablenker. Sie müssen nur reichen, damit der JFET im waagerechten Teil der Kennlinie bleibt.'
+  };
+}
+function drawFET(cv,o){
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height, x0=54,y0=H-42,x1=W-96,y1=22;
+  const uMax=14, iMax=Math.ceil((o.IDSS+0.4)*2)/2;
+  const X=u=>x0+u/uMax*(x1-x0), Y=i=>y0-i/iMax*(y0-y1);
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='#eef1f4';ctx.lineWidth=1;
+  for(let i=0;i<=iMax+1e-9;i+=0.5){ctx.beginPath();ctx.moveTo(x0,Y(i));ctx.lineTo(x1,Y(i));ctx.stroke();}
+  for(let u=0;u<=uMax;u+=2){ctx.beginPath();ctx.moveTo(X(u),y0);ctx.lineTo(X(u),y1);ctx.stroke();}
+  o.levels.forEach(l=>{
+    const P=o.plateau(l), usat=Math.max(l-o.Up,0.3);
+    const hi = o.mark===l;
+    ctx.strokeStyle=hi?'#17a35b':'#9aa6b0'; ctx.lineWidth=hi?2.6:1.6;
+    ctx.beginPath();
+    for(let u=0;u<=uMax;u+=0.1){
+      const i=P*Math.tanh(u/(0.55*usat))*(1+0.004*u);
+      const px=X(u),py=Y(i); u===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.fillStyle=hi?'#0f7c44':'#55606a';ctx.font='11.5px ui-monospace,monospace';
+    ctx.fillText(`U_GS=${fmtDE(l,1)} V`,x1+6,Y(P*(1+0.004*uMax))+4);
+  });
+  ctx.strokeStyle='#1a2024';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(x0,y1-6);ctx.lineTo(x0,y0);ctx.lineTo(x1+6,y0);ctx.stroke();
+  ctx.fillStyle='#55606a';ctx.font='12px ui-monospace,monospace';
+  ctx.fillText('I_D / mA',8,y1+2);
+  ctx.fillText('U_DS / V',x1-50,y0+30);
+  for(let u=2;u<=uMax;u+=2)ctx.fillText(u,X(u)-6,y0+16);
+  for(let i=0.5;i<=iMax+1e-9;i+=0.5)ctx.fillText(fmtDE(i,1),x0-34,Y(i)+4);
+}
+
+/* ============================================================
+   Kennlinienfeld: EIN- und AUS-Arbeitspunkt anklicken
+   ============================================================ */
+function genKennlinie(){
+  const UB = rint(8,12);
+  const B  = 200;
+  const IB = pick([25,50,75,100]);    // µA
+  const IC = B*IB/1000;               // mA
+  return {
+    tag:'Kennlinienfeld · EIN & AUS', pts:'1 Punkt', type:'canvas',
+    prompt:`Markiere im Ausgangskennlinienfeld die Lage des Arbeitspunktes im <b>EIN-geschalteten Zustand</b> und im <b>Sperrzustand (AUS)</b>. Vorgaben: I<sub>Bü</sub> = I<sub>B</sub> = ${IB} µA, U<sub>CE</sub> = U<sub>BE</sub> = 0,7 V, U<sub>B</sub> = ${UB} V.<br><i>Nicht rechnen, sondern im Kennlinienfeld ablesen.</i>`,
+    given:[['I_B',IB+' µA'],['U_CE,ein','0,7 V'],['U_B',UB+' V']],
+    target:{ein:{uce:0.7,ic:IC}, aus:{uce:UB,ic:0}, ubMax:12, icMax:22, B},
+    note:'Hier wird nichts gerechnet. I_B wählt nur die Kennlinie aus (B steckt schon im Kennlinienfeld). EIN: auf dieser Kennlinie ganz nach links bis zum Knick bei U_CE ≈ 0,7 V und I_C dort ablesen. AUS: I_C = 0, die ganze Spannung liegt am Transistor, also U_CE = U_B auf der U_CE-Achse.'
+  };
+}
+function kGeom(cv){return {x0:54,y0:cv.height-42,x1:cv.width-70,y1:22};}
+function toPx(cv,t,uce,ic){const g=kGeom(cv);return {px:g.x0+(uce/t.ubMax)*(g.x1-g.x0), py:g.y0-(ic/t.icMax)*(g.y0-g.y1)};}
+function fromPx(cv,t,px,py){const g=kGeom(cv);return {uce:(px-g.x0)/(g.x1-g.x0)*t.ubMax, ic:(g.y0-py)/(g.y0-g.y1)*t.icMax};}
+function drawKfeld(cv,q,reveal){
+  const ctx=cv.getContext('2d'), g=kGeom(cv), t=q.target;
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.strokeStyle='#eef1f4';ctx.lineWidth=1;
+  for(let v=0;v<=t.ubMax;v+=1){const p=toPx(cv,t,v,0);ctx.beginPath();ctx.moveTo(p.px,g.y0);ctx.lineTo(p.px,g.y1);ctx.stroke();}
+  for(let a=0;a<=t.icMax;a+=5){const p=toPx(cv,t,0,a);ctx.beginPath();ctx.moveTo(g.x0,p.py);ctx.lineTo(g.x1,p.py);ctx.stroke();}
+  ctx.font='11.5px ui-monospace,monospace';
+  for(let ib=12.5;ib<=100;ib+=12.5){
+    const icSat=t.B*ib/1000, main=ib%25===0;
+    ctx.strokeStyle=main?'#7d8a95':'#b8c1c9';ctx.lineWidth=main?1.8:1.2;
+    ctx.beginPath();
+    for(let u=0;u<=t.ubMax;u+=0.1){
+      const ic=icSat*(1-Math.exp(-u/0.22))*(1+0.006*u);
+      const p=toPx(cv,t,u,ic); u===0?ctx.moveTo(p.px,p.py):ctx.lineTo(p.px,p.py);
+    }
+    ctx.stroke();
+    if(main){const p=toPx(cv,t,t.ubMax,icSat*(1+0.006*t.ubMax));ctx.fillStyle='#55606a';ctx.fillText(ib+' µA',p.px+6,p.py+4);}
+  }
+  ctx.strokeStyle='#1a2024';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(g.x0,g.y1-6);ctx.lineTo(g.x0,g.y0);ctx.lineTo(g.x1+6,g.y0);ctx.stroke();
+  ctx.fillStyle='#55606a';ctx.font='12px ui-monospace,monospace';
+  ctx.fillText('I_C / mA',8,g.y1+2);
+  ctx.fillText('U_CE / V',g.x1-46,g.y0+30);
+  for(let v=2;v<=t.ubMax;v+=2){const p=toPx(cv,t,v,0);ctx.fillText(v,p.px-4,g.y0+16);}
+  for(let a=5;a<=t.icMax;a+=5){const p=toPx(cv,t,0,a);ctx.fillText(a,g.x0-28,p.py+4);}
+  if(reveal){
+    const e=toPx(cv,t,t.ein.uce,t.ein.ic), a=toPx(cv,t,t.aus.uce,0);
+    ctx.lineWidth=2;
+    ctx.strokeStyle='#17a35b';ctx.beginPath();ctx.arc(e.px,e.py,15,0,7);ctx.stroke();
+    ctx.strokeStyle='#d98a1f';ctx.beginPath();ctx.arc(a.px,a.py,15,0,7);ctx.stroke();
+  }
+  const mark=(c,col)=>{if(!c)return;ctx.fillStyle=col;ctx.beginPath();ctx.arc(c.x,c.y,6,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();};
+  mark(state.clicks.ap,'#17a35b');
+  mark(state.clicks.sp,'#d98a1f');
+}
+
+/* ============================================================
+   Konzeptfragen
+   ============================================================ */
+function mc(tag,pts,prompt,opts,multi,note){
+  return {tag,pts,type:'mc',multi:!!multi,prompt,choices:shuffle(opts),note};
+}
+const S = s => s.replace(/_([A-Za-zü,]+)/g,'<sub>$1</sub>');   // U_BE → U<sub>BE</sub>
+
+// --- Bipolartransistor als Schalter ---
+const BJT = [
+  ()=>mc('Konzept · Relais vs. Transistor','1 Punkt',
+    'Wodurch unterscheidet sich ein Transistor als Schalter von einem mechanischen Schalter (Relais)?',
+    [{t:'Schaltet schneller',ok:true},{t:'Empfindlich gegenüber Spannungsspitzen',ok:true},{t:'Keine galvanische Trennung',ok:true},
+     {t:'Schaltet langsamer',ok:false},{t:'Unempfindlich gegenüber Spannungsspitzen',ok:false}],true,
+    'Kein mechanischer Kontakt → schnell und verschleißfrei. Dafür hängen Steuer- und Laststromkreis elektrisch zusammen, und Überspannungen zerstören die Sperrschicht.'),
+  ()=>mc('Konzept · Warum Bipolar als Schalter','2 Punkte',
+    'Warum ist ein Bipolartransistor gut als elektronischer Schalter geeignet?',
+    [{t:'Wegen seines kleinen Steuerstromes',ok:true},{t:'Wegen seines geringen Sperrstromes',ok:true},{t:'Wegen seines großen Steuerstromes',ok:false}],true,
+    'Ein kleiner Basisstrom schaltet einen großen Kollektorstrom (Faktor B). Im AUS-Zustand fließt praktisch nichts, weil der Sperrstrom sehr klein ist.'),
+  ()=>{const aus=Math.random()<.5; return mc(`Konzept · Kriterien ${aus?'AUS':'EIN'}`,'1 Punkt',
+    `Welche Kriterien gehören zum <b>${aus?'Sperrzustand (AUS)':'leitenden Zustand (EIN)'}</b>?`,
+    [{t:S('I_B = 0'),ok:aus},{t:S('I_B ≠ 0'),ok:!aus},{t:S('U_BE < U_BEF'),ok:aus},{t:S('U_BE = 0,7 V'),ok:!aus},
+     {t:S('I_C = 0'),ok:aus},{t:S('I_C ≠ 0'),ok:!aus},{t:S('U_CE < U_BEF'),ok:!aus}],true,
+    'AUS: U_BE unter der Schwellspannung U_BEF → kein I_B → kein I_C. EIN: U_BE ≈ 0,7 V, es fließt I_B und I_C, und U_CE sinkt unter U_BEF (bis U_CES).');},
+  ()=>{const ue=Math.random()<.5; return mc(`Konzept · ${ue?'übersteuert':'sperrt'}`,'0,5 Punkte',
+    `Welche Spannungsbedingung muss am Transistor erfüllt sein, damit er <b>${ue?'übersteuert':'sperrt'}</b>?`,
+    [{t:S('U_BE > U_CE'),ok:ue},{t:S('U_BE < U_CE'),ok:!ue},{t:S('U_BE = U_CE'),ok:false}],false,
+    'Übersteuert: U_CE fällt unter U_BE (z. B. 0,1 V < 0,7 V), die Kollektor-Basis-Diode wird leitend. Gesperrt: U_BE ist klein bzw. negativ, U_CE ≈ U_B, also U_BE < U_CE.');},
+  ()=>{
+    const D=[
+      ['I_C','= I_Bü · B'],['I_E','= I_C + I_B'],['I_B','= m · I_Bü'],
+      ['B','= I_C / I_B, die Stromverstärkung'],['m','ist der Übersteuerungsfaktor'],
+      ['I_Bü','ist der Basisstrom an der Übersteuerungsgrenze (m = 1)']];
+    const d=pick(D);
+    return mc('Konzept · Formeln & Definitionen','0,5 Punkte',
+      `Welche Berechnungsvorschrift bzw. Definition gehört zu <b>${S(d[0])}</b>?`,
+      D.map(x=>({t:S(x[1]),ok:x===d})),false,
+      'Kette merken: I_Bü = I_C / B an der Grenze, dann I_B = m · I_Bü. Mit m > 1 fließt mehr Basisstrom als nötig.');
+  },
+  ()=>mc('Konzept · Kennlinienfeld','0,5 Punkte',
+    'In welchem Quadranten des Vierquadranten-Kennlinienfeldes liegt die <b>Stromübertragungskennlinie</b> I<sub>C</sub> = f(I<sub>B</sub>)?',
+    [{t:'Quadrant II (links oben, I_C über I_B)'.replace(/_([A-Z]+)/g,'<sub>$1</sub>'),ok:true},
+     {t:'Quadrant I (rechts oben, Ausgangskennlinien)',ok:false},
+     {t:'Quadrant III (links unten, Eingangskennlinie)',ok:false},
+     {t:'Quadrant IV (rechts unten, Rückwirkung)',ok:false}],false,
+    'I: Ausgangskennlinien I_C(U_CE). II: Stromübertragung I_C(I_B), eine Gerade mit Steigung B. III: Eingangskennlinie I_B(U_BE). IV: Spannungsrückwirkung U_BE(U_CE).'),
+];
+
+BJT.push(()=>mc('Konzept · Widerstandskennlinie R_C','2 Punkte',
+  'Aus welchen beiden Kriterien ergibt sich die Widerstandskennlinie (Arbeitsgerade) des Kollektorwiderstandes R<sub>C</sub> im Ausgangskennlinienfeld?',
+  [{t:'Leerlauffall: Es fließt kein Strom durch den Transistor, die gesamte Betriebsspannung fällt über der Kollektor-Emitter-Strecke ab.',ok:true},
+   {t:'Kurzschlussfall: Über der Kollektor-Emitter-Strecke fällt keine Spannung ab.',ok:true},
+   {t:S('Arbeitspunkt liegt auf dem Mittelwert der Betriebsspannung: U_CE = U_B/2'),ok:false},
+   {t:S('Die Eingangsspannung hat den negativen Wert der Betriebsspannung: U_E = −U_B'),ok:false}],true,
+  'Leerlauf: I_C = 0, U_CE = U_B (Punkt auf der U_CE-Achse). Kurzschluss: U_CE = 0, I_C = U_B/R_C (Punkt auf der I_C-Achse). Die Verbindung ist die Arbeitsgerade. U_B/2 ist der Verstärker-Arbeitspunkt aus V1, nicht der Schalter.'));
+
+// --- Feldeffekttransistor ---
+const FET = [
+  ()=>mc('Konzept · falsche FET-Aussagen','2 Punkte',
+    'Welche Aussagen über die FET-Typen sind <b>falsch</b>?',
+    [{t:'Beim MOSFET ist das Gate gegenüber dem Kanal durch ein Dielektrikum isoliert.',ok:false},
+     {t:'Beim SFET fließt wie bei Bipolar-Transistoren ein Gate-Strom.',ok:true},
+     {t:'Sowohl SFETs als auch MOSFETs gibt es als n- und als p-Kanal-Typen.',ok:false},
+     {t:'Beim MOSFET ist das Gate gegenüber dem Kanal durch einen gesperrten pn-Übergang isoliert.',ok:true}],true,
+    'Achtung, gefragt sind die FALSCHEN Aussagen. MOSFET: Isolation durch Oxid (Dielektrikum). SFET (Sperrschicht-FET): Isolation durch einen gesperrten pn-Übergang, deshalb fließt praktisch kein Gate-Strom.'),
+  ()=>{
+    const T=[
+      ['n-Kanal-Anreicherungstyp','U_t > 0: Bis U_GS = U_t fließt kein Strom, danach steigt I_D mit größerem U_GS.'],
+      ['n-Kanal-Verarmungstyp','U_t < 0: Bei U_GS = 0 fließt schon Strom; I_D steigt weiter, auch für U_GS > 0.'],
+      ['p-Kanal-Anreicherungstyp','U_t < 0: Bis U_GS = U_t fließt kein Strom, danach steigt |I_D|, je negativer U_GS wird.'],
+      ['p-Kanal-Verarmungstyp','U_t > 0: Bei U_GS = 0 fließt schon Strom; |I_D| steigt, je negativer U_GS wird.'],
+      ['n-Kanal-SFET','U_t < 0: Größter Strom bei U_GS = 0, nur für U_GS ≤ 0 nutzbar (sonst leitet die Gate-Diode).']];
+    const k=pick(T);
+    return mc('Konzept · Transferkennlinie','0,5 Punkte',
+      `Welche Transferkennlinie I<sub>D</sub>(U<sub>GS</sub>) gehört zum <b>${k[0]}</b>?`,
+      T.map(x=>({t:S(x[1]),ok:x===k})),false,
+      'Anreicherung: Kurve beginnt erst bei U_t, bei U_GS = 0 kein Strom. Verarmung: Kurve schneidet die I_D-Achse, bei U_GS = 0 fließt schon Strom. n-Kanal: Kurve steigt nach rechts. p-Kanal: gespiegelt, steigt nach links. SFET: wie Verarmung, endet aber bei U_GS = 0 (im Bild: Verarmung mit gestrichelter Fortsetzung = MOSFET, ohne = SFET).');
+  },
+  ()=>{const durch=Math.random()<.5; return mc('Konzept · MOSFET-Symbol','0,5 Punkte',
+    `Welche Bedeutung hat im Schaltsymbol eine <b>${durch?'durchgezogene':'gestrichelte'}</b> Verbindungslinie zwischen Source und Drain?`,
+    [{t:'Es handelt sich um einen Verarmungstyp.',ok:durch},{t:'Es handelt sich um einen Anreicherungstyp.',ok:!durch},
+     {t:'Es handelt sich um einen n-Kanal-Typ.',ok:false},{t:'Es handelt sich um einen p-Kanal-Typ.',ok:false}],false,
+    'Durchgezogen = Kanal ist schon da → selbstleitend (Verarmung). Gestrichelt = Kanal muss erst erzeugt werden → selbstsperrend (Anreicherung). n/p erkennt man am Pfeil am Bulk.');},
+  ()=>{
+    const K=[['Formelzeichen für die Steilheit','g_m'],['Formel für die Steilheit','dI_D / dU_GS'],
+             ['Formelzeichen für den Ausgangsleitwert','g_d'],['Formel für den Ausgangsleitwert','dI_D / dU_DS']];
+    const extra=['g_l','dU_DS / dI_D','dU_GS / dI_D'];
+    const k=pick(K);
+    return mc('Konzept · FET-Kenngrößen','0,5 Punkte',`Was ist das bzw. die richtige <b>${k[0]}</b>?`,
+      [...K.map(x=>({t:S(x[1]),ok:x===k})),...extra.map(e=>({t:S(e),ok:false}))],false,
+      'Steilheit g_m = dI_D/dU_GS: wie stark das Gate den Strom steuert. Ausgangsleitwert g_d = dI_D/dU_DS: Neigung der Ausgangskennlinie. dU_DS/dI_D wäre der Ausgangswiderstand r_d.');
+  },
+  ()=>{
+    const P=[['Annähernd leistungsloses Schalten bei niedrigen Frequenzen','F'],['Bezeichnung der Kontakte mit Basis, Emitter, Kollektor','B'],
+             ['Sehr hoher Eingangswiderstand bei niedrigen Frequenzen','F'],['Stromgesteuert','B'],
+             ['Ausgangsstrom fließt sowohl durch n- als auch durch p-dotierte Bereiche','B'],['Spannungsgesteuert','F'],
+             ['Bezeichnung der Kontakte mit Gate, Source, Drain','F']];
+    const f=Math.random()<.5;
+    return mc('Konzept · FET vs. Bipolar','1 Punkt',
+      `Welche Eigenschaften gehören zum <b>${f?'Feldeffekt-Transistor':'Bipolar-Transistor'}</b>?`,
+      P.map(p=>({t:p[0],ok:(p[1]==='F')===f})),true,
+      'FET: spannungsgesteuert, das isolierte Gate zieht fast keinen Strom → sehr hoher Eingangswiderstand, nahezu leistungslos. Bipolar: stromgesteuert, der Strom läuft durch n- und p-Schichten (npn/pnp).');
+  },
+  ()=>mc('Konzept · Bulk-Pfeil','0,5 Punkte',
+    'Worauf weist der Pfeil am Bulk-Anschluss im MOSFET-Schaltsymbol hin?',
+    [{t:'Auf einen n- bzw. p-Kanal-MOSFET',ok:true},{t:'Auf Verarmungs- bzw. Anreicherungstyp',ok:false},
+     {t:'Auf die technische Stromrichtung im Kanal',ok:false},{t:'Auf die Lage der Gate-Isolation',ok:false}],false,
+    'Pfeil zeigt die Kanalart (n oder p). Ob Verarmung oder Anreicherung, sagt allein die Linie zwischen Source und Drain.'),
+];
+
+
+// 6) Dimensionierung R_C und R_B bei vorgegebenem I_C und m (OPAL Aufgabe 7)
+function genDimRC(){
+  const UB=rint(10,16), UI=pick([2.5,3.3,5]), B=rint(120,220), UCES=pick([0.1,0.2,0.3]), m=pick([2,3,4,5]);
+  const IC=rint(500,1500)/100;
+  const RC=(UB-UCES)/IC*1000, RCo=(UB-0.45)/IC*1000;
+  const IB=m*IC/B*1000, RB=(UI-UBEF)/IB*1000;
+  return {
+    tag:'Dimensionierung R_C & R_B', pts:'3 Punkte',
+    prompt:`Gegeben ist ein Transistorschalter mit U<sub>B</sub> = ${UB} V, den Eingangsspannungen U<sub>I,ein</sub> = ${fmtDE(UI,1)} V und U<sub>I,aus</sub> = 0 V. Wie groß müssen <b>R<sub>B</sub></b> und <b>R<sub>C</sub></b> sein, damit im EIN-Zustand I<sub>C</sub> = ${fmtDE(IC,2)} mA fließt und der Übersteuerungsgrad m = ${m} beträgt?`,
+    given:[['U_B',UB+' V'],['U_I,ein',fmtDE(UI,1)+' V'],['U_BE',fmtDE(UBEF,1)+' V'],['U_CES',fmtDE(UCES,1)+' V'],['B',''+B],['I_C',fmtDE(IC,2)+' mA'],['m',''+m]],
+    fields:[
+      {key:'RC',label:'R<sub>C</sub>',unit:'Ω', target:RC,alt:RCo,abs:3,dec:1},
+      {key:'IB',label:'I<sub>B</sub>',unit:'µA',target:IB,abs:0.5,dec:2},
+      {key:'RB',label:'R<sub>B</sub>',unit:'kΩ',target:RB,abs:0.1,dec:2},
+    ],
+    solve:()=>[
+      {lhs:`m > 1 → U_CE = U_CES: R_C = (U_B − U_CES) / I_C = ${fmtDE(UB-UCES,1)} V / ${fmtDE(IC,2)} mA`, res:fmtDE(RC,1)+' Ω'},
+      {lhs:`(OPAL rechnet mit U_CE = 0,45 V: R_C = ${fmtDE(UB-0.45,2)} V / ${fmtDE(IC,2)} mA)`, res:fmtDE(RCo,1)+' Ω'},
+      {lhs:`I_B = m · I_C / B = ${m} · ${fmtDE(IC,2)} mA / ${B}`, res:fmtDE(IB,2)+' µA'},
+      {lhs:`R_B = (U_I,ein − U_BE) / I_B = ${fmtDE(UI-UBEF,1)} V / ${fmtDE(IB,2)} µA`, res:fmtDE(RB,2)+' kΩ'},
+    ],
+    note:'U_I,aus = 0 V braucht man nicht. Bei R_C akzeptiert der Trainer auch die OPAL-Variante mit 0,45 V.'
+  };
+}
+
+// 7) Übersteuerungsfaktor aus gegebenem I_B (OPAL Aufgabe 12)
+function genMfaktor(){
+  let UB,RC,B,IB,IC,IBu,m,UCES;
+  do{UB=rint(10,16);RC=rint(8,25)*100;B=rint(120,250);UCES=pick([0.1,0.2,0.3]);IB=pick([150,200,250,300,400]);
+     IC=(UB-UCES)/RC*1000;IBu=IC/B*1000;m=IB/IBu;}while(m<1.5);
+  const ICo=(UB-0.45)/RC*1000, mo=IB/(ICo/B*1000);
+  return {
+    tag:'Übersteuerungsfaktor m', pts:'2 Punkte',
+    prompt:`Der Transistor soll als Schalter betrieben und übersteuert werden. R<sub>C</sub> = ${RC} Ω, U<sub>B</sub> = ${UB} V, B = ${B}. Er ist bei einem Basisstrom von I<sub>B</sub> = ${IB} µA voll durchgesteuert. Berechne I<sub>C</sub> und den <b>Übersteuerungsfaktor m</b>. Tipp: Rechne zuerst I<sub>C</sub> aus.`,
+    given:[['U_B',UB+' V'],['R_C',RC+' Ω'],['B',''+B],['I_B',IB+' µA'],['U_CES',fmtDE(UCES,1)+' V']],
+    fields:[
+      {key:'IC',label:'I<sub>C</sub>',unit:'mA',target:IC,alt:ICo,abs:0.03,dec:2},
+      {key:'m', label:'m',            unit:'',  target:m, alt:mo, abs:0.03,dec:2},
+    ],
+    solve:()=>[
+      {lhs:`I_C = (U_B − U_CES) / R_C = ${fmtDE(UB-UCES,1)} V / ${RC} Ω`, res:fmtDE(IC,3)+' mA'},
+      {lhs:`I_Bü = I_C / B`, res:fmtDE(IBu,2)+' µA'},
+      {lhs:`m = I_B / I_Bü = ${IB} µA / ${fmtDE(IBu,2)} µA`, res:fmtDE(m,3)},
+      {lhs:`(OPAL-Variante mit U_CE = 0,45 V)`, res:`I_C = ${fmtDE(ICo,3)} mA · m = ${fmtDE(mo,3)}`},
+    ],
+    note:'Ohne I_C kein I_Bü, ohne I_Bü kein m: m sagt, wie viel mal mehr Basisstrom fließt als an der Übersteuerungsgrenze nötig.'
+  };
+}
+
+// 8) R_B mit Schalter S (OPAL Aufgabe 8)
+function genRBS(){
+  const UB=pick([9,10,12,15]), IB=pick([25,50,75,100,150,200]);
+  const RB=(UB-UBEF)/IB*1000;
+  return {
+    tag:'Basiswiderstand · Schalter S', pts:'1 Punkt',
+    prompt:`R<sub>B</sub> liegt zwischen U<sub>B</sub> und der Basis, der Schalter S verbindet die Basis mit Masse. Es gilt U<sub>B</sub> = ${UB} V und U<sub>BE</sub> = 0,7 V. S ist <b>offen</b>. Wie groß muss R<sub>B</sub> sein, damit I<sub>B</sub> = ${IB} µA fließt? Wie groß ist I<sub>B</sub>, wenn S <b>geschlossen</b> wird?`,
+    given:[['U_B',UB+' V'],['U_BE','0,7 V'],['I_B',IB+' µA']],
+    fields:[
+      {key:'RB',label:'R<sub>B</sub>',unit:'kΩ',target:RB,abs:0.2,dec:2},
+      {key:'IBz',label:'I<sub>B</sub> (S zu)',unit:'µA',target:0,abs:0.01,dec:0},
+    ],
+    solve:()=>[
+      {lhs:`R_B = (U_B − U_BE) / I_B = ${fmtDE(UB-UBEF,1)} V / ${IB} µA`, res:fmtDE(RB,2)+' kΩ'},
+      {lhs:`S zu: Basis liegt auf Masse → U_BE = 0 < U_BEF`, res:'I_B = 0, Transistor sperrt'},
+    ],
+    note:'Der Strom durch R_B fließt bei geschlossenem S komplett über den Schalter nach Masse, nicht in die Basis.'
+  };
+}
+
+// 9) Schottky-Transistor (OPAL Aufgabe 13)
+function genSchottky(){
+  const UF=pick([0.3,0.25,0.35,0.4]);
+  const UCE=UBEF-UF;
+  return {
+    tag:'Schottky-Transistor', pts:'1 Punkt',
+    prompt:`Zwischen Basis und Kollektor wird eine Schottky-Diode mit U<sub>F</sub> = ${fmtDE(UF,2)} V geschaltet. Wie groß ist U<sub>CE</sub> im eingeschalteten Zustand, wenn U<sub>BE</sub> = 0,7 V ist?`,
+    given:[['U_BE','0,7 V'],['U_F',fmtDE(UF,2)+' V']],
+    fields:[{key:'UCE',label:'U<sub>CE</sub>',unit:'V',target:UCE,abs:0.01,dec:2}],
+    solve:()=>[
+      {lhs:`Masche: U_CE − U_BE + U_CB = 0 → U_CE = U_BE − U_CB`, res:''},
+      {lhs:`U_CB = U_F = ${fmtDE(UF,2)} V → U_CE = 0,7 V − ${fmtDE(UF,2)} V`, res:fmtDE(UCE,2)+' V'},
+    ],
+    note:'Die Schottky-Diode klemmt U_CB auf U_F. Dadurch sinkt U_CE nie bis U_CES, der Transistor geht nicht in die tiefe Sättigung und schaltet schneller wieder aus.'
+  };
+}
+
+// 10) Arbeitsgerade konstruieren (OPAL Aufgabe 6)
+function genArbeitsgerade(){
+  let UB,RC,Imax;
+  do{UB=pick([15,18,20]);RC=pick([220,270,300,330,390,470]);Imax=UB/RC*1000;}while(Imax>86||Imax<30);
+  const IB=pick([100,200,300,400]);
+  const cur=(ib,u)=>{const b=0.185*ib, sl=(ib/100-1)*0.18; return u<0.4? b*u/0.4 : b+sl*(u-0.4);};
+  const ll=u=>Imax*(1-u/UB);
+  let ue=0; for(let u=0;u<=UB;u+=0.005){ if(cur(IB,u)>=ll(u)){ue=u;break;} }
+  const ie=ll(ue);
+  const t={ubMax:22,icMax:90};
+  const G=cv=>({x0:54,y0:cv.height-42,x1:cv.width-70,y1:22});
+  const P=(cv,u,i)=>{const g=G(cv);return{px:g.x0+u/t.ubMax*(g.x1-g.x0),py:g.y0-i/t.icMax*(g.y0-g.y1)};};
+  const Q=(cv,px,py)=>{const g=G(cv);return{u:(px-g.x0)/(g.x1-g.x0)*t.ubMax,i:(g.y0-py)/(g.y0-g.y1)*t.icMax};};
+  const draw=(cv,q,rev)=>{
+    const ctx=cv.getContext('2d'),g=G(cv);
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.strokeStyle='#eef1f4';ctx.lineWidth=1;
+    for(let u=0;u<=20;u+=5){const p=P(cv,u,0);ctx.beginPath();ctx.moveTo(p.px,g.y0);ctx.lineTo(p.px,g.y1);ctx.stroke();}
+    for(let i=0;i<=80;i+=20){const p=P(cv,0,i);ctx.beginPath();ctx.moveTo(g.x0,p.py);ctx.lineTo(g.x1,p.py);ctx.stroke();}
+    ctx.font='11.5px ui-monospace,monospace';
+    [100,200,300,400].forEach(ib=>{
+      ctx.strokeStyle=ib===IB&&rev?'#0f7c44':'#55606a';ctx.lineWidth=ib===IB&&rev?2.4:1.6;
+      ctx.beginPath();
+      for(let u=0;u<=20;u+=0.05){const p=P(cv,u,cur(ib,u));u===0?ctx.moveTo(p.px,p.py):ctx.lineTo(p.px,p.py);}
+      ctx.stroke();
+      const p=P(cv,20,cur(ib,20));ctx.fillStyle='#55606a';ctx.fillText(ib+' µA',p.px+6,p.py+4);
+    });
+    ctx.strokeStyle='#1a2024';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(g.x0,g.y1-6);ctx.lineTo(g.x0,g.y0);ctx.lineTo(g.x1+6,g.y0);ctx.stroke();
+    ctx.fillStyle='#55606a';ctx.font='12px ui-monospace,monospace';
+    ctx.fillText('I_C / mA',8,g.y1+2);ctx.fillText('U_CE / V',g.x1-46,g.y0+30);
+    for(let u=5;u<=20;u+=5){const p=P(cv,u,0);ctx.fillText(u,p.px-6,g.y0+16);}
+    for(let i=20;i<=80;i+=20){const p=P(cv,0,i);ctx.fillText(i,g.x0-28,p.py+4);}
+    if(rev){
+      const a=P(cv,0,Imax),b=P(cv,UB,0);
+      ctx.strokeStyle='#d98a1f';ctx.lineWidth=2;ctx.setLineDash([6,4]);
+      ctx.beginPath();ctx.moveTo(a.px,a.py);ctx.lineTo(b.px,b.py);ctx.stroke();ctx.setLineDash([]);
+      const e=P(cv,ue,ie);
+      ctx.strokeStyle='#17a35b';ctx.beginPath();ctx.arc(e.px,e.py,15,0,7);ctx.stroke();
+      ctx.strokeStyle='#d98a1f';ctx.beginPath();ctx.arc(b.px,b.py,15,0,7);ctx.stroke();
+    }
+    const mk=(c,col)=>{if(!c)return;ctx.fillStyle=col;ctx.beginPath();ctx.arc(c.x,c.y,6,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();};
+    mk(state.clicks.ap,'#17a35b');mk(state.clicks.sp,'#d98a1f');
+  };
+  return {
+    tag:'Kennlinienfeld · Arbeitsgerade', pts:'1 Punkt', type:'canvas', draw,
+    prompt:`Kennzeichne im idealisierten Ausgangskennlinienfeld die Arbeitspunkte <b>EIN</b> und <b>AUS</b> des Transistors bei R<sub>C</sub> = ${RC} Ω, U<sub>B</sub> = ${UB} V und I<sub>B</sub> = ${IB} µA.<br><i>Tipp: Konstruiere zuerst die Arbeitsgerade von R<sub>C</sub>.</i>`,
+    given:[['R_C',RC+' Ω'],['U_B',UB+' V'],['I_B',IB+' µA']],
+    judge:cv=>{
+      const e=Q(cv,state.clicks.ap.x,state.clicks.ap.y),a=Q(cv,state.clicks.sp.x,state.clicks.sp.y);
+      return Math.abs(e.u-ue)<=1.3 && Math.abs(e.i-ie)<=5 && a.i<=3 && Math.abs(a.u-UB)<=1.2;
+    },
+    solve:()=>[
+      {lhs:`Kurzschlussfall (U_CE = 0): I_C,max = U_B / R_C = ${UB} V / ${RC} Ω`, res:fmtDE(Imax,1)+' mA'},
+      {lhs:`Leerlauffall (I_C = 0): U_CE = U_B → das ist der AUS-Punkt`, res:UB+' V'},
+      {lhs:`Beide Punkte verbinden = Arbeitsgerade`, res:''},
+      {lhs:`EIN = Schnittpunkt der Geraden mit der ${IB}-µA-Kennlinie`, res:`U_CE ≈ ${fmtDE(ue,1)} V · I_C ≈ ${fmtDE(ie,0)} mA`},
+    ],
+    note: ue<1.2
+      ? 'Der Schnittpunkt liegt im steilen Bereich ganz links: Der Transistor ist voll durchgeschaltet (übersteuert). Mehr I_B würde I_C nicht mehr erhöhen, R_C begrenzt.'
+      : 'Der Schnittpunkt liegt im flachen Teil der Kennlinie: Mit diesem I_B ist der Transistor NICHT voll durchgeschaltet, U_CE ist noch deutlich größer als 0. Für einen sauberen Schalter bräuchte man mehr Basisstrom.'
+  };
+}
+
+/* Registry */
+const GENS = {
+  einaus:  {name:'EIN & AUS',          fn:genEinAus},
+  ueber:   {name:'Übersteuert',        fn:()=>pick([genUebersteuert,genMfaktor])()},
+  dimrc:   {name:'R_C & R_B',          fn:genDimRC},
+  grenze:  {name:'Übersteuerungsgrenze',fn:genGrenze},
+  kennlin: {name:'Kennlinienfeld',     fn:genKennlinie},
+  gerade:  {name:'Arbeitsgerade',      fn:genArbeitsgerade},
+  kurz:    {name:'Kurzaufgaben',       fn:()=>pick([genRBS,genSchottky])()},
+  konst:   {name:'Konstantstromquelle',fn:genKonstant},
+  bjt:     {name:'Konzept Bipolar',    fn:()=>pick(BJT)()},
+  fet:     {name:'Konzept FET',        fn:()=>pick(FET)()},
+};
+const ALL = Object.keys(GENS);
+
+/* ============================================================
+   Zustand + UI
+   ============================================================ */
+let state={cat:'random', q:null, answered:false, score:{ok:0,n:0}, streak:0, place:'ap', clicks:{ap:null,sp:null}};
+
+function buildNav(){
+  const nav=$('#nav');
+  const rng=el('button','cat rng','🎲 Zufall'); rng.dataset.cat='random'; nav.appendChild(rng);
+  ALL.forEach(k=>{const b=el('button','cat',GENS[k].name); b.dataset.cat=k; nav.appendChild(b);});
+  nav.addEventListener('click',e=>{
+    const b=e.target.closest('.cat'); if(!b)return;
+    state.cat=b.dataset.cat; syncNav(); newQuestion();
+  });
+  syncNav();
+}
+function syncNav(){document.querySelectorAll('.cat').forEach(b=>b.setAttribute('aria-pressed', b.dataset.cat===state.cat));}
+
+function newQuestion(){
+  const key = state.cat==='random' ? pick(ALL) : state.cat;
+  state.q = GENS[key].fn();
+  state.q._key = key;
+  state.answered=false; state.place='ap'; state.clicks={ap:null,sp:null};
+  render();
+}
+
+function render(){
+  const q=state.q;
+  $('#cardTag').textContent=q.tag+' · '+q.pts;
+  $('#cardStreak').textContent='Serie: '+state.streak;
+  $('#solution').classList.remove('show'); $('#solution').innerHTML='';
+  $('#btnCheck').disabled=false; $('#btnSolve').textContent='Lösung zeigen';
+
+  const body=$('#cardBody'); body.innerHTML='';
+  body.appendChild(el('p','prompt',q.prompt));
+  if(q.given){
+    const g=el('div','given');
+    q.given.forEach(([k,v])=>g.appendChild(el('span','chip', v?`${S(k)} = <b>${v}</b>`:`<b>${S(k)}</b>`)));
+    body.appendChild(g);
+  }
+  if(q.type==='mc') renderMC(body,q);
+  else if(q.type==='canvas') renderCanvas(body,q);
+  else renderFields(body,q);
+}
+
+function renderFields(body,q){
+  if(q.figure){
+    const w=el('div','canvas-wrap'); const cv=el('canvas'); cv.width=560; cv.height=320; cv.id='fig';
+    w.appendChild(cv); body.appendChild(w); q.figure(cv);
+  }
+  const wrap=el('div','fields');
+  q.fields.forEach(f=>{
+    if(f.group){wrap.appendChild(el('div','group',f.group));return;}
+    const row=el('div','field');
+    row.innerHTML=`<label>${f.label}</label><span class="eq">=</span>`;
+    const inp=el('input','cell'); inp.id='f_'+f.key; inp.inputMode='decimal'; inp.autocomplete='off';
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')doCheck();});
+    row.appendChild(inp); row.appendChild(el('span','unit',f.unit)); row.appendChild(el('span','verdict',''));
+    wrap.appendChild(row);
+  });
+  body.appendChild(wrap);
+  setTimeout(()=>{const fi=body.querySelector('.cell'); if(fi)fi.focus({preventScroll:true});},30);
+}
+
+function renderMC(body,q){
+  if(q.multi) body.appendChild(el('p','hint','Mehrfachauswahl möglich'));
+  const wrap=el('div','choices');
+  q.choices.forEach((c,i)=>{
+    const ch=el('div','choice'); ch.dataset.i=i; ch.setAttribute('aria-pressed','false');
+    ch.innerHTML=`<span class="box"></span><span>${c.t}</span>`;
+    ch.addEventListener('click',()=>{
+      if(state.answered)return;
+      if(q.multi){const p=ch.getAttribute('aria-pressed')==='true'; ch.setAttribute('aria-pressed',!p); ch.querySelector('.box').textContent=!p?'✓':'';}
+      else{wrap.querySelectorAll('.choice').forEach(x=>{x.setAttribute('aria-pressed','false');x.querySelector('.box').textContent='';}); ch.setAttribute('aria-pressed','true'); ch.querySelector('.box').textContent='✓';}
+    });
+    wrap.appendChild(ch);
+  });
+  body.appendChild(wrap);
+}
+
+function renderCanvas(body,q){
+  const wrap=el('div','canvas-wrap');
+  const tog=el('div','placetoggle');
+  const ap=el('button','ptog ap','<span class="dot"></span>EIN'); ap.dataset.m='ap'; ap.setAttribute('aria-pressed','true');
+  const sp=el('button','ptog sp','<span class="dot"></span>AUS (Sperrzustand)'); sp.dataset.m='sp'; sp.setAttribute('aria-pressed','false');
+  tog.append(ap,sp);
+  tog.addEventListener('click',e=>{const b=e.target.closest('.ptog');if(!b)return; state.place=b.dataset.m; ap.setAttribute('aria-pressed',state.place==='ap'); sp.setAttribute('aria-pressed',state.place==='sp');});
+  const cv=el('canvas','click'); cv.width=560; cv.height=340; cv.id='kfeld';
+  cv.addEventListener('pointerdown',e=>{
+    if(state.answered)return;
+    const r=cv.getBoundingClientRect();
+    state.clicks[state.place]={x:(e.clientX-r.left)*(cv.width/r.width), y:(e.clientY-r.top)*(cv.height/r.height)};
+    // nach dem EIN-Klick automatisch auf AUS umschalten
+    if(state.place==='ap' && !state.clicks.sp){state.place='sp'; ap.setAttribute('aria-pressed','false'); sp.setAttribute('aria-pressed','true');}
+    (q.draw||drawKfeld)(cv,q,false);
+  });
+  wrap.append(tog,cv);
+  body.appendChild(wrap);
+  (q.draw||drawKfeld)(cv,q,false);
+}
+
+/* ============================================================
+   Prüfen / Lösung
+   ============================================================ */
+function doCheck(){
+  if(state.answered) return;
+  const q=state.q; let allOk=true;
+
+  if(q.type==='mc'){
+    const chosen=[...document.querySelectorAll('.choice[aria-pressed="true"]')].map(c=>+c.dataset.i);
+    if(chosen.length===0) return;
+    document.querySelectorAll('.choice').forEach((c,i)=>{
+      const correct=q.choices[i].ok;
+      if(correct) c.classList.add('reveal-ok');
+      if(chosen.includes(i)&&!correct) c.classList.add('reveal-bad');
+    });
+    const want=q.choices.map((c,i)=>c.ok?i:-1).filter(i=>i>=0);
+    allOk = chosen.length===want.length && want.every(i=>chosen.includes(i));
+  }
+  else if(q.type==='canvas'){
+    const cv=$('#kfeld'), t=q.target;
+    if(!state.clicks.ap||!state.clicks.sp) return;
+    if(q.judge){ allOk=q.judge(cv); q.draw(cv,q,true); } else {
+    const e=fromPx(cv,t,state.clicks.ap.x,state.clicks.ap.y);
+    const a=fromPx(cv,t,state.clicks.sp.x,state.clicks.sp.y);
+    const einOk = e.uce<=1.6 && Math.abs(e.ic-t.ein.ic)<=1.6;
+    const ausOk = a.ic<=1.3 && Math.abs(a.uce-t.aus.uce)<=0.8;
+    allOk = einOk && ausOk;
+    drawKfeld(cv,q,true); }
+  }
+  else {
+    q.fields.forEach(f=>{
+      if(f.group) return;
+      const inp=$('#f_'+f.key); const val=parseNum(inp.value);
+      const ok = check(val,f.target,f.abs) || (f.alt!=null && check(val,f.alt,f.abs));
+      const v=inp.parentElement.querySelector('.verdict');
+      inp.classList.remove('ok','bad'); v.classList.remove('ok','bad');
+      inp.classList.add(ok?'ok':'bad'); v.classList.add(ok?'ok':'bad'); v.textContent=ok?'✓':'✕';
+      if(!ok) allOk=false;
+    });
+    if(q.figureReveal) q.figureReveal($('#fig'));
+  }
+
+  state.answered=true;
+  state.score.n++; if(allOk){state.score.ok++; state.streak++;} else state.streak=0;
+  $('#score').innerHTML=state.score.ok+'<small> / '+state.score.n+'</small>';
+  $('#cardStreak').textContent='Serie: '+state.streak;
+  $('#btnCheck').disabled=true;
+  showSolution(allOk);
+}
+
+function showSolution(ok){
+  const q=state.q, sol=$('#solution');
+  let h=`<h3>${ok?'✓ Richtig — Rechenweg':'Lösung'}</h3>`;
+  if(q.solve){
+    h+='<div class="steps">';
+    q.solve().forEach(s=>{h+=`<div class="step"><span class="lhs">${s.lhs}</span><span class="res">${s.res}</span></div>`;});
+    h+='</div>';
+  } else if(q.type==='mc'){
+    const corr=q.choices.filter(c=>c.ok).map(c=>c.t).join(' · ');
+    h+=`<div class="steps"><div class="step"><span class="lhs">Richtige Auswahl</span><span class="res" style="white-space:normal">${corr}</span></div></div>`;
+  } else if(q.type==='canvas'){
+    const t=q.target;
+    h+=`<div class="steps"><div class="step"><span class="lhs">EIN</span><span class="res">U_CE ≈ 0,7 V · I_C auf der ${Math.round(t.ein.ic/t.B*1000)}-µA-Kennlinie abgelesen ≈ ${fmtDE(t.ein.ic,0)} mA</span></div>`;
+    h+=`<div class="step"><span class="lhs">AUS</span><span class="res">U_CE = U_B = ${t.aus.uce} V · I_C = 0</span></div></div>`;
+  }
+  if(q.note) h+=`<p class="note">${q.note}</p>`;
+  sol.innerHTML=h; sol.classList.add('show');
+}
+
+$('#btnCheck').addEventListener('click',doCheck);
+$('#btnNext').addEventListener('click',newQuestion);
+$('#btnSolve').addEventListener('click',()=>{
+  const sol=$('#solution');
+  if(sol.classList.contains('show')){sol.classList.remove('show'); $('#btnSolve').textContent='Lösung zeigen';}
+  else{
+    if(state.q.type==='canvas') (state.q.draw||drawKfeld)($('#kfeld'),state.q,true);
+    if(state.q.figureReveal) state.q.figureReveal($('#fig'));
+    showSolution(false); $('#btnSolve').textContent='Lösung verbergen';
+  }
+});
+
+buildNav();
+newQuestion();
+</script>
+</body>
+</html>
