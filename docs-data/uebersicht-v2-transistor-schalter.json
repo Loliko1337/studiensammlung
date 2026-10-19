@@ -2,7 +2,7 @@
  "id": "uebersicht-v2-transistor-schalter",
  "titel": "Übersicht V2: Transistor als Schalter",
  "untertitel": "Formeln, Zusammenhänge und wann du was brauchst",
- "stand": "2026-10-16",
+ "stand": "2026-10-19",
  "bloecke": [
   {
    "typ": "h2",
@@ -38,7 +38,7 @@
   },
   {
    "typ": "tabelle",
-   "html": "<tbody><tr><th>m</th><th>Bedeutung</th><th>U<sub>CE</sub></th></tr><tr><td>m &lt; 1</td><td>zu wenig Basisstrom, nicht voll durchgeschaltet (aktiver Bereich, I<sub>C</sub> = B · I<sub>B</sub>)</td><td>&gt; 0,7 V</td></tr><tr><td>m = 1</td><td>genau an der Übersteuerungsgrenze</td><td>= U<sub>BE</sub> = 0,7 V</td></tr><tr><td>m &gt; 1</td><td>übersteuert, sicher durchgeschaltet (Sättigung)</td><td>= U<sub>CES</sub></td></tr></tbody>",
+   "html": "<tbody><tr><th>m</th><th>Bedeutung</th><th>U<sub>CE</sub></th></tr><tr><td>m &lt; 1</td><td>zu wenig Basisstrom, nicht voll durchgeschaltet (aktiver Bereich, I<sub>C</sub> = B · I<sub>B</sub>)</td><td>&gt; 0,7 V</td></tr><tr><td>m = 1</td><td>genau an der Übersteuerungsgrenze</td><td>= U<sub>BE</sub> = 0,7 V</td></tr><tr><td>m &gt; 1</td><td>übersteuert, sicher durchgeschaltet (Sättigung). Vorlesung: typisch m = 5 … 10</td><td>= U<sub>CES</sub></td></tr></tbody>",
    "abstand": "m"
   },
   {
@@ -52,6 +52,12 @@
    "html": "<strong>Warum übersteuert man?</strong> Damit der Schalter auch bei streuendem B und bei Temperaturänderung sicher voll durchschaltet. Nachteil: Ladungsträger stauen sich in der Basis, das <strong>Ausschalten wird langsamer</strong>. Dagegen hilft die Schottky-Diode.",
    "variante": "info",
    "abstand": "l"
+  },
+  {
+   "typ": "box",
+   "variante": "info",
+   "abstand": "l",
+   "html": "<strong>Vorlesung vs. OPAL bei m = 1:</strong> Genau an der Übersteuerungsgrenze gilt U<sub>BC</sub> = 0, also U<sub>CE</sub> = U<sub>BE</sub> ≈ 0,7 V. Damit rechnet OPAL (Aufgabe 11). Die Vorlesung setzt zur Vereinfachung auch an der Grenze I<sub>CÜ</sub> = (U<sub>0C</sub> − U<sub>CEmin</sub>)/R<sub>C</sub> mit U<sub>CEmin</sub> = U<sub>CES</sub> ein. Beide Werte unterscheiden sich nur um wenige Prozent. Schreib in der Prüfung einfach dazu, welche Annahme du triffst."
   },
   {
    "typ": "h2",
@@ -89,6 +95,28 @@
    "html": "Die Diode verhindert, dass U<sub>CE</sub> bis U<sub>CES</sub> absinkt. Ohne tiefe Sättigung schaltet der Transistor schneller wieder aus.",
    "variante": "merke",
    "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "Störabstände (Seminar Ü4)"
+  },
+  {
+   "typ": "absatz",
+   "html": "Wie stark darf sich U<sub>E</sub> durch eine Störung ändern, ohne dass der Schalter seinen Zustand verlässt? Gefragt ist immer der Abstand bis zur jeweiligen <strong>Grenze</strong>."
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Zustand</th><th>Grenze</th><th>Störabstand</th><th>Warum</th></tr><tr><td><strong>AUS</strong></td><td>U<sub>BE</sub> = U<sub>BEF</sub></td><td>ΔU = U<sub>BEF</sub> − U<sub>E,AUS</sub></td><td>ohne Basisstrom fällt an R<sub>B</sub> nichts ab, also U<sub>BE</sub> = U<sub>E</sub></td></tr><tr><td><strong>EIN</strong></td><td>I<sub>B</sub> = I<sub>BÜ</sub></td><td>U<sub>E,min</sub> = U<sub>BEF</sub> + I<sub>BÜ</sub>·R<sub>B</sub>, ΔU = U<sub>E,EIN</sub> − U<sub>E,min</sub></td><td>darunter rutscht der AP in den aktiven Bereich, U<sub>CE</sub> steigt an</td></tr></tbody>"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Mit Hilfsspannung U<sub>EE</sub> &lt; 0 und Basisteiler R<sub>B</sub>/R<sub>E</sub></strong> (Ü4 A2): Im AUS-Zustand wird die Basis über den Teiler negativ vorgespannt, U<sub>BE</sub> = U<sub>E</sub>·R<sub>E</sub>/(R<sub>B</sub> + R<sub>E</sub>) + U<sub>EE</sub>·R<sub>B</sub>/(R<sub>B</sub> + R<sub>E</sub>). Damit sperrt der Transistor sicher, und der Störabstand im AUS-Zustand wächst. Im EIN-Zustand gilt I<sub>B</sub> = I<sub>RB</sub> − I<sub>RE</sub>, denn ein Teil des Stroms fließt über R<sub>E</sub> nach U<sub>EE</sub> ab."
+  },
+  {
+   "typ": "box",
+   "variante": "merke",
+   "abstand": "l",
+   "html": "Genau deshalb übersteuert man mit m &gt; 1: Je größer m, desto weiter darf U<sub>E</sub> im EIN-Zustand sinken. Im AUS-Zustand vergrößert eine negative Eingangs- oder Hilfsspannung den Abstand zur Schwelle U<sub>BEF</sub>."
   },
   {
    "typ": "h2",
@@ -171,7 +199,7 @@
   },
   {
    "typ": "box",
-   "html": "<strong>OPAL-Vorbereitungstest:</strong> Bei übersteuerten Schaltern (A7, A12, A14) rechnet OPAL intern mit U<sub>CE</sub> = 0,45 V, obwohl U<sub>CES</sub> = 0,2 V angegeben ist. In A14 werden innerhalb derselben Aufgabe beide Werte gemischt, das ist sehr wahrscheinlich ein Fehler im Test. Im Antestat mit U<sub>CES</sub> rechnen oder vorher beim Betreuer nachfragen.",
+   "html": "<strong>OPAL-Vorbereitungstest:</strong> Bei übersteuerten Schaltern (A7, A12, A14) rechnet OPAL intern mit U<sub>CE</sub> = 0,45 V, obwohl U<sub>CES</sub> = 0,2 V angegeben ist. In A14 werden innerhalb derselben Aufgabe beide Werte gemischt, das ist sehr wahrscheinlich ein Fehler im Test. Im Antestat mit U<sub>CES</sub> rechnen oder vorher beim Betreuer nachfragen.<div>Vorlesung und Seminar (Ü4) rechnen bei Übersteuerung mit U<sub>CE</sub> = U<sub>CES</sub>. Das bestätigt, dass die 0,45 V ein Fehler im OPAL-Test sind.</div>",
    "variante": "info",
    "abstand": "l"
   }

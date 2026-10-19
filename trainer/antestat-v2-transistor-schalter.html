@@ -196,16 +196,17 @@ function genEinAus(){
   const IC  = (UB-UBEF)/RC*1000;       // mA
   const IB  = IC/B*1000;               // µA
   const RB  = (UEon-UBEF)/IB*1000;     // kΩ
+  const ICv=(UB-UCES)/RC*1000, IBv=ICv/B*1000, RBv=(UEon-UBEF)/IBv*1000;  // Vorlesungsvariante: I_C mit U_CEmin
   return {
     tag:'Schalter · EIN & AUS', pts:'4,5 Punkte',
     prompt:`Für den Transistorschalter ist der <b>Basisvorwiderstand R<sub>B</sub></b> zu dimensionieren. Berechne Ströme und Spannungen im Zustand <b>EIN</b> und <b>AUS</b>. Der Transistor wird nicht übersteuert (m = 1). U<sub>E</sub> beträgt eingeschaltet ${UEon} V und ausgeschaltet ${fmtDE(UEoff,0)} V. Tipp: Beginne mit I<sub>C</sub> im EIN-Zustand.`,
     given:[['U_B',UB+' V'],['R_C',RC+' Ω'],['U_BEF',fmtDE(UBEF,1)+' V'],['U_CES',fmtDE(UCES,1)+' V'],['B',''+B],['m','1'],['U_E,ein',UEon+' V'],['U_E,aus',fmtDE(UEoff,0)+' V']],
     fields:[
       {group:'Dimensionierung'},
-      {key:'RB',  label:'R<sub>B</sub>',  unit:'kΩ', target:RB, abs:0.3,  dec:2},
+      {key:'RB',  label:'R<sub>B</sub>',  unit:'kΩ', target:RB, alt:RBv, abs:0.3,  dec:2},
       {group:'EIN'},
-      {key:'IBe', label:'I<sub>B</sub>',  unit:'µA', target:IB, abs:0.3,  dec:2},
-      {key:'ICe', label:'I<sub>C</sub>',  unit:'mA', target:IC, abs:0.05, dec:2},
+      {key:'IBe', label:'I<sub>B</sub>',  unit:'µA', target:IB, alt:IBv, abs:0.3,  dec:2},
+      {key:'ICe', label:'I<sub>C</sub>',  unit:'mA', target:IC, alt:ICv, abs:0.05, dec:2},
       {key:'UBEe',label:'U<sub>BE</sub>', unit:'V',  target:UBEF,abs:0.02,dec:1},
       {key:'UCEe',label:'U<sub>CE</sub>', unit:'V',  target:UBEF,abs:0.02,dec:1},
       {group:'AUS'},
@@ -223,7 +224,7 @@ function genEinAus(){
       {lhs:`AUS: ohne I_B fällt an R_B nichts ab → U_BE = U_E`,           res:fmtDE(UEoff,0)+' V'},
       {lhs:`AUS: ohne I_C fällt an R_C nichts ab → U_CE = U_B`,           res:UB+' V'},
     ],
-    note:'Die Falle ist U_CES: Bei m = 1 sitzt der Transistor genau an der Übersteuerungsgrenze, also gilt U_CE = U_BE = 0,7 V. U_CES brauchst du erst, wenn m > 1 ist.'
+    note:'Bei m = 1 sitzt der Transistor genau an der Übersteuerungsgrenze (U_BC = 0), also gilt U_CE = U_BE = 0,7 V. So rechnet auch OPAL. Die Vorlesung setzt für I_C vereinfacht U_CEmin = U_CES ein. Der Trainer akzeptiert beide Ergebnisse, schreib in der Prüfung aber dazu, welche Annahme du triffst.'
   };
 }
 
@@ -659,12 +660,50 @@ function genArbeitsgerade(){
   };
 }
 
+
+// Störabstände (Seminar Ü4 A1)
+function genStoer(){
+  const U0C=pick([5,5,10,12]), RB=rint(10,60), RC=rint(1,5)*500, B=rint(100,250), UCES=pick([0.1,0.2]);
+  const UEon=5, UEoff=pick([-5,0]);
+  const IC=(U0C-UCES)/RC*1000;          // mA
+  const IBu=IC/B*1000;                   // µA
+  const IB=(UEon-UBEF)/RB*1000;          // µA (V/kΩ = mA → ·1000)
+  const m=IB/IBu;
+  const dAus=UBEF-UEoff;
+  const UEmin=UBEF+IBu*RB/1000;
+  const dEin=UEon-UEmin;
+  if(m<1.2) return genStoer();
+  return {
+    tag:'Störabstände · Schalter', pts:'4 Punkte',
+    prompt:`Transistorschalter mit U<sub>0C</sub> = ${U0C} V, R<sub>B</sub> = ${RB} kΩ, R<sub>C</sub> = ${RC} Ω. U<sub>E</sub> springt zwischen ${UEon} V (EIN) und ${fmtDE(UEoff,0)} V (AUS). Berechne I<sub>C</sub>, I<sub>B</sub> und m im EIN-Zustand. Um wie viel darf sich U<sub>E</sub> durch eine Störung <b>höchstens ändern</b>, ohne dass der Transistor im AUS-Zustand den Sperrzustand bzw. im EIN-Zustand die Übersteuerung verlässt?`,
+    given:[['U_0C',U0C+' V'],['R_B',RB+' kΩ'],['R_C',RC+' Ω'],['B_N',''+B],['U_BEF','0,7 V'],['U_CES',fmtDE(UCES,1)+' V'],['U_E,ein',UEon+' V'],['U_E,aus',fmtDE(UEoff,0)+' V']],
+    fields:[
+      {key:'IC',label:'I<sub>C</sub>',unit:'mA',target:IC,abs:0.03,dec:2},
+      {key:'IB',label:'I<sub>B</sub>',unit:'µA',target:IB,abs:0.5,dec:1},
+      {key:'m', label:'m',unit:'',target:m,abs:0.03,dec:2},
+      {key:'dA',label:'ΔU<sub>E,AUS</sub>',unit:'V',target:dAus,abs:0.02,dec:1},
+      {key:'dE',label:'ΔU<sub>E,EIN</sub>',unit:'V',target:dEin,abs:0.03,dec:2},
+    ],
+    solve:()=>[
+      {lhs:`EIN übersteuert: I_C = (U_0C − U_CES)/R_C = ${fmtDE(U0C-UCES,1)} V / ${RC} Ω`, res:fmtDE(IC,2)+' mA'},
+      {lhs:`I_BÜ = I_C / B_N`, res:fmtDE(IBu,2)+' µA'},
+      {lhs:`I_B = (U_E,ein − U_BEF)/R_B = ${fmtDE(UEon-UBEF,1)} V / ${RB} kΩ`, res:fmtDE(IB,1)+' µA'},
+      {lhs:`m = I_B / I_BÜ`, res:fmtDE(m,2)},
+      {lhs:`AUS: I_B = 0 → U_BE = U_E. Sperrt, solange U_BE < U_BEF → ΔU = U_BEF − U_E,aus`, res:fmtDE(dAus,1)+' V'},
+      {lhs:`EIN: übersteuert, solange I_B ≥ I_BÜ → U_E,min = U_BEF + I_BÜ·R_B`, res:fmtDE(UEmin,2)+' V'},
+      {lhs:`ΔU = U_E,ein − U_E,min`, res:fmtDE(dEin,2)+' V'},
+    ],
+    note:'Der Störabstand im EIN-Zustand ist der Grund für m > 1: Je stärker übersteuert wird, desto weiter darf U_E sinken, bevor der Transistor in den aktiven Bereich rutscht und U_CE ansteigt. Im AUS-Zustand hilft eine negative Eingangsspannung (oder eine Hilfsspannung U_EE über einen Basisteiler).'
+  };
+}
+
 /* Registry */
 const GENS = {
   einaus:  {name:'EIN & AUS',          fn:genEinAus},
   ueber:   {name:'Übersteuert',        fn:()=>pick([genUebersteuert,genMfaktor])()},
   dimrc:   {name:'R_C & R_B',          fn:genDimRC},
   grenze:  {name:'Übersteuerungsgrenze',fn:genGrenze},
+  stoer:   {name:'Störabstände',       fn:genStoer},
   kennlin: {name:'Kennlinienfeld',     fn:genKennlinie},
   gerade:  {name:'Arbeitsgerade',      fn:genArbeitsgerade},
   kurz:    {name:'Kurzaufgaben',       fn:()=>pick([genRBS,genSchottky])()},
