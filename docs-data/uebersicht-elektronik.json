@@ -1,0 +1,642 @@
+{
+ "id": "uebersicht-elektronik",
+ "titel": "Übersicht Elektronik",
+ "untertitel": "Formeln, Modelle und wann du was brauchst – Kap. 1–6 und Übungen 1–7",
+ "stand": "2026-10-19",
+ "bloecke": [
+  {
+   "typ": "h2",
+   "html": "0 · So benutzt du diese Übersicht",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Jeder Abschnitt beantwortet drei Fragen: <strong>Woran erkenne ich die Situation?</strong> <strong>Welche Formel gilt dann und warum?</strong> <strong>Wann gilt sie nicht mehr?</strong> In der Prüfung zählt die Begründung, nicht nur das Ergebnis. Die blauen Boxen enthalten deshalb Musterbegründungen, die du so sagen oder hinschreiben kannst.",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Formelzeichen wie in Vorlesung und Seminar: U<sub>0C</sub> (Betriebsspannung), B<sub>N</sub>, U<sub>BEF</sub>, U<sub>CES</sub>, U<sub>EA</sub> (Early-Spannung), U<sub>T</sub>, S, r<sub>BE</sub>, r<sub>CE</sub>, b, U<sub>t</sub>, β, λ, I<sub>DSS</sub>, U<sub>SG</sub>, g<sub>m</sub>, g<sub>d</sub>.",
+   "abstand": "m"
+  },
+  {
+   "typ": "h2",
+   "html": "1 · Das Grundprinzip: Großsignal → Arbeitspunkt, Kleinsignal → Signal",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Fast jede Schaltungsaufgabe in Elektronik läuft in zwei getrennten Rechnungen ab. Wer diese Trennung sauber begründet, hat bei den meisten Aufgaben schon die halbe Erklärung.",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th></th><th>Großsignal (Gleichgrößen)</th><th>Kleinsignal (Wechselgrößen)</th></tr><tr><td>Was wird berechnet?</td><td>Arbeitspunkt: U<sub>0</sub>, I<sub>0</sub>, U<sub>BE0</sub>, I<sub>C0</sub>, U<sub>DS0</sub> …</td><td>Änderungen um den AP: ΔU, ΔI, Verstärkung v<sub>u</sub></td></tr><tr><td>Welche Gleichungen?</td><td>die echten, nichtlinearen Kennlinien (e-Funktion, quadratische FET-Gleichung) oder das Schaltermodell</td><td>linearisierte Kennlinie: Tangente im AP → Widerstände und gesteuerte Quellen</td></tr><tr><td>Kondensatoren</td><td>Leerlauf (kein Gleichstrom)</td><td>NF: Kurzschluss (ωC → ∞)</td></tr><tr><td>Konstante Quellen</td><td>bleiben drin</td><td>Spannungsquellen kurzschließen, Stromquellen leerlaufen (U<sub>0C</sub> → Masse)</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Die drei Regeln für jedes Kleinsignalersatzschaltbild",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<ol><li><strong>Konstante Quellen entfernen:</strong> Spannungsquellen kurzschließen, Stromquellen leerlaufen lassen. Grund: Wir betrachten nur Änderungen um den AP, und eine konstante Quelle ändert sich nicht.</li><li><strong>Bauelement durch sein Kleinsignalmodell ersetzen:</strong> Diode → r<sub>d</sub>, Bipolartransistor → r<sub>BE</sub> und b·i<sub>B</sub> parallel r<sub>CE</sub>, FET → g<sub>m</sub>·u<sub>GS</sub> parallel r<sub>DS</sub>.</li><li><strong>R, L, C bleiben erhalten.</strong> Im NF-Bereich mit ωC → ∞ werden Koppel- und Emitterkondensatoren zu Kurzschlüssen.</li></ol>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Kleinsignal gilt nur, wenn die Aussteuerung klein ist. Dann darf die gekrümmte Kennlinie durch ihre Tangente im AP ersetzt werden.<div>Bei der Diode ist „klein“ genau definiert: ΔU ≪ U<sub>T</sub> ≈ 26 mV. Bei großer Aussteuerung (Schalter, maximale Amplitude) musst du mit dem Großsignalmodell rechnen.</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Typische Frage:</strong> Warum darf man die Verstärkung mit dem Kleinsignalmodell berechnen?<div><strong>So begründest du:</strong> Die Kennlinie ist nichtlinear. Für kleine Änderungen um den Arbeitspunkt lässt sie sich aber durch ihre Tangente ersetzen (Taylor-Entwicklung, Abbruch nach dem linearen Glied). Dadurch werden alle Zusammenhänge linear, und man kann mit Widerständen und gesteuerten Quellen wie in der Netzwerkanalyse rechnen. Der AP selbst muss vorher mit den Großsignalgleichungen bestimmt werden, weil die Kleinsignalparameter vom AP abhängen.</div>",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "2 · Passive Bauelemente (Kap. 1)",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>Z<sub>R</sub> = R, φ = 0</td><td>Ohmscher Widerstand</td><td>Strom und Spannung in Phase</td></tr><tr><td>Z<sub>C</sub> = 1/(jωC) = −j/(ωC), φ = −90°</td><td>Kondensator bei Wechselgrößen</td><td>i = C·du/dt: Strom eilt der Spannung voraus</td></tr><tr><td>Z<sub>L</sub> = jωL, φ = +90°</td><td>Spule bei Wechselgrößen</td><td>u = L·di/dt: Spannung eilt dem Strom voraus</td></tr><tr><td>τ = R·C bzw. τ = L/R</td><td>Lade- und Entladevorgänge, Glättung, Grenzfrequenzen</td><td>Zeit, in der 63 % des Endwerts erreicht sind</td></tr><tr><td>u<sub>C</sub>(t) = U<sub>0</sub>·(1 − e<sup>−t/τ</sup>)</td><td>Kondensator lädt über R</td><td>Strom nimmt ab, je voller C wird</td></tr><tr><td>tan δ = 1/(ωC·R<sub>iso</sub>) bzw. R/(ωL)</td><td>Verluste eines realen C bzw. L</td><td>Verhältnis Wirk- zu Blindanteil</td></tr><tr><td>R = ρ·l/A, R(T) = R<sub>0</sub>(1 + αΔT)</td><td>Leiterwiderstand, PTC/Pt100</td><td>Temperaturabhängigkeit</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>Zweipol</strong> = Bauteil oder Netzwerk mit zwei Klemmen. Aktiver Zweipol (Quelle + R) liefert die <strong>Lastgerade</strong>, passiver Zweipol (z. B. Diode) die Kennlinie. Der Schnittpunkt ist der AP (siehe Abschnitt 3).</li><li><strong>Vierpol</strong> = Eingang + Ausgang. Wird um den AP linear beschrieben, also im Kleinsignalbetrieb. Die <strong>h-Parameter</strong> (Hybridform) sind genau die Kleinsignalparameter des Bipolartransistors (Abschnitt 6).</li><li>Reale Bauteile: Ein Kondensator wirkt oberhalb seiner Resonanzfrequenz induktiv, eine Spule kapazitiv.</li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Zur Faustregel für Kondensatoren: Bei Gleichstrom (ω = 0) ist Z<sub>C</sub> → ∞ (Leerlauf), bei hoher Frequenz Z<sub>C</sub> → 0 (Kurzschluss). Daraus folgt das ganze Groß- und Kleinsignal-Prinzip für Koppelkondensatoren.",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "3 · pn-Übergang & Diodenmodelle (Kap. 2, Ü2)",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Eine Diode kann mit <strong>drei verschiedenen Modellen</strong> beschrieben werden. Die Kernfrage jeder Diodenaufgabe ist, welches Modell gerade passt.",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Modell</th><th>Gleichung</th><th>Wann benutzen?</th></tr><tr><td><strong>Schaltermodell</strong> (ideale Schalterkennlinie)</td><td>U < U<sub>F0</sub> → I = 0 (Schalter offen); U = U<sub>F0</sub> → I beliebig (Schalter zu), U<sub>F0</sub> ≈ 0,7 V (Si), 0,3 V (Ge)</td><td>Spannungsverläufe, Gleichrichter, Begrenzer, Logik. Immer, wenn die Aufgabe „ideale Schalterkennlinie“ sagt oder die Spannungen ≫ 0,7 V sind (Ü1).</td></tr><tr><td><strong>Exponentialmodell</strong> (Großsignal)</td><td>I = I<sub>S</sub>·(e<sup>U/(m·U<sub>T</sub>)</sup> − 1), U<sub>T</sub> = kT/e ≈ 26 mV, m = 1 … 2</td><td>Exakter Strom bei gegebener Spannung, AP-Berechnung, große Aussteuerung. Wenn I<sub>S</sub>, m, U<sub>T</sub> gegeben sind (Ü2 A2a).</td></tr><tr><td><strong>Kleinsignalmodell</strong></td><td>r<sub>d</sub> = ΔU/ΔI = m·U<sub>T</sub>/I<sub>0</sub>, ΔI = ΔU/r<sub>d</sub></td><td>Kleine Wechselspannung auf einem AP. Nur gültig für ΔU ≪ U<sub>T</sub> (Ü2 A2b).</td></tr><tr><td><strong>grafisch</strong></td><td>Schnittpunkt Kennlinie ∩ Lastgerade</td><td>Wenn eine gemessene Kennlinie gegeben ist (Ü2 A1)</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Statischer vs. dynamischer Widerstand",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>R<sub>D</sub> = U<sub>D</sub>/I<sub>D</sub></td><td>„statischer Widerstand“, Gleichstromverhalten im AP</td><td>Gerade vom Ursprung zum AP</td></tr><tr><td>r<sub>d</sub> = dU/dI|_AP = m·U<sub>T</sub>/I<sub>0</sub></td><td>„dynamischer“/differentieller Widerstand, Verhalten bei kleinen Änderungen</td><td>Steigung (Tangente) der Kennlinie im AP</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "r<sub>d</sub> ist <strong>nicht</strong> U/I! r<sub>d</sub> gibt nur die Steigung der Kennlinie im AP wieder. Weil die Kennlinie im Durchlass sehr steil ist, gilt fast immer r<sub>d</sub> ≪ R<sub>D</sub>.<div>Je größer der Strom, desto kleiner wird r<sub>d</sub> (r<sub>d</sub> ∝ 1/I<sub>0</sub>).</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Lastgerade (aktiver Zweipol)",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>I = (U − U<sub>D</sub>)/R</td><td>Diode mit Vorwiderstand an einer Quelle</td><td>Masche U = U<sub>D</sub> + I·R, nach I aufgelöst</td></tr><tr><td>Achsenpunkte: U<sub>D</sub> = U → I = 0 und U<sub>D</sub> = 0 → I = U/R</td><td>Einzeichnen ins Kennlinienfeld</td><td>zwei Punkte reichen für eine Gerade</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Ein größeres R macht die Gerade flacher, der AP rutscht zu kleinerem Strom (Ü2 A1: R<sub>80</sub> liefert I<sub>Fmax</sub>, R<sub>150</sub> liefert I<sub>Fmin</sub>). Leistung: P<sub>D</sub> = U<sub>D</sub>·I, P<sub>R</sub> = I²·R.",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Kleinsignal oder Exponentialfunktion: Genauigkeitscheck",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Die e-Funktion lässt sich entwickeln: e<sup>x</sup> = 1 + x + x²/2 + … Mit x = ΔU/U<sub>T</sub> darf man nach dem linearen Glied abbrechen, wenn ΔU/U<sub>T</sub> ≪ 1. Bei Û = 5 mV ist ΔU/U<sub>T</sub> ≈ 0,19: Die lineare Näherung ist brauchbar, aber schon sichtbar ungenau. Ü2 A2 zeigt genau diesen Vergleich.",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Typische Frage:</strong> Warum weichen die Ergebnisse aus Ü2 A2a und A2b voneinander ab?<div><strong>So begründest du:</strong> In a) wird mit der echten Exponentialkennlinie gerechnet, in b) mit der Tangente im AP (r<sub>d</sub> = U<sub>T</sub>/I<sub>0</sub>). Die Tangente liegt unterhalb der gekrümmten e-Funktion. Deshalb liefert die Näherung für +Û einen zu kleinen und für −Û einen zu großen Strom. Die Abweichung wird klein, wenn Û ≪ U<sub>T</sub> ist.</div>",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Weitere Eigenschaften des pn-Übergangs",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Größe</th><th>Aussage</th><th>Wann relevant?</th></tr><tr><td>U<sub>diff</sub></td><td>Si 0,6 … 0,7 V, Ge 0,3 V: Diffusionsspannung, darum U<sub>F0</sub> ≈ 0,7 V</td><td>Begründung für U<sub>F0</sub></td></tr><tr><td>D<sub>T</sub> = dU<sub>D</sub>/dT</td><td>−1 … −3 mV/K: Bei konstantem Strom sinkt U<sub>D</sub> mit steigender Temperatur</td><td>Temperaturdrift, AP-Stabilität</td></tr><tr><td>C<sub>S</sub> / C<sub>D</sub></td><td>Sperrschichtkapazität (Sperrrichtung), Diffusionskapazität (Durchlass)</td><td>Schaltzeiten, HF, Kapazitätsdiode</td></tr><tr><td>t<sub>S</sub> = τ_D·ln(1 − I<sub>1</sub>/I<sub>2</sub>)</td><td>Speicherzeit beim Ausschalten: Die Ladung in C<sub>D</sub> muss erst abgebaut werden</td><td>Schaltdioden, dynamisches Schaltverhalten</td></tr><tr><td>I<sub>Sp</sub></td><td>Sperrstrom im µA-Bereich, temperaturabhängig</td><td>Sperrrichtung</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Bahnwiderstände R<sub>B</sub> liegen in Reihe zum eigentlichen pn-Übergang. Deshalb ist die Gesamtkennlinie keine reine e-Funktion mehr und nicht nach I auflösbar. In den Übungen wird meist R<sub>B</sub> = 0 gesetzt, das ist immer eine Annahme.",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "4 · Diodenschaltungen (Kap. 3, Ü1, Ü3)",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Methode für jede Schaltung mit Schalterdioden",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<ol><li>Für jede Diode einen Zustand <strong>annehmen</strong> (leitend oder gesperrt).</li><li>Ersatzschaltbild einsetzen: leitend → Spannungsquelle U<sub>F0</sub>, gesperrt → Leerlauf (I = 0).</li><li>Ströme und Spannungen ausrechnen.</li><li><strong>Annahme prüfen:</strong> leitend erfordert I > 0, gesperrt erfordert U &lt; U<sub>F0</sub>. Ist eine Bedingung verletzt, war die Annahme falsch: anderen Zustand annehmen und neu rechnen.</li></ol>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Die Prüfung der Annahme ist die eigentliche Begründung. Der Satz „Diode leitet, weil I > 0 herauskommt“ beziehungsweise „sperrt, weil U<sub>D</sub> &lt; U<sub>F0</sub>“ gehört in jede Lösung.",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Gleichrichter",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>Einweg: Û_L = Û − U<sub>F0</sub></td><td>Spitzenwert am Ausgang</td><td>eine Diode in Reihe leitet</td></tr><tr><td>Graetz-Brücke: Û_L = Û − 2·U<sub>F0</sub></td><td>Zweiweg</td><td>pro Halbwelle leiten zwei Dioden in Reihe</td></tr><tr><td>Einweg mit C<sub>L</sub>: U<sub>SPmax</sub> = 2Û − U<sub>F0</sub> ≈ 2Û</td><td>Sperrspannung der Diode auswählen</td><td>C hält +Û, die Quelle liefert gleichzeitig −Û</td></tr><tr><td>Graetz: U<sub>SPmax</sub> ≈ Û</td><td>Sperrspannung pro Diode</td><td>zwei Dioden teilen sich die Sperrspannung</td></tr><tr><td>τ = C<sub>L</sub>·R<sub>L</sub> ≫ T</td><td>wann die Glättung wirkt</td><td>C entlädt sich langsamer, als die Periode dauert</td></tr><tr><td>α = arcsin(U<sub>F0</sub>/Û)</td><td>Phasenwinkel, ab dem die Diode leitet</td><td>Diode leitet erst, wenn u(t) > U<sub>F0</sub></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Begrenzer und Diodenlogik (Ü1)",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>Begrenzer mit Gleichspannungsquelle U<sub>B</sub></strong> (Ü1 A3): Die Diode leitet, sobald U<sub>e</sub> > U<sub>B</sub> + U<sub>F0</sub> ist. Dann wird U<sub>A</sub> = U<sub>B</sub> + U<sub>F0</sub> „festgeklemmt“. Darunter sperrt sie, und es gilt U<sub>A</sub> = U<sub>e</sub> (unbelasteter Ausgang).</li><li><strong>Mit Z-Diode</strong> (Ü1 A4): In Sperrrichtung begrenzt sie bei U<sub>Z</sub>, in Durchlassrichtung bei U<sub>F0</sub>. Es gibt also zwei Knickpunkte: U<sub>B</sub> + U<sub>Z</sub> und U<sub>B</sub> − U<sub>F0</sub>. Welcher gilt, hängt von der Einbaurichtung ab.</li><li><strong>Logik</strong> (Ü1 A2): Dioden mit der Kathode zum Eingang und Pull-up R<sub>V</sub> zu U<sub>B</sub>. Ein einziger Low-Eingang zieht den Knoten auf U<sub>F0</sub>, nur wenn alle Eingänge High sind, sperren alle Dioden → <strong>UND</strong>. Mit umgekehrten Dioden und Pull-down entsteht ein ODER.</li><li>Eingang mit Rechteck ±5 V: Diode in Reihe zu R lässt nur die positive Halbwelle durch (U<sub>A</sub> = 5 V − 0,7 V). Diode parallel zum Ausgang begrenzt die positive Halbwelle auf 0,7 V.</li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Z-Diode & Spannungsstabilisierung (Ü3)",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Die Z-Diode wird in Sperrrichtung im Durchbruch betrieben. <strong>Modell:</strong> Für U<sub>Z</sub> ≥ U<sub>Z0</sub> wirkt sie wie eine Spannungsquelle U<sub>Z0</sub> mit Innenwiderstand r<sub>Z</sub> in Reihe, darunter fließt kein Strom.",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>I<sub>Z</sub> = (U<sub>Z</sub> − U<sub>Z0</sub>)/r<sub>Z</sub></td><td>Durchbruchast, wenn r<sub>Z</sub> gegeben ist</td><td>stückweise lineare Kennlinie</td></tr><tr><td>U<sub>A</sub> = U<sub>Z0</sub></td><td>grobe Näherung, wenn r<sub>Z</sub> nicht gegeben ist oder r<sub>Z</sub> ≪ R<sub>V</sub>, R<sub>L</sub></td><td>ideal steile Kennlinie</td></tr><tr><td>U<sub>A</sub> = (U<sub>E</sub>/R<sub>V</sub> + U<sub>Z0</sub>/r<sub>Z</sub>)/(1/R<sub>V</sub> + 1/r<sub>Z</sub> + 1/R<sub>L</sub>)</td><td>genau mit r<sub>Z</sub> und Last (Ü3 A1a)</td><td>Knotensatz am Ausgang (oder Überlagerung)</td></tr><tr><td>S = ΔU<sub>E</sub>/ΔU<sub>A</sub> = 1 + R<sub>V</sub>/r<sub>Z</sub></td><td>Stabilisierungsfaktor im <strong>Leerlauf</strong> (R<sub>L</sub> → ∞)</td><td>Kleinsignal: Teiler aus R<sub>V</sub> und r<sub>Z</sub></td></tr><tr><td>S = 1 + R<sub>V</sub>/(r<sub>Z</sub> ∥ R<sub>L</sub>)</td><td>mit Last</td><td>R<sub>L</sub> liegt kleinsignalmäßig parallel zu r<sub>Z</sub></td></tr><tr><td>S' = S·U<sub>A</sub>/U<sub>E</sub></td><td>normierter (relativer) Stabilisierungsfaktor</td><td>bezieht die Änderungen auf die Absolutwerte</td></tr><tr><td>P<sub>Vmax</sub> = U<sub>Z0</sub>·I<sub>Zmax</sub></td><td>Diode auswählen</td><td>Worst Case: U<sub>Emax</sub> und R<sub>L</sub> → ∞, dann fließt der ganze Strom durch die Z-Diode</td></tr><tr><td>I<sub>Vmin</sub> = I<sub>L</sub> + I<sub>Zmin</sub> bei U<sub>Emin</sub></td><td>R<sub>Lmin</sub> bzw. R<sub>Vmax</sub> bestimmen</td><td>Worst Case nach unten: Die Diode muss noch im Durchbruch bleiben</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Stabilisierung funktioniert nur, solange I<sub>Zmin</sub> &lt; I<sub>Z</sub> &lt; I<sub>Zmax</sub> ist. Für Grenzwerte immer den passenden <strong>Worst Case</strong> wählen: <strong>I<sub>Zmax</sub></strong> bei maximalem U<sub>E</sub> und ohne Last, <strong>I<sub>Zmin</sub></strong> bei minimalem U<sub>E</sub> und maximaler Last (kleinstem R<sub>L</sub>).",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Typische Frage:</strong> Warum stabilisiert die Schaltung überhaupt?<div><strong>So begründest du:</strong> Im Durchbruch ist die Kennlinie der Z-Diode sehr steil, r<sub>Z</sub> ist klein. Eine Änderung ΔU<sub>E</sub> teilt sich zwischen R<sub>V</sub> und r<sub>Z</sub> auf. Weil R<sub>V</sub> ≫ r<sub>Z</sub> ist, fällt fast die ganze Änderung an R<sub>V</sub> ab, am Ausgang kommt nur ΔU<sub>E</sub>·r<sub>Z</sub>/(R<sub>V</sub> + r<sub>Z</sub>) an. Daraus folgt S = 1 + R<sub>V</sub>/r<sub>Z</sub>.</div>",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Weitere Diodentypen: Wofür und warum?",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Typ</th><th>Besonderheit</th><th>Einsatz</th></tr><tr><td>pin-Diode</td><td>Intrinsic-Zone nimmt die Sperrspannung auf → hohe U<sub>BR</sub>, dafür U<sub>F0</sub> ≈ 1,2 V</td><td>Hochspannungsgleichrichter</td></tr><tr><td>Schaltdiode</td><td>kleine Kapazitäten → kurze Schaltzeiten</td><td>schnelles Schalten, HF-Gleichrichtung</td></tr><tr><td>Schottky-Diode</td><td>Metall-Halbleiter-Übergang, U<sub>F</sub> ≈ 0,3 V, sehr kleine Kapazität, keine Speicherzeit</td><td>schnelle Schalter, Schottky-Transistor</td></tr><tr><td>Kapazitätsdiode</td><td>C<sub>S</sub> = C<sub>S0</sub>·(1 + U<sub>SP</sub>/U<sub>D</sub>)<sup>−q</sup> in Sperrrichtung, q = 0,33 (linear) … 0,5 (abrupt) … >0,5 (hyperabrupt)</td><td>abstimmbare Schwingkreise, ω<sub>r</sub> = 1/√(LC)</td></tr><tr><td>Z-Diode</td><td>Zener-Effekt (&lt; 5 V, TK &lt; 0) bzw. Lawineneffekt (TK &gt; 0)</td><td>Stabilisierung, Referenz, Begrenzer</td></tr><tr><td>Tunnel-, IMPATT-, Gunn-Diode</td><td>negativer Kleinsignalwiderstand</td><td>Entdämpfung von Schwingkreisen, Oszillatoren (GHz)</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h2",
+   "html": "5 · Bipolartransistor: Grundlagen (Kap. 4)",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Betriebszustände: daran hängt alles",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>U<sub>BE</sub></th><th>U<sub>BC</sub></th><th>Zustand</th><th>Anwendung</th></tr><tr><td>&lt; 0</td><td>&lt; 0</td><td>gesperrt</td><td>Schalter AUS</td></tr><tr><td>&gt; 0</td><td>&lt; 0</td><td><strong>aktiv normal</strong></td><td><strong>Verstärker</strong></td></tr><tr><td>&lt; 0</td><td>&gt; 0</td><td>aktiv invers</td><td>(kaum genutzt, schlechte Werte)</td></tr><tr><td>&gt; 0</td><td>&gt; 0</td><td><strong>übersteuert (Sättigung)</strong></td><td><strong>Schalter EIN</strong></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Die Grenze zwischen aktiv und übersteuert liegt bei U<sub>BC</sub> = 0, also bei <strong>U<sub>CE</sub> = U<sub>BE</sub></strong>. Aus der Masche U<sub>CE</sub> = U<sub>BE</sub> − U<sub>BC</sub> folgt: Im aktiven Bereich ist U<sub>CE</sub> > U<sub>BE</sub>, im übersteuerten Bereich U<sub>CE</sub> &lt; U<sub>BE</sub>.",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Stromverstärkungen",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>I<sub>E</sub> = I<sub>B</sub> + I<sub>C</sub></td><td>immer</td><td>Knotensatz</td></tr><tr><td>A<sub>N</sub> = I<sub>C</sub>/I<sub>E</sub> ≈ 0,95 … 0,999</td><td>Basisschaltung</td><td>Bruchteil des Emitterstroms, der den Kollektor erreicht</td></tr><tr><td>B<sub>N</sub> = I<sub>C</sub>/I<sub>B</sub> = A<sub>N</sub>/(1 − A<sub>N</sub>) ≈ 50 … 500</td><td>Emitterschaltung (Großsignal, nur aktiver Bereich)</td><td>aus I<sub>E</sub> = I<sub>B</sub> + I<sub>C</sub> und A<sub>N</sub></td></tr><tr><td>C<sub>N</sub> = I<sub>E</sub>/I<sub>B</sub> = 1/(1 − A<sub>N</sub>)</td><td>Kollektorschaltung</td><td></td></tr><tr><td>I<sub>B</sub> = I<sub>BS</sub>·e<sup>U<sub>BE</sub>/U<sub>T</sub></sup></td><td>Eingangskennlinie (Großsignal)</td><td>BE-Diode in Durchlassrichtung</td></tr><tr><td>I<sub>C</sub> = (B<sub>N</sub>·I<sub>B</sub> + I<sub>CE0</sub>)·(1 + U<sub>CE</sub>/U<sub>EA</sub>)</td><td>Ausgangskennlinie mit Early-Effekt</td><td>Basisweite wird mit U<sub>CE</sub> kleiner → Kennlinien steigen leicht an; I<sub>CE0</sub> meist ≈ 0</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Vierquadranten-Kennlinienfeld",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Quadrant</th><th>Kennlinie</th><th>Daraus abgelesen</th></tr><tr><td>I (rechts oben)</td><td>Ausgangskennlinie I<sub>C</sub> = f(U<sub>CE</sub>)|I<sub>B</sub></td><td>AP, Arbeitsgerade, r<sub>CE</sub> (Steigung)</td></tr><tr><td>II (links oben)</td><td>Stromübertragung I<sub>C</sub> = f(I<sub>B</sub>)|U<sub>CE</sub></td><td>B<sub>N</sub> (Gerade durch den Ursprung), b (Steigung)</td></tr><tr><td>III (links unten)</td><td>Eingangskennlinie I<sub>B</sub> = f(U<sub>BE</sub>)|U<sub>CE</sub></td><td>U<sub>BE0</sub>, r<sub>BE</sub> (Kehrwert der Steigung)</td></tr><tr><td>IV (rechts unten)</td><td>Rückwirkung U<sub>BE</sub> = f(U<sub>CE</sub>)|I<sub>B</sub></td><td>η ≈ 0</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Grenzen (SOAR): I<sub>Cmax</sub>, U<sub>CEmax</sub> (Durchbruch) und die Verlustleistungshyperbel P<sub>Vmax</sub> = U<sub>CE</sub>·I<sub>C</sub>. Der AP muss innerhalb dieser Grenzen liegen.",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "6 · Bipolartransistor als Schalter (Ü4, V2)",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Ziel im EIN-Zustand: maximaler Strom bei minimaler Spannung U<sub>CE</sub>. Deshalb wird der Transistor in die <strong>Übersteuerung</strong> gefahren. Im AUS-Zustand wird er sicher <strong>gesperrt</strong>. Der aktive Bereich wird nur beim Umschalten durchlaufen.",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Schaltermodell: zwei Geradenstücke",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Zustand</th><th>Eingang</th><th>Ausgang</th></tr><tr><td>AUS (gesperrt)</td><td>U<sub>BE</sub> &lt; U<sub>BEF</sub>, I<sub>B</sub> = 0</td><td>I<sub>C</sub> = 0, U<sub>CE</sub> = U<sub>0C</sub> (beliebig, aber &lt; U<sub>CEmax</sub>)</td></tr><tr><td>EIN (übersteuert)</td><td>U<sub>BE</sub> = U<sub>BEF</sub> ≈ 0,7 V, I<sub>B</sub> beliebig groß</td><td>U<sub>CE</sub> = U<sub>CES</sub> ≈ 0,1 … 0,3 V, I<sub>C</sub> = (U<sub>0C</sub> − U<sub>CES</sub>)/R<sub>C</sub></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Übersteuerung und m",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>I<sub>CÜ</sub> = (U<sub>0C</sub> − U<sub>CE</sub>)/R<sub>C</sub></td><td>Kollektorstrom im EIN-Zustand</td><td>R<sub>C</sub> begrenzt den Strom, nicht der Transistor</td></tr><tr><td>I<sub>BÜ</sub> = I<sub>C</sub>/B<sub>N</sub></td><td>Basisstrom an der Übersteuerungsgrenze (m = 1)</td><td>B<sub>N</sub> gilt genau bis zu dieser Grenze</td></tr><tr><td>I<sub>B</sub> = m·I<sub>BÜ</sub></td><td>tatsächlicher Basisstrom, m gegeben</td><td>mehr Basisstrom als nötig</td></tr><tr><td>m = I<sub>B</sub>/I<sub>BÜ</sub></td><td>I<sub>B</sub> gegeben (über U<sub>E</sub> und R<sub>B</sub>), m gesucht (Ü4 A1b)</td><td></td></tr><tr><td>I<sub>B</sub> = (U<sub>E</sub> − U<sub>BEF</sub>)/R<sub>B</sub></td><td>Basisstrom aus dem Eingangskreis</td><td>Masche am Eingang</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>m</th><th>Lage des AP</th><th>U<sub>CE</sub></th></tr><tr><td>&lt; 1</td><td>aktiver Bereich, Transistor nicht voll durchgeschaltet</td><td>&gt; U<sub>BE</sub></td></tr><tr><td>= 1</td><td>genau an der Grenze U<sub>BC</sub> = 0</td><td>= U<sub>BE</sub> ≈ 0,7 V</td></tr><tr><td>&gt; 1 (typisch 5 … 10)</td><td>Übersteuerung</td><td>= U<sub>CES</sub></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Mehr Basisstrom macht I<sub>C</sub> <strong>nicht</strong> größer, R<sub>C</sub> begrenzt ihn. Deshalb gilt in der Übersteuerung <strong>nicht</strong> I<sub>C</sub> = B<sub>N</sub>·I<sub>B</sub>, sondern nur noch I<sub>C</sub> = B<sub>N</sub>·I<sub>BÜ</sub>.<div>Man übersteuert mit m = 5 … 10, damit der Transistor auch bei Störungen am Eingang oder streuendem B<sub>N</sub> sicher EIN bleibt.</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Typische Frage:</strong> Warum übersteuert man einen Transistorschalter?<div><strong>So begründest du:</strong> Im EIN-Zustand soll U<sub>CE</sub> möglichst klein sein (wenig Verlustleistung, sauberer Low-Pegel). Das ist nur im Übersteuerungsbereich der Fall, wo U<sub>CE</sub> = U<sub>CES</sub> gilt. Mit m > 1 bleibt der AP auch dann in der Übersteuerung, wenn U<sub>E</sub> durch eine Störung sinkt oder B<sub>N</sub> kleiner ist als angenommen. Der Preis dafür ist eine größere Speicherladung in der Basis und damit eine längere Ausschaltzeit (Speicherzeit t<sub>S</sub>).</div>",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Störabstände (Ü4 A1c/d, A2b)",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>AUS-Zustand:</strong> Wie weit darf U<sub>E</sub> steigen, bis der Transistor anfängt zu leiten? Grenze ist U<sub>BE</sub> = U<sub>BEF</sub>. Ohne Basisstrom fällt an R<sub>B</sub> nichts ab, also gilt U<sub>BE</sub> = U<sub>E</sub>, und der Störabstand ist ΔU = U<sub>BEF</sub> − U<sub>E,AUS</sub>.</li><li><strong>EIN-Zustand:</strong> Wie weit darf U<sub>E</sub> sinken, bis die Übersteuerung verloren geht? Grenze ist I<sub>B</sub> = I<sub>BÜ</sub>, also U<sub>E,min</sub> = U<sub>BEF</sub> + I<sub>BÜ</sub>·R<sub>B</sub>. Daraus folgt ΔU = U<sub>E,EIN</sub> − U<sub>E,min</sub>.</li><li><strong>Mit Hilfsspannung U<sub>EE</sub> und Basisteiler R<sub>B</sub> / R<sub>E</sub></strong> (Ü4 A2): Im AUS-Zustand ist die Basis über den Teiler negativ vorgespannt: U<sub>BE</sub> = U<sub>E</sub>·R<sub>E</sub>/(R<sub>B</sub> + R<sub>E</sub>) + U<sub>EE</sub>·R<sub>B</sub>/(R<sub>B</sub> + R<sub>E</sub>). Dadurch wird der Transistor sicher gesperrt (U<sub>BE</sub> &lt; 0), und der Störabstand vergrößert sich. Im EIN-Zustand gilt: I<sub>B</sub> = Strom durch R<sub>B</sub> − Strom durch R<sub>E</sub>.</li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Arbeitsgerade im Kennlinienfeld",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>Leerlauf: I<sub>C</sub> = 0 → U<sub>CE</sub> = U<sub>0C</sub></td><td>AUS-Punkt auf der U<sub>CE</sub>-Achse</td><td></td></tr><tr><td>Kurzschluss: U<sub>CE</sub> = 0 → I<sub>C</sub> = U<sub>0C</sub>/R<sub>C</sub></td><td>zweiter Punkt der Geraden</td><td></td></tr><tr><td>EIN = Schnittpunkt Gerade ∩ Kennlinie des gegebenen I<sub>B</sub></td><td>grafische Aufgabe ohne B<sub>N</sub></td><td>B<sub>N</sub> steckt bereits in den Kennlinien</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Dynamik & Schottky-Transistor",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Schaltzeiten: t<sub>d</sub> (Einschaltverzögerung), t<sub>a</sub> (Anstieg), t<sub>S</sub> (Speicherzeit), t<sub>f</sub> (Abfall). In der Übersteuerung sammelt sich Ladung in der Basis, die vor dem Ausschalten erst abgebaut werden muss. Je größer m, desto länger dauert t<sub>S</sub>. Der <strong>Schottky-Transistor</strong> klemmt mit einer Schottky-Diode (U<sub>F</sub> ≈ 0,3 V) zwischen B und C die Spannung U<sub>BC</sub>. Aus der Masche folgt U<sub>CE</sub> = U<sub>BE</sub> − U<sub>F</sub> ≈ 0,4 V: Der Transistor geht nicht in die tiefe Sättigung, die Speicherzeit entfällt fast vollständig.",
+   "abstand": "m"
+  },
+  {
+   "typ": "h2",
+   "html": "7 · Bipolartransistor als Verstärker (Ü5, V1)",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Eine Verstärkeraufgabe ist immer zweistufig: <strong>1. Arbeitspunkt</strong> mit Großsignalgleichungen einstellen, <strong>2. Signal</strong> mit dem Kleinsignalersatzschaltbild rechnen.",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Schritt 1: Arbeitspunkt (Großsignal)",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>U<sub>BE0</sub> ≈ 0,6 … 0,7 V</td><td>AP, wenn nichts anderes gegeben ist</td><td>BE-Diode in Durchlassrichtung (aktiv normal)</td></tr><tr><td>I<sub>C0</sub> = (U<sub>0C</sub> − U<sub>CE0</sub>)/R<sub>C</sub></td><td>Kollektorkreis</td><td>Masche am Ausgang</td></tr><tr><td>I<sub>B0</sub> = I<sub>C0</sub>/B<sub>N</sub></td><td>Basisstrom im AP</td><td>aktiver Bereich: B<sub>N</sub> gilt</td></tr><tr><td>R<sub>B</sub> = (U<sub>0C</sub> − U<sub>BE0</sub>)/I<sub>B0</sub></td><td>Basisstromeinspeisung (R<sub>B</sub> direkt an U<sub>0C</sub>, Ü5 A2)</td><td>Masche Eingang</td></tr><tr><td>U<sub>CE0</sub> = U<sub>0C</sub>/2</td><td>maximale symmetrische Aussteuerung</td><td>gleich viel Platz nach oben und unten</td></tr><tr><td>U<sub>CE0</sub> > U<sub>BE0</sub></td><td>Bedingung für den Verstärkerbetrieb</td><td>sonst U<sub>BC</sub> > 0 → übersteuert</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Arbeitspunktstabilisierung: Basisspannungsteiler + R<sub>E</sub> (Ü5 A3)",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<ol><li>I<sub>B0</sub> = I<sub>C0</sub>/B<sub>N</sub> und I<sub>E0</sub> = I<sub>C0</sub> + I<sub>B0</sub></li><li>R<sub>E</sub> = U<sub>RE0</sub>/I<sub>E0</sub> (U<sub>RE0</sub> ist vorgegeben, z. B. 1 V)</li><li>R<sub>C</sub> = (U<sub>0C</sub> − U<sub>CE0</sub> − U<sub>RE0</sub>)/I<sub>C0</sub></li><li>Basispotential (Spannung über R<sub>2</sub>): U<sub>R2</sub> = U<sub>BE0</sub> + U<sub>RE0</sub></li><li>Querstrom I<sub>R2</sub> = k·I<sub>B0</sub> (k = 5 … 10) → R<sub>2</sub> = U<sub>R2</sub>/I<sub>R2</sub></li><li>R<sub>1</sub> = (U<sub>0C</sub> − U<sub>R2</sub>)/(I<sub>R2</sub> + I<sub>B0</sub>), denn durch R<sub>1</sub> fließen Querstrom und Basisstrom</li></ol>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Warum der Querstrom ein Vielfaches von I<sub>B</sub> ist:</strong> Dann belastet der Basisstrom den Teiler kaum, und das Basispotential bleibt konstant, auch wenn sich I<sub>B</sub> ändert.<div><strong>Warum R<sub>E</sub>:</strong> Steigt I<sub>C</sub> (z. B. durch Erwärmung), steigt U<sub>RE</sub>. Weil das Basispotential fest ist, sinkt dann U<sub>BE</sub>, und I<sub>C</sub> geht zurück. Das ist eine Stromgegenkopplung.</div><div><strong>Warum C<sub>E</sub>:</strong> C<sub>E</sub> schließt R<sub>E</sub> für das Signal kurz. Die Gegenkopplung wirkt also nur für Gleichgrößen und Drift, nicht für das Nutzsignal.</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>v<sub>D</sub> = ΔU<sub>CE</sub>/ΔU<sub>BE</sub> ≈ −R<sub>C</sub>/R<sub>E</sub></td><td>Driftverstärkung (DC, C<sub>E</sub> wirkt nicht)</td><td>Gegenkopplung über R<sub>E</sub> voll wirksam, meist |v<sub>D</sub>| &lt; 10</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Schritt 2: Kleinsignalparameter im AP",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>r<sub>BE</sub> = ΔU<sub>BE</sub>/ΔI<sub>B</sub> = U<sub>T</sub>/I<sub>B0</sub></td><td>Eingangswiderstand (h<sub>11</sub>)</td><td>Ableitung der Eingangskennlinie I<sub>B</sub> = I<sub>BS</sub>·e<sup>U<sub>BE</sub>/U<sub>T</sub></sup></td></tr><tr><td>b = ΔI<sub>C</sub>/ΔI<sub>B</sub> = B<sub>N</sub>·(1 + U<sub>CE0</sub>/U<sub>EA</sub>) ≈ B<sub>N</sub></td><td>Kleinsignal-Stromverstärkung (h<sub>21</sub>)</td><td>Ableitung der Ausgangsgleichung nach I<sub>B</sub></td></tr><tr><td>r<sub>CE</sub> = ΔU<sub>CE</sub>/ΔI<sub>C</sub> ≈ U<sub>EA</sub>/I<sub>C0</sub></td><td>Ausgangswiderstand (1/h<sub>22</sub>)</td><td>Early-Effekt: Steigung der Ausgangskennlinie</td></tr><tr><td>η ≈ 0</td><td>Spannungsrückwirkung (h<sub>12</sub>)</td><td>wird vernachlässigt (rückwirkungsfrei)</td></tr><tr><td>S = b/r<sub>BE</sub> = I<sub>C0</sub>/U<sub>T</sub></td><td>Steilheit (Ü5 A1b)</td><td>ΔI<sub>C</sub>/ΔU<sub>BE</sub>: Übertragung von Eingangsspannung auf Ausgangsstrom</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Alle Kleinsignalparameter hängen vom AP ab (I<sub>B0</sub>, I<sub>C0</sub>). Deshalb immer <strong>zuerst</strong> den AP berechnen. Ü5 A2 zeigt das direkt: Derselbe Transistor hat bei U<sub>CE0</sub> = 2 V und bei 8 V unterschiedliche Werte für r<sub>BE</sub>, r<sub>CE</sub> und v<sub>u</sub>.",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Schritt 3: Ersatzschaltbild & Verstärkung",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>NF-Kleinsignalersatzschaltbild der Emitterschaltung:</strong> Eingang B–E mit r<sub>BE</sub>. Ausgang C–E mit gesteuerter Stromquelle b·i<sub>B</sub>, parallel dazu r<sub>CE</sub> und R<sub>C</sub> (U<sub>0C</sub> ist auf Masse gelegt). Der Basisteiler R<sub>1</sub> ∥ R<sub>2</sub> liegt parallel zum Eingang. C<sub>K</sub> und C<sub>E</sub> sind bei NF Kurzschlüsse.",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>v<sub>u</sub> = U<sub>a</sub>/U<sub>e</sub> = −(b/r<sub>BE</sub>)·(r<sub>CE</sub> ∥ R<sub>C</sub>) = −S·(r<sub>CE</sub> ∥ R<sub>C</sub>)</td><td>Emitterschaltung, R<sub>E</sub> durch C<sub>E</sub> überbrückt oder nicht vorhanden</td><td>U<sub>e</sub> = i<sub>B</sub>·r<sub>BE</sub>, U<sub>a</sub> = −b·i<sub>B</sub>·(r<sub>CE</sub> ∥ R<sub>C</sub>)</td></tr><tr><td>v<sub>u</sub> ≈ −S·R<sub>C</sub></td><td>wenn r<sub>CE</sub> ≫ R<sub>C</sub></td><td></td></tr><tr><td>v<sub>u</sub> ≈ −b·R<sub>C</sub>/(r<sub>BE</sub> + (1+b)·R<sub>E</sub>) ≈ −R<sub>C</sub>/R<sub>E</sub></td><td>R<sub>E</sub> <strong>nicht</strong> überbrückt</td><td>Gegenkopplung wirkt auch für das Signal</td></tr><tr><td>r<sub>e</sub> = R<sub>1</sub> ∥ R<sub>2</sub> ∥ r<sub>BE</sub></td><td>Eingangswiderstand der Stufe</td><td></td></tr><tr><td>Phase φ = −180°</td><td>Emitterschaltung</td><td>Minuszeichen: U<sub>BE</sub> ↑ → I<sub>C</sub> ↑ → U<sub>CE</sub> ↓</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Typische Frage:</strong> Leite die Spannungsverstärkung aus dem Kleinsignalersatzschaltbild her.<div><strong>So begründest du:</strong> Am Eingang fließt i<sub>B</sub> = U<sub>e</sub>/r<sub>BE</sub>. Die gesteuerte Quelle liefert b·i<sub>B</sub>. Dieser Strom fließt durch die Parallelschaltung r<sub>CE</sub> ∥ R<sub>C</sub> und erzeugt U<sub>a</sub> = −b·i<sub>B</sub>·(r<sub>CE</sub> ∥ R<sub>C</sub>). Das Minus kommt aus der Zählrichtung: Der Strom fließt in den Kollektor hinein, die Spannung am Ausgang sinkt. Daraus folgt v<sub>u</sub> = −(b/r<sub>BE</sub>)·(r<sub>CE</sub> ∥ R<sub>C</sub>) = −S·(r<sub>CE</sub> ∥ R<sub>C</sub>).</div>",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Koppelkondensator, Temperatur, HF",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>C<sub>K</sub></strong> trennt den Gleichanteil ab (Hochpass). Er wird über die untere Grenzfrequenz mit dem Eingangswiderstand der Stufe dimensioniert: Bei der Signalfrequenz muss X<sub>C</sub> ≪ r<sub>e</sub> sein.</li><li><strong>Temperatur:</strong> D<sub>T</sub> = dU<sub>BE</sub>/dT ≈ −1 … −3 mV/K und B<sub>N</sub> steigt mit T (c<sub>b</sub> ≈ 0,6 %/K) → I<sub>C</sub> steigt, der AP wandert. Abhilfe ist die Stromgegenkopplung über R<sub>E</sub>.</li><li><strong>HF:</strong> Die Kapazitäten C<sub>BE</sub> und C<sub>BC</sub> lassen b sinken: h<sub>21</sub>(f) = b/(1 + j·f/f_β), mit Transitfrequenz f<sub>T</sub> = b·f_β. Für die Rechnung im NF-Bereich spielt das keine Rolle.</li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h2",
+   "html": "8 · Feldeffekttransistor (Kap. 5, Ü6, Ü7)",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Typen erkennen",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Typ</th><th>Kanal ohne Ansteuerung</th><th>Symbol</th><th>Gate-Isolation</th></tr><tr><td>MOSFET, Anreicherung (selbstsperrend)</td><td>kein Kanal, Strom erst ab U<sub>GS</sub> &gt; U<sub>t</sub></td><td>Linie S–D <strong>gestrichelt</strong></td><td>Oxid (Dielektrikum)</td></tr><tr><td>MOSFET, Verarmung (selbstleitend)</td><td>Kanal vorhanden, Strom schon bei U<sub>GS</sub> = 0</td><td>Linie S–D <strong>durchgezogen</strong></td><td>Oxid (Dielektrikum)</td></tr><tr><td>SFET / JFET</td><td>immer Verarmungstyp</td><td>—</td><td><strong>gesperrter pn-Übergang</strong></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>Bulk-Pfeil</strong> zeigt n- oder p-Kanal an, nicht Anreicherung oder Verarmung.</li><li>n-Kanal: Transferkennlinie steigt nach rechts (positives U<sub>GS</sub> erhöht I<sub>D</sub>). p-Kanal: gespiegelt.</li><li>FET ist <strong>spannungsgesteuert</strong>: I<sub>G</sub> ≈ 0, daraus folgt nahezu leistungslose Steuerung und ein sehr hoher Eingangswiderstand.</li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Arbeitsbereiche: das Entscheidende beim MOSFET",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Bereich</th><th>Bedingung</th><th>Gleichung</th><th>Verhalten</th></tr><tr><td>Sperrbereich</td><td>U<sub>GS</sub> ≤ U<sub>t</sub></td><td>I<sub>D</sub> = 0</td><td>kein Kanal</td></tr><tr><td><strong>Pentodenbereich</strong> (Abschnürung, Sättigung)</td><td>0 ≤ U<sub>GS</sub> − U<sub>t</sub> ≤ U<sub>DS</sub></td><td>I<sub>D</sub> = β·(U<sub>GS</sub> − U<sub>t</sub>)²·(1 + λ·U<sub>DS</sub>)</td><td>I<sub>D</sub> fast unabhängig von U<sub>DS</sub> → Verstärker, Konstantstromquelle</td></tr><tr><td><strong>Triodenbereich</strong> (ohmsch)</td><td>U<sub>GS</sub> − U<sub>t</sub> ≥ U<sub>DS</sub></td><td>I<sub>D</sub> = β·[2(U<sub>GS</sub> − U<sub>t</sub>)·U<sub>DS</sub> − U<sub>DS</sub>²]</td><td>I<sub>D</sub> hängt von U<sub>DS</sub> ab → Schalter EIN, R<sub>DS</sub>(on)</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Die Grenze zwischen Pentoden- und Triodenbereich ist die Abschnürgrenze <strong>U<sub>DS</sub> = U<sub>GS</sub> − U<sub>t</sub></strong>. Vor jeder Rechnung musst du prüfen, ob der AP im richtigen Bereich liegt: Für Verstärker und Stromquelle gilt U<sub>DS</sub> ≥ U<sub>GS</sub> − U<sub>t</sub>.<div>Euer Skript verwendet <strong>β ohne Faktor 1/2</strong>. Weil λ sehr klein ist, reicht oft I<sub>D</sub> = β(U<sub>GS</sub> − U<sub>t</sub>)².</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Parameter aus Kennlinien bestimmen (Ü6 A1)",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li><strong>Transferkennlinie konstruieren:</strong> Im Ausgangskennlinienfeld bei festem U<sub>DS</sub> senkrecht nach oben gehen und für jede U<sub>GS</sub>-Kurve das I<sub>D</sub> ablesen. Diese Punkte trägst du als I<sub>D</sub> über U<sub>GS</sub> auf.</li><li><strong>U<sub>t</sub> und β:</strong> √I<sub>D</sub> über U<sub>GS</sub> auftragen. Weil √I<sub>D</sub> = √β·(U<sub>GS</sub> − U<sub>t</sub>) linear ist, schneidet die Gerade die U<sub>GS</sub>-Achse bei U<sub>t</sub>, ihre Steigung ist √β.</li><li><strong>λ:</strong> Die Ausgangskennlinien im Pentodenbereich nach links verlängern. Sie schneiden die U<sub>DS</sub>-Achse bei −1/λ. Alternativ zwei Punkte derselben Kurve einsetzen: I<sub>D2</sub>/I<sub>D1</sub> = (1 + λU<sub>DS2</sub>)/(1 + λU<sub>DS1</sub>).</li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Kleinsignalparameter",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>g<sub>m</sub> = dI<sub>D</sub>/dU<sub>GS</sub> = 2β·(U<sub>GS</sub> − U<sub>t</sub>) = 2I<sub>D</sub>/(U<sub>GS</sub> − U<sub>t</sub>)</td><td>Steilheit, MOSFET im Pentodenbereich</td><td>Ableitung der quadratischen Kennlinie</td></tr><tr><td>g<sub>d</sub> = dI<sub>D</sub>/dU<sub>DS</sub> = λ·I<sub>D</sub>, r<sub>DS</sub> = 1/g<sub>d</sub></td><td>Ausgangsleitwert</td><td>kommt nur aus dem λ-Term, der Rest der Kennlinie ist flach</td></tr><tr><td>I<sub>D</sub> = I<sub>DSS</sub>·(1 − U<sub>SG</sub>/U<sub>t</sub>)², I<sub>DSS</sub> = β·U<sub>t</sub>²</td><td>SFET (n-Kanal, Verarmung)</td><td>quadratisch in der Steuerspannung U<sub>SG</sub></td></tr><tr><td>g<sub>m</sub> = 2I<sub>D0</sub>/(U<sub>t</sub> − U<sub>SG0</sub>), g<sub>d</sub> ≈ λ·I<sub>D0</sub></td><td>SFET</td><td></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Source-Schaltung als Verstärker (Ü7 A1)",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<ol><li><strong>AP:</strong> R<sub>D</sub> = (U<sub>B</sub> − U<sub>DS0</sub>)/I<sub>D</sub>. U<sub>GS0</sub> aus der Kennlinie zurückrechnen: U<sub>GS0</sub> = U<sub>t</sub> + √(I<sub>D</sub>/(β(1 + λU<sub>DS0</sub>))).</li><li><strong>Gate-Teiler:</strong> I<sub>G</sub> = 0, also fließt durch R<sub>1</sub> und R<sub>2</sub> derselbe Querstrom. R<sub>2</sub> = U<sub>GS0</sub>/I<sub>q</sub> und R<sub>1</sub> = (U<sub>B</sub> − U<sub>GS0</sub>)/I<sub>q</sub>.</li><li><strong>Pentodenbereich prüfen:</strong> U<sub>DS0</sub> ≥ U<sub>GS0</sub> − U<sub>t</sub>.</li><li><strong>Kleinsignal:</strong> g<sub>m</sub>, r<sub>DS</sub> berechnen. Ersatzschaltbild: Eingang R<sub>1</sub> ∥ R<sub>2</sub> (Gate selbst hochohmig), Ausgang g<sub>m</sub>·u<sub>GS</sub> ∥ r<sub>DS</sub> ∥ R<sub>D</sub>.</li><li><strong>Verstärkung:</strong> v<sub>u</sub> = −g<sub>m</sub>·(R<sub>D</sub> ∥ r<sub>DS</sub>) ≈ −g<sub>m</sub>·R<sub>D</sub>.</li></ol>",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>v<sub>u</sub> = −g<sub>m</sub>·(R<sub>D</sub> ∥ r<sub>DS</sub>)</td><td>NF, C und C<sub>L</sub> vernachlässigt</td><td>Ausgangsstrom g<sub>m</sub>·u<sub>GS</sub> fließt durch R<sub>D</sub> ∥ r<sub>DS</sub></td></tr><tr><td>r<sub>e</sub> = R<sub>1</sub> ∥ R<sub>2</sub></td><td>Eingangswiderstand</td><td>Gate ist im NF-Bereich isoliert (r<sub>GS</sub> → ∞)</td></tr><tr><td>ω_g = 1/(R<sub>D</sub>·(C<sub>GD</sub> + C<sub>DS</sub> + C<sub>L</sub>))</td><td>obere Grenzfrequenz</td><td>Lastkapazität C<sub>L</sub> wird über R<sub>D</sub> umgeladen</td></tr><tr><td>û_max = min(U<sub>B</sub> − U<sub>DS0</sub> ; U<sub>DS0</sub> − U<sub>DS,min</sub>)</td><td>maximale Ausgangsamplitude</td><td>nach oben bis U<sub>B</sub> (I<sub>D</sub> → 0), nach unten bis zur Abschnürgrenze</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Für die maximale Amplitude legst du den AP in die Mitte des nutzbaren Bereichs, also zwischen U<sub>DS,min</sub> (Abschnürgrenze auf der Arbeitsgeraden) und U<sub>B</sub>. U<sub>DS0</sub> = U<sub>B</sub>/2 ist nur dann optimal, wenn U<sub>DS,min</sub> ≈ 0 ist.",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "SFET-Konstantstromquelle (Ü6 A2, V2)",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>R<sub>S</sub> = U<sub>SG</sub>/I<sub>L</sub></td><td>Laststrom einstellen</td><td>U<sub>SG</sub> für das gewünschte I<sub>D</sub> aus der Transferkennlinie ablesen; R<sub>S</sub> erzeugt diese Spannung selbst (Gate liegt auf Source-Ende von R<sub>S</sub>)</td></tr><tr><td>R<sub>S,min</sub> ↔ I<sub>L,max</sub> und R<sub>S,max</sub> ↔ I<sub>L,min</sub></td><td>Grenzwerte für einen Bereich I<sub>L</sub> = … (Ü6 A2a)</td><td>großer Strom braucht kleine U<sub>SG</sub></td></tr><tr><td>U<sub>DS</sub> ≥ U<sub>t</sub> − U<sub>SG</sub></td><td>Bedingung für den Betrieb als Stromquelle</td><td>Pentodenbereich: Nur dort ist I<sub>D</sub> unabhängig von U<sub>DS</sub></td></tr><tr><td>R<sub>L,max</sub> = (U<sub>B</sub> − U<sub>DS,min</sub> − U<sub>SG</sub>)/I<sub>L</sub></td><td>größter erlaubter Lastwiderstand</td><td>alle Spannungen in der Masche müssen in U<sub>B</sub> passen</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Typische Frage:</strong> Warum schwankt der Ausgangsstrom etwas, wenn R<sub>L</sub> verändert wird (Ü6 A2c)?<div><strong>So begründest du:</strong> Mit R<sub>L</sub> ändert sich U<sub>DS</sub>. Wegen des λ-Terms sind die Ausgangskennlinien im Pentodenbereich nicht ganz waagerecht, deshalb ändert sich I<sub>D</sub> ein wenig: ΔI<sub>D</sub> ≈ g<sub>d</sub>·ΔU<sub>DS</sub>. Verlässt der AP bei zu großem R<sub>L</sub> den Pentodenbereich, bricht der Strom deutlich ein, und die Schaltung ist keine Stromquelle mehr.</div>",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "MOSFET als Schalter",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "html": "<li>Im EIN-Zustand arbeitet der MOSFET im Triodenbereich (kleines U<sub>DS</sub>), er verhält sich wie ein Widerstand R<sub>DS(on)</sub>. Im AUS-Zustand liegt er im Sperrbereich.</li><li>Es gibt keine Speicherzeit wie beim Bipolartransistor. Die Schaltgeschwindigkeit wird vom Umladen der Gate- und Lastkapazitäten bestimmt.</li><li>CMOS-Inverter: n- und p-Kanal-Anreicherungstyp in Reihe. In beiden stationären Zuständen fließt I<sub>D</sub> = 0. Bei gleichen |β| und |U<sub>t</sub>| liegt der Umschaltpunkt bei U<sub>B</sub>/2.</li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Temperatur: Beim MOSFET wirken zwei Effekte gegeneinander (die Beweglichkeit sinkt, die Schwellspannung sinkt ebenfalls). Deshalb gibt es einen AP, in dem er praktisch temperaturunabhängig ist. Insgesamt ist der MOSFET deutlich stabiler als der Bipolartransistor.",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "9 · Operationsverstärker (Kap. 6, Ü7)",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Idealer OPV: Annahmen",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Annahme</th><th>Folge für die Rechnung</th></tr><tr><td>v<sub>D</sub> → ∞, U<sub>a</sub> = v<sub>D</sub>·U<sub>D</sub></td><td>bei endlichem U<sub>a</sub> muss U<sub>D</sub> = U<sub>P</sub> − U<sub>N</sub> → 0 gehen</td></tr><tr><td>I<sub>P</sub> = I<sub>N</sub> = 0, r<sub>e</sub> → ∞</td><td>in die Eingänge fließt kein Strom</td></tr><tr><td>r<sub>a</sub> = 0</td><td>Ausgang ist eine ideale Spannungsquelle, Last egal</td></tr><tr><td>kein Offset, spiegelsymmetrisch, frequenzunabhängig</td><td>U<sub>a</sub>(U<sub>D</sub> = 0) = 0, keine Bandbreitengrenze</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Goldene Regeln</strong> (nur mit Gegenkopplung, also Rückführung auf den N-Eingang):<div>1. Beide Eingänge liegen auf demselben Potential (U<sub>D</sub> = 0, virtuelle Masse).</div><div>2. In die Eingänge fließt kein Strom.</div><div>Ohne Gegenkopplung (Komparator) gilt Regel 1 <strong>nicht</strong>, der Ausgang läuft dann in die Begrenzung.</div>",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Methode für jede OPV-Schaltung",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<ol><li>Prüfen, ob eine Gegenkopplung vorhanden ist. Nur dann gilt U<sub>P</sub> = U<sub>N</sub>.</li><li>U<sub>P</sub> bestimmen, meist direkt aus dem Eingang oder der Masse.</li><li>U<sub>N</sub> = U<sub>P</sub> setzen.</li><li>Knotensatz am N-Eingang aufstellen, mit I<sub>N</sub> = 0.</li><li>Nach U<sub>a</sub> bzw. I<sub>a</sub> auflösen.</li></ol>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Grundschaltungen",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>v = U<sub>2</sub>/U<sub>1</sub> = −R<sub>2</sub>/R<sub>1</sub></td><td>invertierender Verstärker</td><td>N ist virtuelle Masse: I<sub>1</sub> = U<sub>1</sub>/R<sub>1</sub> fließt komplett über R<sub>2</sub></td></tr><tr><td>v = 1 + R<sub>2</sub>/R<sub>1</sub></td><td>nichtinvertierend (R<sub>1</sub> nach Masse, R<sub>2</sub> Rückführung)</td><td>U<sub>N</sub> = U<sub>2</sub>·R<sub>1</sub>/(R<sub>1</sub> + R<sub>2</sub>) = U<sub>1</sub></td></tr><tr><td>v = 1</td><td>Spannungsfolger (R<sub>2</sub> = 0, R<sub>1</sub> → ∞)</td><td>Impedanzwandler: Eingang hochohmig, Ausgang niederohmig</td></tr><tr><td>I<sub>2</sub> = U<sub>1</sub>/R<sub>1</sub></td><td>U/I-Wandler, Last R<sub>L</sub> in der Rückführung (Ü7 A4)</td><td>U<sub>N</sub> = U<sub>1</sub> → Strom durch R<sub>1</sub> ist U<sub>1</sub>/R<sub>1</sub> → wegen I<sub>N</sub> = 0 fließt derselbe Strom durch R<sub>L</sub></td></tr><tr><td>U<sub>2</sub> = −R·I<sub>1</sub></td><td>I/U-Wandler (Transimpedanz)</td><td>virtuelle Masse am Eingang</td></tr><tr><td>U<sub>2</sub> = −R<sub>2</sub>·(U<sub>11</sub>/R<sub>11</sub> + U<sub>12</sub>/R<sub>12</sub> + …)</td><td>Summierer</td><td>Ströme addieren sich am Knoten N</td></tr><tr><td>U<sub>2</sub> = (R<sub>22</sub>/R<sub>11</sub>)·(U<sub>11</sub> − U<sub>12</sub>)</td><td>Differenzverstärker (symmetrische Widerstände)</td><td>Überlagerung beider Eingänge</td></tr><tr><td>u<sub>2</sub> = −1/(R<sub>1C</sub>_2)·∫u<sub>1</sub> dt</td><td>Integrator</td><td>Strom U<sub>1</sub>/R<sub>1</sub> lädt C<sub>2</sub></td></tr><tr><td>u<sub>2</sub> = −R<sub>2C</sub>_1·du<sub>1</sub>/dt</td><td>Differenzierer</td><td>i = C·du/dt fließt über R<sub>2</sub></td></tr><tr><td>U<sub>2</sub> = −U<sub>T</sub>·ln(I<sub>1</sub>/I<sub>0</sub>)</td><td>Logarithmierer (Diode in der Rückführung)</td><td>Kennlinie der Diode</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Typische Frage:</strong> Leite I<sub>2</sub> = U<sub>1</sub>/R<sub>1</sub> her und nenne die Voraussetzungen (Ü7 A4a).<div><strong>So begründest du:</strong> Voraussetzungen: idealer OPV (v<sub>D</sub> → ∞, I<sub>N</sub> = I<sub>P</sub> = 0), Gegenkopplung über R<sub>L</sub>, Ausgang nicht in der Begrenzung. Dann gilt U<sub>D</sub> = 0, also U<sub>N</sub> = U<sub>P</sub> = U<sub>1</sub>. Über R<sub>1</sub> liegt U<sub>1</sub>, der Strom ist U<sub>1</sub>/R<sub>1</sub>. Weil kein Strom in den N-Eingang fließt, muss genau dieser Strom durch R<sub>L</sub> fließen: I<sub>2</sub> = U<sub>1</sub>/R<sub>1</sub>. R<sub>L</sub> kommt in der Gleichung nicht vor, die Schaltung ist eine Konstantstromquelle.</div>",
+   "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>0 ≤ R<sub>L</sub> ≤ R<sub>1</sub>·(U<sub>a,max</sub>/U<sub>1</sub> − 1)</td><td>Variationsbereich der Last (Ü7 A4b)</td><td>U<sub>2</sub> = I<sub>2</sub>·(R<sub>1</sub> + R<sub>L</sub>) darf die Aussteuergrenze U<sub>a,max</sub> des OPV nicht überschreiten; zusätzlich gilt I<sub>2</sub> ≤ I<sub>a,max</sub></td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "Realer OPV: Wann ist „ideal“ nicht mehr genug?",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Formel</th><th>Wann?</th><th>Warum / Herkunft</th></tr><tr><td>v = v<sub>ideal</sub>/(1 + v<sub>ideal</sub>/v<sub>D0</sub>)</td><td>endliche Leerlaufverstärkung v<sub>D0</sub> (Ü7 A2b)</td><td>Ein kleiner Teil U<sub>D</sub> = U<sub>a</sub>/v<sub>D0</sub> bleibt am Eingang stehen</td></tr><tr><td>relativer Fehler ≈ −v<sub>ideal</sub>/v<sub>D0</sub></td><td>Abschätzung</td><td>Fehler wird klein, wenn v<sub>D0</sub> ≫ gewünschte Verstärkung</td></tr><tr><td>R<sub>E</sub> = R<sub>e</sub>·v<sub>D</sub>/v</td><td>Eingangswiderstand nichtinvertierend</td><td>Gegenkopplung erhöht den Eingangswiderstand um den Faktor v<sub>D</sub>/v</td></tr><tr><td>U<sub>2</sub> = I<sub>N</sub>·R<sub>2</sub> (bei U<sub>1</sub> = 0)</td><td>Eingangsruhestrom, invertierender Verstärker (Ü7 A3a)</td><td>U<sub>N</sub> = 0 → kein Strom durch R<sub>1</sub> → I<sub>N</sub> kommt komplett über R<sub>2</sub> vom Ausgang</td></tr><tr><td>R<sub>P</sub> = (I<sub>N</sub>/I<sub>P</sub>)·(R<sub>1</sub> ∥ R<sub>2</sub>), für I<sub>P</sub> = I<sub>N</sub>: R<sub>P</sub> = R<sub>1</sub> ∥ R<sub>2</sub></td><td>Kompensationswiderstand am P-Eingang (Ü7 A3b)</td><td>I<sub>P</sub>·R<sub>P</sub> erzeugt dieselbe Spannung wie I<sub>N</sub> am N-Knoten → Fehler hebt sich auf</td></tr><tr><td>U<sub>OS</sub></td><td>Offsetspannung</td><td>als Spannungsquelle am Eingang modelliert, wird mit der Rauschverstärkung 1 + R<sub>2</sub>/R<sub>1</sub> verstärkt</td></tr><tr><td>CMRR = v<sub>D</sub>/v<sub>Gl</sub></td><td>Gleichtaktunterdrückung</td><td>ein realer OPV verstärkt auch den Gleichtaktanteil (U<sub>P</sub> + U<sub>N</sub>)/2</td></tr><tr><td>f<sub>T</sub> = v<sub>D0</sub>·f<sub>1</sub>, f<sub>B</sub> = f<sub>T</sub>/v<sub>u0</sub></td><td>Bandbreite einer Verstärkerstufe</td><td>Verstärkungs-Bandbreite-Produkt (Einpolnäherung)</td></tr><tr><td>SR ≥ 2π·f·Û</td><td>Slewrate, große Sinussignale</td><td>maximale Steigung des Sinus liegt im Nulldurchgang</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Gegenkopplung macht die Verstärkung unabhängig vom OPV: v = 1 + R<sub>2</sub>/R<sub>1</sub> hängt nur von den Widerständen ab und nicht von v<sub>D</sub>, das stark streut und temperaturabhängig ist. Dafür nimmt man in Kauf, dass die Verstärkung viel kleiner als v<sub>D</sub> ist. Gleichzeitig wächst die Bandbreite (f<sub>B</sub> = f<sub>T</sub>/v).",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h2",
+   "html": "10 · Entscheidungshilfe: Aufgabe sagt … → das musst du tun",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Signalwort in der Aufgabe</th><th>Bedeutung / Modell</th></tr><tr><td>„ideale Schalterkennlinie“, „U<sub>F0</sub> = 0,7 V“</td><td>Diode als Schalter: Annahme leitend/gesperrt, danach prüfen</td></tr><tr><td>„I<sub>S</sub>, m, U<sub>T</sub> gegeben“</td><td>Exponentialgleichung (Großsignal)</td></tr><tr><td>„lineare Näherung“, „Kleinsignal“, „kleine Amplitude“</td><td>r<sub>d</sub> = mU<sub>T</sub>/I<sub>0</sub>, Ersatzschaltbild</td></tr><tr><td>„Kennlinie gegeben“, „grafisch bestimmen“</td><td>Lastgerade einzeichnen, Schnittpunkt ablesen</td></tr><tr><td>„r<sub>Z</sub> gegeben“</td><td>Z-Diode als U<sub>Z0</sub> + r<sub>Z</sub>, Knotensatz; sonst U<sub>A</sub> ≈ U<sub>Z0</sub></td></tr><tr><td>„Leerlauf“ / „R<sub>L</sub> → ∞“</td><td>Laststrom 0 → Worst Case für I<sub>Zmax</sub></td></tr><tr><td>„nicht übersteuert“, „Übersteuerungsgrenze“, m = 1</td><td>U<sub>CE</sub> = U<sub>BE</sub>, I<sub>B</sub> = I<sub>BÜ</sub> = I<sub>C</sub>/B<sub>N</sub></td></tr><tr><td>„übersteuert“, m &gt; 1</td><td>U<sub>CE</sub> = U<sub>CES</sub>, I<sub>B</sub> = m·I<sub>BÜ</sub>, I<sub>C</sub> ≠ B<sub>N</sub>·I<sub>B</sub></td></tr><tr><td>„Störung im AUS/EIN-Zustand“</td><td>Störabstand bis U<sub>BEF</sub> bzw. bis I<sub>B</sub> = I<sub>BÜ</sub></td></tr><tr><td>„Verstärker“, „Arbeitspunkt“</td><td>erst AP (Großsignal), dann Kleinsignalparameter</td></tr><tr><td>„NF-Bereich“, „ωC → ∞“</td><td>alle C im Ersatzschaltbild kurzschließen</td></tr><tr><td>„U<sub>EA</sub> gegeben“</td><td>Early-Effekt: r<sub>CE</sub> = U<sub>EA</sub>/I<sub>C0</sub>, b = B<sub>N</sub>(1 + U<sub>CE0</sub>/U<sub>EA</sub>)</td></tr><tr><td>„aus den Kennliniengleichungen ableiten“</td><td>ableiten: r<sub>BE</sub> = U<sub>T</sub>/I<sub>B0</sub>, g<sub>m</sub> = 2β(U<sub>GS</sub> − U<sub>t</sub>) usw.</td></tr><tr><td>„Pentodenbereich“ / „Konstantstromquelle“ beim FET</td><td>quadratische Gleichung, Bedingung U<sub>DS</sub> ≥ U<sub>GS</sub> − U<sub>t</sub> prüfen</td></tr><tr><td>„idealer OPV“ und Gegenkopplung</td><td>U<sub>P</sub> = U<sub>N</sub>, I<sub>P</sub> = I<sub>N</sub> = 0, Knotensatz am N-Eingang</td></tr><tr><td>„endliche Verstärkung v<sub>D0</sub>“</td><td>U<sub>D</sub> = U<sub>a</sub>/v<sub>D0</sub> ≠ 0 mitnehmen</td></tr><tr><td>„Eingangsruheströme“</td><td>I<sub>N</sub>, I<sub>P</sub> als Stromquellen an den Eingängen, U<sub>1</sub> = 0 setzen</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Bei jeder Rechnung zuerst schreiben, <strong>welches Modell</strong> du benutzt und <strong>warum es hier gilt</strong>. Am Ende kurz <strong>prüfen</strong>, ob die Annahme erfüllt ist (Diode leitet? AP im aktiven Bereich bzw. im Pentodenbereich? OPV nicht in der Begrenzung?). Genau diese zwei Sätze will der Professor sehen.",
+   "variante": "merke",
+   "abstand": "l"
+  }
+ ],
+ "abstand": "m"
+}

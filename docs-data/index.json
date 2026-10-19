@@ -1,6 +1,12 @@
 {
  "docs": [
   {
+   "id": "uebersicht-elektronik",
+   "titel": "Übersicht Elektronik",
+   "untertitel": "Formeln, Modelle und wann du was brauchst – Kap. 1–6 und Übungen 1–7",
+   "stand": "2026-10-19"
+  },
+  {
    "id": "test-uebersicht-fuer-bausteine",
    "titel": "Test Übersicht für Bausteine",
    "untertitel": "Nicht beachten",
