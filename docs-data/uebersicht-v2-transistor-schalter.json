@@ -200,7 +200,7 @@
   {
    "typ": "box",
    "html": "<strong>OPAL-Vorbereitungstest:</strong> Bei übersteuerten Schaltern (A7, A12, A14) rechnet OPAL intern mit U<sub>CE</sub> = 0,45 V, obwohl U<sub>CES</sub> = 0,2 V angegeben ist. In A14 werden innerhalb derselben Aufgabe beide Werte gemischt, das ist sehr wahrscheinlich ein Fehler im Test. Im Antestat mit U<sub>CES</sub> rechnen oder vorher beim Betreuer nachfragen.<div>Vorlesung und Seminar (Ü4) rechnen bei Übersteuerung mit U<sub>CE</sub> = U<sub>CES</sub>. Das bestätigt, dass die 0,45 V ein Fehler im OPAL-Test sind.</div>",
-   "variante": "info",
+   "variante": "achtung",
    "abstand": "l"
   }
  ],

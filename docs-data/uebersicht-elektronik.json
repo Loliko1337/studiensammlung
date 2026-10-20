@@ -2,7 +2,7 @@
  "id": "uebersicht-elektronik",
  "titel": "Übersicht Elektronik",
  "untertitel": "Formeln, Modelle und wann du was brauchst – Kap. 1–6 und Übungen 1–7",
- "stand": "2026-10-19",
+ "stand": "2026-10-20",
  "bloecke": [
   {
    "typ": "h2",
@@ -54,6 +54,29 @@
    "typ": "box",
    "html": "<strong>Typische Frage:</strong> Warum darf man die Verstärkung mit dem Kleinsignalmodell berechnen?<div><strong>So begründest du:</strong> Die Kennlinie ist nichtlinear. Für kleine Änderungen um den Arbeitspunkt lässt sie sich aber durch ihre Tangente ersetzen (Taylor-Entwicklung, Abbruch nach dem linearen Glied). Dadurch werden alle Zusammenhänge linear, und man kann mit Widerständen und gesteuerten Quellen wie in der Netzwerkanalyse rechnen. Der AP selbst muss vorher mit den Großsignalgleichungen bestimmt werden, weil die Kleinsignalparameter vom AP abhängen.</div>",
    "variante": "info",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Kleinsignalersatzschaltbild anfertigen: Schritt für Schritt",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "geordnet": true,
+   "html": "<li><strong>Originalschaltung abzeichnen</strong> und alle Knoten benennen (G/B, D/C, S/E, Masse).</li><li><strong>Betriebsspannung U<sub>B</sub> / U<sub>0C</sub> durch Masse ersetzen.</strong> Alles, was oben an U<sub>B</sub> hing, hängt jetzt an Masse. Der obere Teilerwiderstand R<sub>1</sub> liegt dadurch <strong>parallel</strong> zum unteren R<sub>2</sub>, und R<sub>D</sub> bzw. R<sub>C</sub> liegt zwischen Ausgang und Masse.</li><li><strong>Kondensatoren:</strong> Große Koppel- und Emitterkondensatoren (ωC → ∞) werden zum Kurzschluss. Kleine Lastkapazitäten (C<sub>L</sub>) werden bei NF zum Leerlauf und fallen weg, sie zählen erst bei HF.</li><li><strong>Transistor ersetzen:</strong> beim FET ist G–S offen (I<sub>G</sub> = 0), zwischen D und S sitzt die gesteuerte Stromquelle g<sub>m</sub>·u<sub>GS</sub> ∥ r<sub>DS</sub>. Beim Bipolartransistor liegt r<sub>BE</sub> zwischen B und E, zwischen C und E die Stromquelle b·i<sub>B</sub> ∥ r<sub>CE</sub>.</li><li><strong>Gemeinsame Masse</strong> durchziehen (Source bzw. Emitter), dann Eingang und Ausgang sauber trennen.</li><li><strong>Spannungen und Ströme eintragen</strong>, und zwar nur mit Kleinbuchstaben (u<sub>e</sub>, u<sub>GS</sub>, u<sub>a</sub>). Die Richtung der Stromquelle einzeichnen, sie entscheidet über das Vorzeichen.</li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "Die gesteuerte Stromquelle ist <strong>kein Widerstand</strong>. Sie ist der Kern des Verstärkers: Eine Spannung am Eingang (u<sub>GS</sub>) steuert einen Strom am Ausgang. Eingangs- und Ausgangskreis sind <strong>nur</strong> über diese Quelle gekoppelt, es gibt keine leitende Verbindung dazwischen.",
+   "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Groß- oder Kleinbuchstaben?</strong> U<sub>GS0</sub>, I<sub>D0</sub> und U<sub>DS0</sub> sind Gleichgrößen im Arbeitspunkt (Großsignal). u<sub>gs</sub>, i<sub>d</sub> und u<sub>a</sub> sind die kleinen Änderungen um diesen AP (Kleinsignal). Im Ersatzschaltbild stehen <strong>nur</strong> Kleinbuchstaben, die AP-Werte gehen nur indirekt über g<sub>m</sub>, r<sub>DS</sub> usw. ein. Typischer Fehler: u<sub>e</sub> = U<sub>GS0</sub> = 2,19 V setzen.",
+   "variante": "achtung",
    "abstand": "l"
   },
   {
@@ -519,6 +542,80 @@
    "typ": "box",
    "html": "Für die maximale Amplitude legst du den AP in die Mitte des nutzbaren Bereichs, also zwischen U<sub>DS,min</sub> (Abschnürgrenze auf der Arbeitsgeraden) und U<sub>B</sub>. U<sub>DS0</sub> = U<sub>B</sub>/2 ist nur dann optimal, wenn U<sub>DS,min</sub> ≈ 0 ist.",
    "variante": "merke",
+   "abstand": "l"
+  },
+  {
+   "typ": "h3",
+   "html": "Durchgerechnetes Beispiel: Seminar Ü7 A1 (Leistungs-MOSFET, Source-Schaltung)",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Gegeben:</strong> β = 1 A/V², U<sub>t</sub> = 1,5 V, λ = 0,004 1/V, I<sub>D</sub> = 500 mA, U<sub>B</sub> = 20 V, U<sub>DS0</sub> = U<sub>B</sub>/2, Querstrom I<sub>q</sub> = I<sub>D</sub>/100 = 5 mA.<div>Gesucht: a) R<sub>D</sub>, R<sub>1</sub>, R<sub>2</sub> · b) Kleinsignalparameter · c) Ersatzschaltbild und v<sub>u</sub> · d) û<sub>max</sub> · e) optimaler AP</div>",
+   "variante": "beispiel",
+   "abstand": "l"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>a) Dimensionierung (Großsignal)</strong>",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Schritt</th><th>Rechnung</th><th>Begründung</th></tr><tr><td>R<sub>D</sub></td><td>U<sub>B</sub> = U<sub>RD</sub> + U<sub>DS0</sub> → R<sub>D</sub> = (20 V − 10 V)/0,5 A = <strong>20 Ω</strong></td><td>Maschensatz am Ausgang</td></tr><tr><td>Bereich</td><td>Pentodenbereich angenommen</td><td>nur dort steuert U<sub>GS</sub> den Strom unabhängig von U<sub>DS</sub> → Verstärker. λ ist gegeben, das kommt nur in dieser Gleichung vor.</td></tr><tr><td>U<sub>GS0</sub></td><td>U<sub>GS0</sub> = U<sub>t</sub> + √(I<sub>D</sub>/(β(1+λU<sub>DS0</sub>))) = 1,5 V + √(0,5/1,04) V = <strong>2,19 V</strong></td><td>Kennliniengleichung umgestellt; positive Wurzel, da U<sub>GS</sub> &gt; U<sub>t</sub> sein muss</td></tr><tr><td>R<sub>2</sub></td><td>U<sub>R2</sub> = U<sub>GS0</sub> − 0 → R<sub>2</sub> = 2,19 V / 5 mA = <strong>438 Ω</strong></td><td>Gate-Potential = U<sub>GS0</sub> (Source auf Masse). Wegen I<sub>G</sub> = 0 fließt derselbe Querstrom durch R<sub>1</sub> und R<sub>2</sub>.</td></tr><tr><td>R<sub>1</sub></td><td>U<sub>R1</sub> = U<sub>B</sub> − U<sub>GS0</sub> = 17,81 V → R<sub>1</sub> = <strong>3,56 kΩ</strong></td><td>Potentialdifferenz zwischen 20 V und Gate</td></tr><tr><td>Prüfung</td><td>U<sub>DS0</sub> = 10 V ≥ U<sub>GS0</sub> − U<sub>t</sub> = 0,69 V ✓</td><td>Annahme Pentodenbereich bestätigt</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>b) Kleinsignalparameter im AP</strong>",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Größe</th><th>Rechnung</th><th>Begründung</th></tr><tr><td>g<sub>m</sub></td><td>2β(U<sub>GS0</sub> − U<sub>t</sub>) = 2 · 1 A/V² · 0,69 V ≈ <strong>1,39 S</strong></td><td>Ableitung der Kennlinie nach U<sub>GS</sub>. Die Form 2I<sub>D</sub>/(U<sub>GS</sub> − U<sub>t</sub>) liefert 1,44 S, weil sie den Faktor 1 + λU<sub>DS</sub> enthält. Eine Variante wählen und dazuschreiben.</td></tr><tr><td>g<sub>d</sub></td><td>λ·I<sub>D</sub> = 0,004 1/V · 0,5 A = <strong>2 mS</strong> → r<sub>DS</sub> = <strong>500 Ω</strong></td><td>Ableitung nach U<sub>DS</sub>; nur der λ-Term hängt von U<sub>DS</sub> ab. Mit λ = 0 wären die Kennlinien waagerecht und r<sub>DS</sub> → ∞.</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>c) Ersatzschaltbild und Verstärkung (Kleinsignal):</strong> U<sub>B</sub> → Masse, also liegt R<sub>1</sub> ∥ R<sub>2</sub> am Gate und R<sub>D</sub> vom Drain nach Masse. C wird zum Kurzschluss, C<sub>L</sub> bei NF zum Leerlauf.",
+   "abstand": "m"
+  },
+  {
+   "typ": "code",
+   "html": "",
+   "sprache": "andere",
+   "text": "u_e ──┬──────── G          D ──────┬─────────┬────────┬──── u_a\n      │                           │         │        │\n   R1 ∥ R2    (offen,       g_m·u_GS ↓    r_DS     R_D\n      │       I_G = 0)            │         │        │\n ─────┴──────── S ────────────────┴─────────┴────────┴──── Masse"
+  },
+  {
+   "typ": "liste",
+   "geordnet": true,
+   "html": "<li>u<sub>GS</sub> = u<sub>e</sub> (C kurzgeschlossen, Gate stromlos)</li><li>Der Strom g<sub>m</sub>·u<sub>GS</sub> fließt von D nach S. Durch die Widerstände r<sub>DS</sub> ∥ R<sub>D</sub> fließt er deshalb <strong>entgegen</strong> u<sub>a</sub>.</li><li>u<sub>a</sub> = −g<sub>m</sub>·u<sub>GS</sub>·(r<sub>DS</sub> ∥ R<sub>D</sub>), also <strong>U = I · R</strong> (nicht geteilt)</li><li>v<sub>u</sub> = u<sub>a</sub>/u<sub>e</sub> = −g<sub>m</sub>·(r<sub>DS</sub> ∥ R<sub>D</sub>) = −1,39 S · 19,23 Ω ≈ <strong>−26,7</strong></li>",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Interpretation: Das Signal wird etwa 27-fach verstärkt und um 180° gedreht. Weil r<sub>DS</sub> ≫ R<sub>D</sub> ist, gilt v<sub>u</sub> ≈ −g<sub>m</sub>·R<sub>D</sub> (etwa 4 % Abweichung).",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>d) Maximale Amplitude (Großsignal)</strong>",
+   "abstand": "m"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Grenze</th><th>Rechnung</th><th>Begründung</th></tr><tr><td>oben</td><td>U<sub>DS,max</sub> = U<sub>B</sub> = 20 V → Luft 10 V</td><td>I<sub>D</sub> → 0, an R<sub>D</sub> fällt nichts mehr ab</td></tr><tr><td>unten</td><td>Arbeitsgerade = Abschnürgrenze: (U<sub>B</sub> − U<sub>DS</sub>)/R<sub>D</sub> = β·U<sub>DS</sub>² → 20U<sub>DS</sub>² + U<sub>DS</sub> − 20 = 0 → U<sub>DS,min</sub> = 0,975 V (die negative Lösung entfällt) → Luft 9,02 V</td><td>darunter Triodenbereich → Verzerrung</td></tr><tr><td>Ergebnis</td><td><strong>û<sub>max</sub> = min(10 V; 9,02 V) = 9,02 V</strong></td><td>Ein Sinus schwingt symmetrisch, die kürzere Seite begrenzt</td></tr></tbody>",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>e) Optimaler AP:</strong> in der Mitte des nutzbaren Bereichs, U<sub>DS0</sub> = (U<sub>B</sub> + U<sub>DS,min</sub>)/2 = (20 V + 0,975 V)/2 ≈ <strong>10,5 V</strong>. Dann gilt û<sub>max</sub> = (20 V − 0,975 V)/2 ≈ <strong>9,51 V</strong>. Erreicht wird das mit einem etwas kleineren U<sub>GS0</sub>; die Arbeitsgerade (R<sub>D</sub>) bleibt gleich.",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Typische Fehler aus dieser Aufgabe:</strong><div>• <strong>mA nicht in A umgerechnet</strong> → U<sub>GS</sub> = 23 V. Plausibilitätscheck: Am Gate kann nie mehr als U<sub>B</sub> liegen.</div><div>• <strong>Teiler-Spannungen</strong> falsch zugeordnet. Abhilfe: Potentiale der Knoten notieren (20 V / U<sub>GS0</sub> / 0 V) und Differenzen bilden. Kontrolle: U<sub>R1</sub> + U<sub>R2</sub> = U<sub>B</sub>, R<sub>1</sub>/R<sub>2</sub> ≈ U<sub>R1</sub>/U<sub>R2</sub>.</div><div>• <strong>Groß- und Kleinsignal vermischt:</strong> u<sub>e</sub> ist nicht U<sub>GS0</sub>.</div><div>• <strong>Strom durch den Widerstand geteilt</strong> statt multipliziert. Einheitencheck: A · Ω = V.</div><div>• <strong>Minuszeichen vergessen.</strong> Plausibilität: Ein Verstärker mit |v<sub>u</sub>| &lt; 1 verstärkt nicht.</div><div>• In e) <strong>halbe Breite statt Mitte</strong> berechnet: (U<sub>B</sub> − U<sub>min</sub>)/2 ist die Amplitude, (U<sub>B</sub> + U<sub>min</sub>)/2 der AP.</div>",
+   "variante": "achtung",
    "abstand": "l"
   },
   {
