@@ -1,0 +1,316 @@
+{
+ "id": "durchfuehrung-v2-transistor-schalter",
+ "titel": "Durchführung V2: Transistor als Schalter",
+ "untertitel": "Erwartungswerte, Messaufbau und Fallstricke für den Praktikumstermin",
+ "stand": "2026-10-26",
+ "abstand": "m",
+ "bloecke": [
+  {
+   "typ": "h2",
+   "html": "0 · Vor dem Praktikum",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "geordnet": false,
+   "html": "<li><strong>USB-Stick</strong> für die Oszi-Screenshots (Hinweis in der Anleitung).</li><li><strong>Datenblätter</strong> aus dem OPAL dabei haben: 2N3819, BS170, IRLR024N. Die Werte für 2.2a vorher ablesen.</li><li><strong>Hausaufgaben</strong> dabei haben, weil 2.2b „analog zu HA 2.1b“ und 3.2 die Messschaltung aus 3.1 nutzt.</li><li><strong>Erwartungswerte</strong> aus dieser Übersicht neben die Messtabellen schreiben. So merkst du sofort, wenn ein Messwert nicht stimmen kann.</li><li>Taschenrechner, Stift. Die Tabellen unten vorbereiten.</li>"
+  },
+  {
+   "typ": "h3",
+   "html": "Oszilloskop – Grundeinstellungen"
+  },
+  {
+   "typ": "liste",
+   "geordnet": false,
+   "html": "<li><strong>Tastkopf 10:1</strong> und am Kanal auch <strong>10×</strong> einstellen. Sonst stimmt die Amplitude um Faktor 10 nicht.</li><li><strong>DC-Kopplung</strong>. AC-Kopplung verzerrt langsame Rechtecke (Multivibrator ≈ 5 Hz!) zu Dachschrägen.</li><li><strong>Masseklemmen</strong> aller Tastköpfe nur an die Schaltungsmasse. Sie sind im Oszi über den Schutzleiter miteinander verbunden. Eine Masseklemme an einem anderen Punkt schließt diesen Punkt kurz.</li><li><strong>Trigger</strong> auf den Kanal mit dem saubersten Rechteck, Flanke steigend. Bei langsamen Signalen <strong>Single</strong> oder <strong>Stop</strong> nutzen.</li><li><strong>Measure</strong>-Funktion für Frequenz, Periode, Tastgrad (+Duty) und Mittelwert. Für Zeitabstände die <strong>Cursor</strong>.</li><li>Jeden Screenshot sofort mit sprechendem Namen speichern (z. B. <em>1-2c-poti-links.png</em>).</li>"
+  },
+  {
+   "typ": "h3",
+   "html": "Multimeter"
+  },
+  {
+   "typ": "liste",
+   "geordnet": false,
+   "html": "<li><strong>Spannung parallel, Strom in Reihe.</strong> Für Strom die Messleitung in die A- oder mA-Buchse umstecken.</li><li>Nach jeder Strommessung die Leitung <strong>zurückstecken</strong>. Ein Amperemeter parallel zu einer Quelle löst die Sicherung aus.</li><li>Messbereich passend wählen. Bei 3.2 geht es um <strong>Millivolt</strong>.</li>"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Abweichung immer prozentual angeben:</strong> Abweichung = (Messwert − Rechenwert) / Rechenwert · 100 %. Danach den <strong>Grund</strong> nennen. Bei diesem Prof zählt die Begründung mehr als die Zahl.",
+   "variante": "merke"
+  },
+  {
+   "typ": "h2",
+   "html": "1.2 · Multivibrator",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Aufbau nach Abb. 2: R<sub>B1</sub> = R<sub>B2</sub> = R<sub>B3</sub> = 100 kΩ, C<sub>1</sub> = C<sub>2</sub> = 1 µF, R<sub>C</sub> = 1 kΩ, LEDs im Kollektorkreis, Dioden D<sub>1</sub>/D<sub>2</sub> vor den Basen."
+  },
+  {
+   "typ": "h3",
+   "html": "Erwartungswert vorher ausrechnen"
+  },
+  {
+   "typ": "absatz",
+   "html": "Jede Halbperiode dauert so lange, bis sich ein Kondensator über „seinen“ Basiswiderstand weit genug umgeladen hat. Näherung: <strong>t<sub>halb</sub> ≈ ln 2 · R<sub>B</sub> · C ≈ 0,69 · R<sub>B</sub> · C</strong>."
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Poti-Stellung</th><th>R<sub>B</sub> links / rechts</th><th>t<sub>1</sub> / t<sub>2</sub></th><th>T</th><th>f</th><th>Tastgrad</th></tr><tr><td>Mitte</td><td>150 kΩ / 150 kΩ</td><td>104 ms / 104 ms</td><td>208 ms</td><td>≈ 4,8 Hz</td><td>50 %</td></tr><tr><td>Anschlag A</td><td>100 kΩ / 200 kΩ</td><td>69 ms / 139 ms</td><td>208 ms</td><td>≈ 4,8 Hz</td><td>≈ 33 %</td></tr><tr><td>Anschlag B</td><td>200 kΩ / 100 kΩ</td><td>139 ms / 69 ms</td><td>208 ms</td><td>≈ 4,8 Hz</td><td>≈ 67 %</td></tr></tbody>"
+  },
+  {
+   "typ": "box",
+   "html": "Diese Tabelle nimmt an, dass der <strong>Poti-Schleifer an U<sub>C0</sub></strong> liegt und R<sub>B3</sub> zwischen R<sub>B1</sub> und R<sub>B2</sub> aufteilt (so sieht Abb. 2 aus). Am Board prüfen! Die Summe R<sub>B1</sub> + R<sub>B2</sub> + R<sub>B3</sub> = 300 kΩ bleibt konstant. Deshalb bleibt die <strong>Periode etwa gleich</strong>, und nur das <strong>Tastverhältnis</strong> verschiebt sich.",
+   "variante": "info"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>ln 2 ist nur eine Näherung.</strong> Es gilt exakt, wenn der Kondensatorknoten um genau U<sub>C0</sub> ins Negative springt und der Transistor bei 0 V wieder einschaltet. Hier liegt die Schaltschwelle wegen der Diode bei U<sub>BE</sub> + U<sub>F</sub> ≈ 1,4 V. Genauer gilt <strong>t = R<sub>B</sub>·C · ln((U<sub>Hub</sub> + U<sub>C0</sub> − U<sub>S</sub>) / (U<sub>C0</sub> − U<sub>S</sub>))</strong> mit U<sub>S</sub> ≈ 1,4 V und U<sub>Hub</sub> ≈ U<sub>C0</sub> − U<sub>CES</sub>. Die gemessene Halbperiode ist deshalb meist <strong>etwas länger</strong> als 0,69·R·C. Das ist ein guter Punkt für die Begründung in 1.2b.",
+   "variante": "info"
+  },
+  {
+   "typ": "h3",
+   "html": "Messaufbau"
+  },
+  {
+   "typ": "liste",
+   "geordnet": false,
+   "html": "<li><strong>CH1</strong>: Kollektor T<sub>1</sub> (= U<sub>out</sub>). <strong>CH2</strong>: Basis T<sub>1</sub> bzw. der Knoten zwischen C und Diode. Danach dasselbe für T<sub>2</sub>.</li><li>Zeitbasis ≈ <strong>50 ms/div</strong> (2–3 Perioden auf dem Schirm). Volt/div nach U<sub>C0</sub>, z. B. 2 V/div.</li><li><strong>DC-Kopplung</strong>, Trigger CH1, steigende Flanke.</li>"
+  },
+  {
+   "typ": "h3",
+   "html": "Was du sehen solltest"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Messpunkt</th><th>Verlauf</th><th>Erklärung</th></tr><tr><td>Kollektor</td><td>Rechteck zwischen ≈ U<sub>CES</sub> (0,1–0,2 V) und ≈ U<sub>C0</sub>. Die steigende Flanke ist leicht abgerundet.</td><td>Leitet T, liegt der Kollektor an U<sub>CES</sub>. Sperrt T, wird C über R<sub>C</sub> und LED nachgeladen. τ = R<sub>C</sub>·C ≈ 1 ms, deshalb die Rundung.</td></tr><tr><td>Knoten C–Diode</td><td>Springt beim Umschalten <strong>tief ins Negative</strong> (≈ −U<sub>C0</sub>) und steigt dann e-förmig Richtung U<sub>C0</sub>. Bei ≈ 1,4 V knickt der Verlauf ab.</td><td>Der Kollektor auf der anderen Seite fällt schlagartig um U<sub>C0</sub>. C kann seine Spannung nicht sprunghaft ändern und reicht den Sprung weiter. Danach lädt C über R<sub>B</sub> um, bis der Transistor wieder einschaltet.</td></tr><tr><td>Basis direkt (hinter der Diode)</td><td>Pendelt nur zwischen ≈ 0 V und ≈ 0,7 V, <strong>kein</strong> tiefer Negativsprung.</td><td>Die Diode sperrt den negativen Sprung. Ohne sie läge −U<sub>C0</sub> an der BE-Strecke, die bei ≈ 5–6 V in Sperrrichtung durchbricht. <strong>Das ist der Zweck der Dioden.</strong></td></tr></tbody>"
+  },
+  {
+   "typ": "h3",
+   "html": "Antworten vorbereiten"
+  },
+  {
+   "typ": "liste",
+   "geordnet": false,
+   "html": "<li><strong>a) Funktion:</strong> Es leitet immer genau ein Transistor. Die Kondensatoren koppeln jeden Kollektor auf die Basis des anderen (Kreuzkopplung). Wenn ein Transistor einschaltet, springt sein Kollektor nach unten. Über C wird dadurch die Basis des anderen negativ, und dieser sperrt. Er bleibt so lange gesperrt, bis C über R<sub>B</sub> umgeladen ist. Dann kippt die Schaltung zurück. Kein stabiler Zustand, daher <em>astabil</em>.</li><li><strong>b) Abweichung f:</strong> Toleranzen von C (Kondensatoren oft ±10–20 %) und R (±1–5 %), ungenaue Poti-Mittelstellung, Schaltschwelle U<sub>BE</sub> + U<sub>F</sub> statt 0 V (ln 2 nicht exakt, siehe oben), Hub kleiner als U<sub>C0</sub> (U<sub>CES</sub>, LED), Nachladezeit über R<sub>C</sub>.</li><li><strong>c) Poti:</strong> Die Seite mit dem kleineren R<sub>B</sub> lädt schneller um, ihre Halbperiode wird kürzer. Weil die Summe der Widerstände gleich bleibt, ändert sich vor allem der <strong>Tastgrad</strong> und kaum die Frequenz. Man sieht es an der Leuchtdauer der LEDs.</li>"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Poti</th><th>t<sub>ein</sub> T<sub>1</sub></th><th>t<sub>aus</sub> T<sub>1</sub></th><th>T gemessen</th><th>f gemessen</th><th>Tastgrad</th><th>f gerechnet</th><th>Abw.</th></tr><tr><td>Mitte</td><td></td><td></td><td></td><td></td><td></td><td>4,8 Hz</td><td></td></tr><tr><td>Anschlag A</td><td></td><td></td><td></td><td></td><td></td><td>4,8 Hz</td><td></td></tr><tr><td>Anschlag B</td><td></td><td></td><td></td><td></td><td></td><td>4,8 Hz</td><td></td></tr></tbody>"
+  },
+  {
+   "typ": "h2",
+   "html": "2.2 · Konstantstromquelle mit 2N3819",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>Schaltung verstehen (Abb. 4):</strong> Drain an U<sub>B</sub> = 12 V, R<sub>S</sub> (Dekade 0…1 kΩ) unter der Source. Das <strong>Gate liegt am unteren Ende von R<sub>S</sub></strong>, darunter R<sub>L</sub> (Dekade 0…10 MΩ) nach Masse."
+  },
+  {
+   "typ": "box",
+   "html": "Daraus folgt <strong>U<sub>GS</sub> = −I<sub>L</sub> · R<sub>S</sub></strong>. U<sub>GS</sub> hängt also nur von R<sub>S</sub> ab und nicht von R<sub>L</sub>. Deshalb regelt sich der Strom selbst: Steigt I, wird U<sub>GS</sub> negativer, und der FET schnürt den Strom wieder ab. R<sub>L</sub> verkleinert nur U<sub>DS</sub> = U<sub>B</sub> − I·(R<sub>S</sub> + R<sub>L</sub>).",
+   "variante": "merke"
+  },
+  {
+   "typ": "h3",
+   "html": "a) Strom bei U<sub>GS</sub> = −1 V aus dem Datenblatt"
+  },
+  {
+   "typ": "absatz",
+   "html": "Im <strong>Ausgangskennlinienfeld</strong> des 2N3819 die Kurve U<sub>GS</sub> = −1 V suchen und im waagerechten Teil (Abschnürbereich) I<sub>D</sub> ablesen. Das vor dem Praktikum erledigen."
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Plausibilität mit typischen Werten:</strong> Der 2N3819 streut stark. I<sub>DSS</sub> liegt laut Datenblatt grob zwischen 2 und 20 mA, U<sub>GS(off)</sub> bei bis zu −8 V. Zum Beispiel ergeben I<sub>DSS</sub> = 10 mA und U<sub>P</sub> = −3 V nach I<sub>D</sub> = I<sub>DSS</sub>(1 − U<sub>GS</sub>/U<sub>P</sub>)² ≈ 4,4 mA und damit R<sub>S</sub> ≈ 1 V / 4,4 mA ≈ 230 Ω. Deine Zahl kommt aus dem OPAL-Datenblatt, das Beispiel zeigt nur die Größenordnung.",
+   "variante": "beispiel"
+  },
+  {
+   "typ": "h3",
+   "html": "b) R<sub>S</sub> einstellen und nachmessen"
+  },
+  {
+   "typ": "liste",
+   "geordnet": true,
+   "html": "<li><strong>R<sub>S</sub> = 1 V / I<sub>D</sub></strong> (Wert aus a) an der Dekade einstellen. R<sub>L</sub> zunächst auf 0 bzw. sehr klein.</li><li><strong>I<sub>L</sub></strong> mit dem Amperemeter in Reihe zu R<sub>L</sub> messen, am einfachsten unten zwischen R<sub>L</sub> und Masse.</li><li><strong>U<sub>GS</sub></strong> als Spannung über R<sub>S</sub> messen: U<sub>GS</sub> = −U<sub>RS</sub>.</li>"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Erwartung:</strong> Strom und U<sub>GS</sub> weichen <strong>deutlich</strong> vom Datenblatt ab. Das ist kein Messfehler. Das Datenblatt zeigt eine <em>typische</em> Kennlinie, dein Exemplar hat ein anderes I<sub>DSS</sub> und U<sub>P</sub> (Exemplarstreuung). Der Arbeitspunkt ist der Schnittpunkt der Geraden U<sub>GS</sub> = −I·R<sub>S</sub> mit der <em>echten</em> Kennlinie des Exemplars. Liegt die echte Kennlinie anders, verschiebt sich der Schnittpunkt, und es stellen sich weder −1 V noch der Datenblattstrom genau ein. Weitere Gründe: Temperatur und Toleranzen von Dekade und Messgerät.",
+   "variante": "info"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Tipp:</strong> R<sub>S</sub> so lange nachstellen, bis wirklich U<sub>RS</sub> = 1,00 V anliegt. Der dann gemessene Strom ist das <em>echte</em> I<sub>D</sub>(−1 V) deines Exemplars. Das ist ein schöner Vergleichswert zum Datenblatt fürs Protokoll."
+  },
+  {
+   "typ": "h3",
+   "html": "c) Bereich von R<sub>L</sub> messen (max. −10 %)"
+  },
+  {
+   "typ": "liste",
+   "geordnet": true,
+   "html": "<li>Bei R<sub>L</sub> = 0 den Strom <strong>I<sub>0</sub></strong> notieren. Grenze <strong>0,9 · I<sub>0</sub></strong> ausrechnen.</li><li>R<sub>L</sub> grob steigern (100 Ω, 1 k, 2 k, 5 k, 10 k …), dabei I<sub>L</sub> und U<sub>DS</sub> notieren.</li><li>Kurz vor der Grenze fein einstellen, bis I<sub>L</sub> = 0,9 · I<sub>0</sub>. Dieses R<sub>L</sub> ist R<sub>L,max</sub>.</li>"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Warum bricht der Strom ein?</strong> Mit wachsendem R<sub>L</sub> sinkt U<sub>DS</sub>. Unterschreitet U<sub>DS</sub> die <strong>Abschnürgrenze U<sub>DS</sub> ≈ U<sub>GS</sub> − U<sub>P</sub></strong>, verlässt der FET den waagerechten Teil der Kennlinie und wird zum Widerstand. Der Strom ist dann nicht mehr konstant. Abschätzung: <strong>R<sub>L,max</sub> ≈ (U<sub>B</sub> − U<sub>RS</sub> − U<sub>DS,min</sub>) / I</strong>, genau wie in HA 2.1d.",
+   "variante": "merke"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>R<sub>L</sub></th><th>I<sub>L</sub> / mA</th><th>U<sub>DS</sub> / V</th><th>I<sub>L</sub> / I<sub>0</sub></th></tr><tr><td>0</td><td></td><td></td><td>100 %</td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td>R<sub>L,max</sub> =</td><td></td><td></td><td>90 %</td></tr></tbody>"
+  },
+  {
+   "typ": "absatz",
+   "html": "Fürs Protokoll mit mehreren Punkten ein Diagramm I<sub>L</sub>(R<sub>L</sub>) zeichnen. Der Knick ist dann gut zu sehen."
+  },
+  {
+   "typ": "h2",
+   "html": "3.2–3.4 · R<sub>DS(on)</sub>, Verlustleistung, Wirkungsgrad",
+   "abstand": "m"
+  },
+  {
+   "typ": "absatz",
+   "html": "Messschaltung aus HA 3.1: U<sub>B</sub> = 12 V, R<sub>V</sub> = 1,2 kΩ in der Drainleitung (I ≈ 10 mA), U<sub>GS</sub> ≈ 10 V, Voltmeter <strong>direkt an Drain und Source</strong>."
+  },
+  {
+   "typ": "h3",
+   "html": "Was dich erwartet"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th></th><th>BS170</th><th>IRLR024N</th></tr><tr><td>Typ</td><td>Kleinsignal, TO-92</td><td>Power, D-Pak</td></tr><tr><td>R<sub>DS(on)</sub> lt. Datenblatt (ca.)</td><td>≈ 1,2 Ω typ. (max. 5 Ω)</td><td>≈ 65 mΩ max. bei U<sub>GS</sub> = 10 V</td></tr><tr><td>U<sub>DS</sub> bei 10 mA</td><td>≈ <strong>12 mV</strong></td><td>≈ <strong>0,65 mV</strong></td></tr></tbody>"
+  },
+  {
+   "typ": "box",
+   "html": "Die Datenblattwerte stehen hier nur als Größenordnung. Für das Protokoll die genauen Werte und Messbedingungen (U<sub>GS</sub>, I<sub>D</sub>, Temperatur) aus den OPAL-Datenblättern nehmen.",
+   "variante": "info"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Die Spannung ist winzig.</strong> Beim IRLR024N misst du unter einem Millivolt.<div>• Multimeter auf den kleinsten <strong>mV-Bereich</strong> stellen.</div><div>• Messspitzen <strong>direkt an die Beinchen</strong> von D und S halten und nicht an Steckbrett oder Kabelenden. Kontakt- und Leitungswiderstände liegen bei 10–100 mΩ und sind damit so groß wie R<sub>DS(on)</sub> selbst.</div><div>• Vorher die Spitzen kurzschließen und den Nullwert (Offset) notieren.</div><div>• Bei 10 mA ist das Messergebnis beim IRLR deshalb unsicher. Diesen Punkt in der Fehlerbetrachtung ansprechen.</div>",
+   "variante": "achtung"
+  },
+  {
+   "typ": "liste",
+   "geordnet": false,
+   "html": "<li><strong>Strom</strong> mit Amperemeter in Reihe messen und nicht nur aus 12 V / 1,2 kΩ rechnen.</li><li><strong>R<sub>DS(on)</sub> = U<sub>DS</sub> / I<sub>D</sub>.</strong> Vergleich mit dem Datenblatt: R<sub>DS(on)</sub> hängt von U<sub>GS</sub>, I<sub>D</sub> und Temperatur ab. Das Datenblatt gibt ihn bei anderen Bedingungen an (z. B. größerem I<sub>D</sub>).</li>"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th></th><th>BS170</th><th>IRLR024N</th></tr><tr><td>U<sub>DS</sub> / mV</td><td></td><td></td></tr><tr><td>I<sub>D</sub> / mA</td><td></td><td></td></tr><tr><td>R<sub>DS(on)</sub> / Ω</td><td></td><td></td></tr><tr><td>P<sub>V</sub> = U<sub>DS</sub>·I<sub>D</sub></td><td></td><td></td></tr><tr><td>η</td><td></td><td></td></tr></tbody>"
+  },
+  {
+   "typ": "h3",
+   "html": "3.3 Verlustleistung"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>P<sub>V</sub> = U<sub>DS</sub> · I<sub>D</sub> = I<sub>D</sub>² · R<sub>DS(on)</sub></strong>. Bei 10 mA: BS170 ≈ 0,12 mW, IRLR024N ≈ 6,5 µW, also praktisch nichts."
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Bei maximalem Strom</strong> (I<sub>D,max</sub> aus dem Datenblatt):<div>• BS170, I<sub>D</sub> ≈ 0,5 A: P ≈ 0,5² · 1,2 Ω ≈ 0,3 W (typ.). Mit dem Maximalwert 5 Ω wären es ≈ 1,25 W, mehr als die zulässige Verlustleistung im TO-92 (≈ 0,8 W).</div><div>• IRLR024N, I<sub>D</sub> ≈ 17 A: P ≈ 17² · 0,065 Ω ≈ 19 W. Das Datenblatt erlaubt ≈ 45 W, aber nur bei <strong>T<sub>C</sub> = 25 °C</strong>, also mit idealer Kühlung.</div>",
+   "variante": "beispiel"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Einfluss der Bauform:</strong> Wie viel Leistung ein Transistor verträgt, bestimmt die Wärmeabfuhr: <strong>P<sub>max</sub> = (T<sub>J,max</sub> − T<sub>U</sub>) / R<sub>th</sub></strong>. TO-92 hat eine winzige Oberfläche und einen hohen Wärmewiderstand. Das D-Pak hat eine große Metallfläche zum Auflöten auf Kupfer bzw. Kühlkörper. Deshalb erlaubt die Bauform einen viel größeren Drainstrom. Ohne Kühlfläche ist auch der IRLR024N nur für wenige Watt gut.",
+   "variante": "merke"
+  },
+  {
+   "typ": "h3",
+   "html": "3.4 Wirkungsgrad"
+  },
+  {
+   "typ": "absatz",
+   "html": "<strong>η = P<sub>Last</sub> / P<sub>gesamt</sub> = U<sub>RV</sub> / (U<sub>RV</sub> + U<sub>DS</sub>) ≈ 1 − U<sub>DS</sub>/U<sub>B</sub></strong>. BS170: ≈ 1 − 0,012/12 ≈ 99,9 %. IRLR024N: ≈ 99,995 %. Bei 10 mA sind beide nahezu ideal. Der Unterschied wird erst bei großen Strömen wichtig, weil P<sub>V</sub> quadratisch mit I<sub>D</sub> steigt."
+  },
+  {
+   "typ": "h2",
+   "html": "4.2 · PWM-Ansteuerung (IRLR024N)",
+   "abstand": "m"
+  },
+  {
+   "typ": "h3",
+   "html": "a) Signalgenerator einstellen"
+  },
+  {
+   "typ": "liste",
+   "geordnet": true,
+   "html": "<li>Funktion <strong>Rechteck / Puls</strong>, Frequenz z. B. <strong>1 kHz</strong>. Das liegt weit unter f<sub>max</sub> ≈ 4,1 MHz aus HA 4.1, die Schaltzeiten spielen also kaum eine Rolle.</li><li><strong>Low = 0 V, High = 5 V.</strong> Bei vielen Generatoren heißt das: Amplitude 5 V<sub>pp</sub> <strong>und Offset 2,5 V</strong>. Ohne Offset pendelt das Signal zwischen −2,5 V und +2,5 V.</li><li>Ausgang auf <strong>High-Z</strong> stellen, falls einstellbar. Sonst stimmt die angezeigte Amplitude nicht.</li><li>Duty <strong>25 %, 50 %, 75 %</strong>. <strong>100 %</strong> kann ein Pulsgenerator oft nicht. Dann DC-Modus bzw. nur Offset 5 V verwenden oder das Gate fest an 5 V legen.</li><li>Signal <strong>erst auf einem Oszi-Kanal kontrollieren</strong>, dann ans Gate anschließen.</li>"
+  },
+  {
+   "typ": "box",
+   "html": "5 V am Gate reichen, weil der IRLR024N ein <strong>Logic-Level</strong>-FET ist. Das „L“ in IRLR steht dafür, R<sub>DS(on)</sub> ist schon bei 4–5 V spezifiziert.",
+   "variante": "info"
+  },
+  {
+   "typ": "h3",
+   "html": "b) Messgeräte anordnen"
+  },
+  {
+   "typ": "liste",
+   "geordnet": false,
+   "html": "<li><strong>Amperemeter in Reihe in die Drainleitung</strong> (zwischen U<sub>B</sub> und R<sub>D</sub>). Der Strom ist für Last und MOSFET derselbe, das Amperemeter bleibt also stecken.</li><li><strong>Voltmeter</strong> einmal parallel zu R<sub>D</sub> (Lastleistung), einmal parallel zu D–S (MOSFET-Leistung).</li><li><strong>Oszi</strong>: CH1 = U<sub>PWM</sub> (Gate-Seite), CH2 = u<sub>DS</sub>. Source liegt an Masse, also passt die Masseklemme dort.</li>"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Fallstrick Leistung bei PWM:</strong> Ein Multimeter im DC-Modus zeigt <strong>Mittelwerte</strong>. Bei PWM gilt aber P ≠ U<sub>mittel</sub> · I<sub>mittel</sub>.<div>Beispiel Last R<sub>D</sub>: Richtig ist P = D · U<sub>B</sub>²/R<sub>D</sub>. Mit Mittelwerten erhältst du D² · U<sub>B</sub>²/R<sub>D</sub>, also bei 25 % nur ein Viertel des richtigen Werts.</div><div>• <strong>Lastwiderstand:</strong> Mit <strong>TRMS (AC+DC)</strong> messen, dann gilt P = U<sub>eff</sub> · I<sub>eff</sub>, weil u und i proportional sind.</div><div>• <strong>MOSFET:</strong> Dort funktioniert auch das nicht. Im Aus-Zustand ist u hoch und i null, im Ein-Zustand umgekehrt. Richtig ist P = Mittelwert von u<sub>DS</sub>·i<sub>D</sub>. Das geht mit der Oszi-Mathefunktion (Produkt, dann Measure → Mean) mit i<sub>D</sub> = (U<sub>B</sub> − u<sub>DS</sub>)/R<sub>D</sub>, oder rechnerisch über P<sub>MOS</sub> ≈ D · I<sub>ein</sub>² · R<sub>DS(on)</sub>.</div>",
+   "variante": "achtung"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Tastkopfmasse nie an den Drain</strong> und nie an den oberen Anschluss von R<sub>D</sub>. Über den Schutzleiter wäre das ein Kurzschluss. Spannung über R<sub>D</sub> entweder mit dem Multimeter messen oder als U<sub>B</sub> − u<sub>DS</sub> (Mathe CH1 − CH2) bilden.",
+   "variante": "achtung"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Duty D</th><th>I (TRMS)</th><th>U<sub>RD</sub> (TRMS)</th><th>P<sub>Last</sub> gemessen</th><th>P<sub>Last</sub> = D·U<sub>B</sub>²/R<sub>D</sub></th><th>P<sub>MOS</sub></th></tr><tr><td>25 %</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>50 %</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>75 %</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>100 %</td><td></td><td></td><td></td><td></td><td></td></tr></tbody>"
+  },
+  {
+   "typ": "box",
+   "html": "Vor dem Einschalten bei 100 % die <strong>Belastbarkeit von R<sub>D</sub></strong> prüfen: P = U<sub>B</sub>²/R<sub>D</sub>. U<sub>B</sub> und R<sub>D</sub> stehen am Versuchsplatz. Am besten gleich ausrechnen und eintragen.",
+   "variante": "info"
+  },
+  {
+   "typ": "h3",
+   "html": "c) Gate-Vorwiderstand R<sub>G</sub>"
+  },
+  {
+   "typ": "tabelle",
+   "html": "<tbody><tr><th>Aufgabe von R<sub>G</sub></th><th>Begründung</th></tr><tr><td>Strombegrenzung</td><td>Das Gate ist ein Kondensator (C<sub>iss</sub>, einige 100 pF). Ohne R<sub>G</sub> zieht jede Flanke einen hohen Ladestromstoß aus dem Generator. R<sub>G</sub> begrenzt ihn auf ≈ U/R<sub>G</sub>.</td></tr><tr><td>Dämpfung</td><td>Leitungsinduktivität und Gatekapazität bilden einen Schwingkreis. R<sub>G</sub> dämpft das Klingeln an den Flanken.</td></tr><tr><td>Schutz der Quelle</td><td>Ein Generator- oder µC-Ausgang darf nur begrenzten Strom liefern.</td></tr></tbody>"
+  },
+  {
+   "typ": "box",
+   "html": "<strong>Dimensionierung – der Kompromiss:</strong><div>• <strong>Zu klein:</strong> hohe Stromspitzen, Überschwingen.</div><div>• <strong>Zu groß:</strong> τ = R<sub>G</sub> · C<sub>iss</sub> wird groß, der FET schaltet langsam und hält sich länger im Widerstandsbereich auf. Dadurch steigen die <strong>Schaltverluste</strong>, und die erreichbare Frequenz sinkt.</div><div>Typisch sind 10…100 Ω. Die Schaltzeiten im Datenblatt gelten für R<sub>G</sub> = 12 Ω (siehe HA 4.1). Zusätzlich sorgt ein <strong>Pull-down</strong> (≈ 10 kΩ) G–S dafür, dass der FET sicher sperrt, wenn kein Signal anliegt.</div>",
+   "variante": "merke"
+  },
+  {
+   "typ": "absatz",
+   "html": "Bonus fürs Protokoll: Am Oszi auf eine Flanke von u<sub>DS</sub> zoomen und die Schaltzeit ablesen. Mit den Werten aus HA 4.1 vergleichen und dabei die anderen Bedingungen nennen (anderes R<sub>G</sub>, U<sub>GS</sub>, I<sub>D</sub>)."
+  },
+  {
+   "typ": "h2",
+   "html": "5 · Zusatz: H-Brücke",
+   "abstand": "m"
+  },
+  {
+   "typ": "liste",
+   "geordnet": false,
+   "html": "<li><strong>Prinzip:</strong> Es leiten immer zwei <strong>diagonale</strong> Transistoren (oben links + unten rechts oder umgekehrt). Welches Paar leitet, bestimmt die Stromrichtung durch die Last. Die LEDs zeigen sie an.</li><li><strong>Nie beide Transistoren einer Seite gleichzeitig.</strong> Das wäre ein Kurzschluss von U<sub>B</sub> nach Masse (Shoot-through). Deshalb gibt es zwischen dem Aus- und Einschalten eine kurze <strong>Totzeit</strong>. Mit dem Oszi an zwei Gate-Testpunkten einer Seite und Zoom auf die Flanke suchen.</li><li><strong>Poti</strong> → Tastgrad (Helligkeit), <strong>Schalter</strong> → Richtung. Beides am Oszi dokumentieren.</li><li><strong>Spannung über der Last</strong> ist nicht massebezogen: zwei Kanäle gegen Masse messen und <strong>CH1 − CH2</strong> bilden. Die Tastkopfmasse nicht an einen Ausgang klemmen.</li><li>Im Schaltplan nachsehen, wie die oberen Transistoren angesteuert werden: P-Kanal oder N-Kanal mit Treiber. Ein N-Kanal-FET oben braucht ein Gate <em>über</em> seiner Source.</li>"
+  },
+  {
+   "typ": "h2",
+   "html": "Typische Fehler am Platz",
+   "abstand": "m"
+  },
+  {
+   "typ": "box",
+   "html": "<div>• Tastkopf auf 10:1, Kanal auf 1× (oder umgekehrt) → Faktor 10 daneben.</div><div>• AC-Kopplung beim langsamen Multivibrator → schiefe Rechtecke.</div><div>• Masseklemme an falschem Punkt → Kurzschluss über den Schutzleiter.</div><div>• Amperemeter parallel geschaltet oder Leitung nicht zurückgesteckt → Sicherung.</div><div>• Generator ohne Offset → negatives Gatesignal, der FET schaltet nur halb.</div><div>• Leistung bei PWM aus DC-Mittelwerten berechnet → um Faktor D zu klein.</div><div>• Beim Messen von R<sub>DS(on)</sub> an Steckbrett-Kontakten gemessen → Kontaktwiderstand mitgemessen.</div><div>• Screenshots nicht gespeichert → für das Protokoll fehlen die Bilder.</div>",
+   "variante": "achtung"
+  }
+ ]
+}

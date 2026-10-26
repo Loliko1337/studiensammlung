@@ -1,6 +1,12 @@
 {
  "docs": [
   {
+   "id": "durchfuehrung-v2-transistor-schalter",
+   "titel": "Durchführung V2: Transistor als Schalter",
+   "untertitel": "Erwartungswerte, Messaufbau und Fallstricke für den Praktikumstermin",
+   "stand": "2026-10-26"
+  },
+  {
    "id": "uebersicht-elektronik",
    "titel": "Übersicht Elektronik",
    "untertitel": "Formeln, Modelle und wann du was brauchst – Kap. 1–6 und Übungen 1–7",
